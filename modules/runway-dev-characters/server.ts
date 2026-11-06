@@ -1,51 +1,90 @@
 /**
- * Minimal Express server for the Runway Characters demo.
- * Provenance and status: see MODULE.md (DRAFT, not reviewed).
+ * Bootstrap for the Runway Characters demo server (V0.2 DRAFT, see MODULE.md).
+ * Fail-closed: invalid configuration or a locked state directory stops the process.
  */
 import RunwayML from '@runwayml/sdk';
-import express from 'express';
 import { fileURLToPath } from 'node:url';
-import { createSession, resolveAvatar, SessionError, PRESET_AVATARS } from './src/session.ts';
+import { createApp } from './src/app.ts';
+import { FileAuditSink } from './src/audit.ts';
+import { AuthService } from './src/auth.ts';
+import { loadConfig, type AppConfig } from './src/config.ts';
+import { SessionController } from './src/controller.ts';
+import { StaticPolicyGate } from './src/policy.ts';
+import { SessionError, type RunwayClient } from './src/session.ts';
+import { Ledger } from './src/store.ts';
 
-const port = Number(process.env.PORT ?? 3000);
-const app = express();
-app.use(express.json({ limit: '4kb' }));
+const baseDir = fileURLToPath(new URL('.', import.meta.url));
 
-// Created lazily so the static page can start without a key; the SDK reads RUNWAYML_API_SECRET.
-let runway: RunwayML | undefined;
-function client(): RunwayML {
-  if (!process.env.RUNWAYML_API_SECRET) {
-    throw new SessionError('RUNWAYML_API_SECRET is not set on the server', 500);
-  }
-  return (runway ??= new RunwayML());
+let config: AppConfig;
+try {
+  config = loadConfig(process.env, baseDir);
+} catch (error) {
+  console.error(`Configuration error: ${(error as Error).message}`);
+  process.exit(1);
 }
 
-app.get('/api/avatar/config', (_req, res) => {
-  res.json({
-    customAvatarConfigured: Boolean(process.env.RUNWAY_AVATAR_ID?.trim()),
-    presets: PRESET_AVATARS,
-    apiKeyConfigured: Boolean(process.env.RUNWAYML_API_SECRET),
-  });
+const ledger = new Ledger(config.stateDir);
+ledger.acquireLock();
+const audit = new FileAuditSink(config.stateDir);
+
+// Created lazily so the page can be served without a key; the SDK reads RUNWAYML_API_SECRET.
+let runway: RunwayML | undefined;
+function client(): RunwayClient {
+  if (!config.apiKeyConfigured) throw new SessionError('RUNWAYML_API_SECRET is not set', 503, 'runway_not_configured');
+  return (runway ??= new RunwayML({ maxRetries: 1, timeout: 20_000 })) as unknown as RunwayClient;
+}
+
+const controller = new SessionController({
+  client,
+  config,
+  ledger,
+  audit,
+  gate: new StaticPolicyGate(config.grantedCapabilities, config.escalationContexts),
+});
+const auth = new AuthService(config, audit);
+const app = createApp({
+  config,
+  controller,
+  auth,
+  audit,
+  staticDir: fileURLToPath(new URL('./dist', import.meta.url)),
 });
 
-app.post('/api/avatar/connect', async (req, res) => {
+if (config.apiKeyConfigured) {
+  const { cancelled, unmanaged } = await controller.recover();
+  if (cancelled.length) console.error(`Recovery: ended ${cancelled.length} session(s) left open by a previous run.`);
+  if (unmanaged.length) console.error(`Recovery: ${unmanaged.length} in-progress session(s) not managed by this server (reported, not touched).`);
+} else if (ledger.open().length) {
+  console.error('Recovery pending: open sessions in the ledger, but no RUNWAYML_API_SECRET to cancel them.');
+}
+
+const reaper = setInterval(() => {
+  controller.reap().catch(() => console.error('reaper pass failed'));
+}, config.reaperIntervalMs);
+reaper.unref();
+
+const server = app.listen(config.port, config.host, () => {
+  const s = controller.status();
+  console.error(
+    `Runway Characters demo on http://${config.host.includes(':') ? `[${config.host}]` : config.host}:${config.port} ` +
+      `(auth ${config.accessToken ? 'on' : 'NOT CONFIGURED'}, budget ${s.remainingCredits}/${s.budgetCredits} credits, ` +
+      `max ${config.maxConcurrentSessions} parallel, ${config.maxDurationS}s per session)`,
+  );
+});
+
+let shuttingDown = false;
+async function shutdown(signal: string) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.error(`${signal}: ending open sessions before exit`);
+  clearInterval(reaper);
+  server.close();
   try {
-    const avatar = resolveAvatar(req.body?.presetId, process.env.RUNWAY_AVATAR_ID);
-    const credentials = await createSession(client(), avatar);
-    res.json(credentials);
-  } catch (error) {
-    if (error instanceof SessionError) {
-      console.error('Session error:', error.message, error.failureCode ?? '');
-      res.status(error.httpStatus).json({ error: error.message, failureCode: error.failureCode });
-      return;
-    }
-    // SDK errors may carry request details; log type/status only, never headers.
-    const status = (error as { status?: number }).status;
-    console.error('Runway API error:', (error as Error).name, status ?? '');
-    res.status(502).json({ error: 'Runway API request failed', status });
+    if (config.apiKeyConfigured) await controller.recover();
+  } finally {
+    ledger.releaseLock();
+    process.exit(0);
   }
-});
-
-app.use(express.static(fileURLToPath(new URL('./dist', import.meta.url))));
-
-app.listen(port, () => console.log(`Runway Characters demo on http://localhost:${port}`));
+}
+process.on('SIGINT', () => void shutdown('SIGINT'));
+process.on('SIGTERM', () => void shutdown('SIGTERM'));

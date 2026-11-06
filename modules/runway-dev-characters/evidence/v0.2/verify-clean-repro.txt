@@ -1,0 +1,438 @@
+# Clean reproduction 2026-11-06T16:47:27Z in fresh copy (git-tracked/untracked non-ignored files only), node v22.23.4, npm 10.9.9
+added 109 packages in 3s
+
+> nyxa-runway-dev-characters@0.2.0 verify
+> npm run check && npm run build && npm test && npm run secret-scan
+
+
+> nyxa-runway-dev-characters@0.2.0 check
+> tsc --noEmit
+
+
+> nyxa-runway-dev-characters@0.2.0 build
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 6 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                   1.51 kB │ gzip:   0.76 kB
+../dist/assets/index-BEWohYUj.css    1.02 kB │ gzip:   0.54 kB
+../dist/assets/index-sO-v7Emw.js   594.98 kB │ gzip: 157.12 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.87s
+
+> nyxa-runway-dev-characters@0.2.0 test
+> node --import tsx --test test/*.test.ts
+
+TAP version 13
+# Subtest: RW-01 unauthenticated connect
+    # Subtest: connect without login is denied and Runway is never called
+    ok 1 - connect without login is denied and Runway is never called
+      ---
+      duration_ms: 72.861149
+      type: 'test'
+      ...
+    # Subtest: wrong access token is rejected; forged cookie is rejected
+    ok 2 - wrong access token is rejected; forged cookie is rejected
+      ---
+      duration_ms: 15.972147
+      type: 'test'
+      ...
+    # Subtest: login brute force is rate limited
+    ok 3 - login brute force is rate limited
+      ---
+      duration_ms: 36.626008
+      type: 'test'
+      ...
+    # Subtest: no NYXA_ACCESS_TOKEN configured -> fail closed (503), no session
+    ok 4 - no NYXA_ACCESS_TOKEN configured -> fail closed (503), no session
+      ---
+      duration_ms: 8.7197
+      type: 'test'
+      ...
+    # Subtest: auth session expires after TTL
+    ok 5 - auth session expires after TTL
+      ---
+      duration_ms: 8.317967
+      type: 'test'
+      ...
+    # Subtest: foreign Host header (DNS rebinding) and foreign Origin are rejected before auth
+    ok 6 - foreign Host header (DNS rebinding) and foreign Origin are rejected before auth
+      ---
+      duration_ms: 15.781822
+      type: 'test'
+      ...
+    # Subtest: cookie is HttpOnly + SameSite=Strict and scoped to /api
+    ok 7 - cookie is HttpOnly + SameSite=Strict and scoped to /api
+      ---
+      duration_ms: 6.045612
+      type: 'test'
+      ...
+    1..7
+ok 1 - RW-01 unauthenticated connect
+  ---
+  duration_ms: 165.854245
+  type: 'suite'
+  ...
+# Subtest: RW-02 invalid character id
+    # Subtest: unknown preset, non-string, and non-allowlisted preset are denied without Runway call
+    ok 1 - unknown preset, non-string, and non-allowlisted preset are denied without Runway call
+      ---
+      duration_ms: 29.678763
+      type: 'test'
+      ...
+    # Subtest: client cannot override a server-configured custom avatar
+    ok 2 - client cannot override a server-configured custom avatar
+      ---
+      duration_ms: 13.234461
+      type: 'test'
+      ...
+    1..2
+ok 2 - RW-02 invalid character id
+  ---
+  duration_ms: 43.609781
+  type: 'suite'
+  ...
+# Subtest: RW-03 double start / replay
+    # Subtest: same Idempotency-Key twice creates one session; second answer is 409
+    ok 1 - same Idempotency-Key twice creates one session; second answer is 409
+      ---
+      duration_ms: 23.499194
+      type: 'test'
+      ...
+    # Subtest: missing or malformed Idempotency-Key is rejected
+    ok 2 - missing or malformed Idempotency-Key is rejected
+      ---
+      duration_ms: 11.622655
+      type: 'test'
+      ...
+    # Subtest: a burst of fresh keys is bounded by the creation rate limit
+    ok 3 - a burst of fresh keys is bounded by the creation rate limit
+      ---
+      duration_ms: 19.574646
+      type: 'test'
+      ...
+    1..3
+ok 3 - RW-03 double start / replay
+  ---
+  duration_ms: 55.126427
+  type: 'suite'
+  ...
+# Subtest: RW-04 concurrency limit
+    # Subtest: parallel starts beyond MAX_CONCURRENT_SESSIONS are denied
+    ok 1 - parallel starts beyond MAX_CONCURRENT_SESSIONS are denied
+      ---
+      duration_ms: 15.632814
+      type: 'test'
+      ...
+    # Subtest: ending a session frees the slot
+    ok 2 - ending a session frees the slot
+      ---
+      duration_ms: 19.37019
+      type: 'test'
+      ...
+    1..2
+ok 4 - RW-04 concurrency limit
+  ---
+  duration_ms: 35.318849
+  type: 'suite'
+  ...
+# Subtest: RW-05 budget
+    # Subtest: default budget 0 denies every paid session
+    ok 1 - default budget 0 denies every paid session
+      ---
+      duration_ms: 10.521899
+      type: 'test'
+      ...
+    # Subtest: budget for exactly one worst-case session allows one, then denies
+    ok 2 - budget for exactly one worst-case session allows one, then denies
+      ---
+      duration_ms: 9.23833
+      type: 'test'
+      ...
+    # Subtest: budget survives a restart (ledger persisted)
+    ok 3 - budget survives a restart (ledger persisted)
+      ---
+      duration_ms: 14.372066
+      type: 'test'
+      ...
+    1..3
+ok 5 - RW-05 budget
+  ---
+  duration_ms: 34.439839
+  type: 'suite'
+  ...
+# Subtest: RW-06 Runway returns FAILED
+    # Subtest: controlled 502 with stable code, session cancelled, record closed
+    ok 1 - controlled 502 with stable code, session cancelled, record closed
+      ---
+      duration_ms: 22.436005
+      type: 'test'
+      ...
+    # Subtest: upstream 4xx on create releases the reservation; 5xx keeps it (unknown billing)
+    ok 2 - upstream 4xx on create releases the reservation; 5xx keeps it (unknown billing)
+      ---
+      duration_ms: 11.946551
+      type: 'test'
+      ...
+    1..2
+ok 6 - RW-06 Runway returns FAILED
+  ---
+  duration_ms: 34.611488
+  type: 'suite'
+  ...
+# Subtest: RW-07 provisioning timeout
+    # Subtest: timeout cancels the remote session and closes the record (cleanup evidence)
+    ok 1 - timeout cancels the remote session and closes the record (cleanup evidence)
+      ---
+      duration_ms: 7.140009
+      type: 'test'
+      ...
+    # Subtest: client abort during provisioning cancels and never returns credentials
+    ok 2 - client abort during provisioning cancels and never returns credentials
+      ---
+      duration_ms: 127.624691
+      type: 'test'
+      ...
+    1..2
+ok 7 - RW-07 provisioning timeout
+  ---
+  duration_ms: 135.068112
+  type: 'suite'
+  ...
+# Subtest: RW-08 browser loses connection
+    # Subtest: credentials never used -> reaper ends the session after CONNECT_GRACE
+    ok 1 - credentials never used -> reaper ends the session after CONNECT_GRACE
+      ---
+      duration_ms: 11.282638
+      type: 'test'
+      ...
+    # Subtest: heartbeats keep it alive; missing heartbeats end it
+    ok 2 - heartbeats keep it alive; missing heartbeats end it
+      ---
+      duration_ms: 26.977323
+      type: 'test'
+      ...
+    # Subtest: hard cap: a record older than maxDuration + slack is force-ended
+    ok 3 - hard cap: a record older than maxDuration + slack is force-ended
+      ---
+      duration_ms: 19.497462
+      type: 'test'
+      ...
+    # Subtest: another tab without the control token cannot heartbeat or end the session
+    ok 4 - another tab without the control token cannot heartbeat or end the session
+      ---
+      duration_ms: 10.020323
+      type: 'test'
+      ...
+    1..4
+ok 8 - RW-08 browser loses connection
+  ---
+  duration_ms: 68.446835
+  type: 'suite'
+  ...
+# Subtest: RW-09 repeated session end
+    # Subtest: end is idempotent, including concurrent calls; one cancel only
+    ok 1 - end is idempotent, including concurrent calls; one cancel only
+      ---
+      duration_ms: 14.838169
+      type: 'test'
+      ...
+    # Subtest: cancel that Runway does not confirm stays "ending", counts against limits, reaper retries
+    ok 2 - cancel that Runway does not confirm stays "ending", counts against limits, reaper retries
+      ---
+      duration_ms: 16.391265
+      type: 'test'
+      ...
+    1..2
+ok 9 - RW-09 repeated session end
+  ---
+  duration_ms: 31.465838
+  type: 'suite'
+  ...
+# Subtest: RW-10 no secret leak
+    # Subtest: API key never appears in responses, logs, audit, ledger or the browser bundle
+    ok 1 - API key never appears in responses, logs, audit, ledger or the browser bundle
+      ---
+      duration_ms: 21.947452
+      type: 'test'
+      ...
+    # Subtest: built browser bundle (dist/) contains no secret-shaped values
+    ok 2 - built browser bundle (dist/) contains no secret-shaped values
+      ---
+      duration_ms: 3.071785
+      type: 'test'
+      ...
+    1..2
+ok 10 - RW-10 no secret leak
+  ---
+  duration_ms: 25.213885
+  type: 'suite'
+  ...
+# Subtest: RW-11 policy requires escalation
+    # Subtest: ESCALATE from the gate blocks before any Runway call or budget reservation
+    ok 1 - ESCALATE from the gate blocks before any Runway call or budget reservation
+      ---
+      duration_ms: 6.441534
+      type: 'test'
+      ...
+    # Subtest: default gate: pilot context "Schule in der Hosentasche" escalates; missing capability denies
+    ok 2 - default gate: pilot context "Schule in der Hosentasche" escalates; missing capability denies
+      ---
+      duration_ms: 10.410387
+      type: 'test'
+      ...
+    # Subtest: SERIALIZE / NEGOTIATE also block (only ALLOW acts)
+    ok 3 - SERIALIZE / NEGOTIATE also block (only ALLOW acts)
+      ---
+      duration_ms: 11.36102
+      type: 'test'
+      ...
+    1..3
+ok 11 - RW-11 policy requires escalation
+  ---
+  duration_ms: 28.453904
+  type: 'suite'
+  ...
+# Subtest: RW-12 server restart with active session
+    # Subtest: recovery cancels sessions left open by the previous process
+    ok 1 - recovery cancels sessions left open by the previous process
+      ---
+      duration_ms: 8.077953
+      type: 'test'
+      ...
+    # Subtest: unmanaged in-progress sessions on the account are reported, never cancelled
+    ok 2 - unmanaged in-progress sessions on the account are reported, never cancelled
+      ---
+      duration_ms: 1.031075
+      type: 'test'
+      ...
+    # Subtest: a second server process on the same state dir is refused (lock); stale lock is taken over
+    ok 3 - a second server process on the same state dir is refused (lock); stale lock is taken over
+      ---
+      duration_ms: 1.587744
+      type: 'test'
+      ...
+    1..3
+ok 12 - RW-12 server restart with active session
+  ---
+  duration_ms: 10.883571
+  type: 'suite'
+  ...
+# Subtest: cost reconciliation
+    # Subtest: ended session settles to the estimate of its real duration, never above the reservation
+    ok 1 - ended session settles to the estimate of its real duration, never above the reservation
+      ---
+      duration_ms: 9.555122
+      type: 'test'
+      ...
+    1..1
+ok 13 - cost reconciliation
+  ---
+  duration_ms: 9.677261
+  type: 'suite'
+  ...
+# Subtest: defaults: loopback bind, budget 0, no capability, 1 parallel session, 120 s
+ok 14 - defaults: loopback bind, budget 0, no capability, 1 parallel session, 120 s
+  ---
+  duration_ms: 2.9799
+  type: 'test'
+  ...
+# Subtest: non-loopback bind requires explicit opt-in AND an access token
+ok 15 - non-loopback bind requires explicit opt-in AND an access token
+  ---
+  duration_ms: 0.480427
+  type: 'test'
+  ...
+# Subtest: weak token, malformed numbers and out-of-range durations are rejected
+ok 16 - weak token, malformed numbers and out-of-range durations are rejected
+  ---
+  duration_ms: 0.383384
+  type: 'test'
+  ...
+# Subtest: ALLOWED_PRESETS cannot add undocumented presets
+ok 17 - ALLOWED_PRESETS cannot add undocumented presets
+  ---
+  duration_ms: 0.219127
+  type: 'test'
+  ...
+# Subtest: resolveAvatar accepts documented, allowlisted presets only
+ok 18 - resolveAvatar accepts documented, allowlisted presets only
+  ---
+  duration_ms: 2.111122
+  type: 'test'
+  ...
+# Subtest: resolveAvatar prefers a configured custom avatar uuid
+ok 19 - resolveAvatar prefers a configured custom avatar uuid
+  ---
+  duration_ms: 0.293479
+  type: 'test'
+  ...
+# Subtest: provisionSession polls until READY and returns only id, key and expiry
+ok 20 - provisionSession polls until READY and returns only id, key and expiry
+  ---
+  duration_ms: 0.623019
+  type: 'test'
+  ...
+# Subtest: provisionSession: FAILED -> 502 with failureCode and cancel
+ok 21 - provisionSession: FAILED -> 502 with failureCode and cancel
+  ---
+  duration_ms: 0.480806
+  type: 'test'
+  ...
+# Subtest: provisionSession: timeout -> 504 and cancel
+ok 22 - provisionSession: timeout -> 504 and cancel
+  ---
+  duration_ms: 0.31666
+  type: 'test'
+  ...
+# Subtest: provisionSession: polling error -> 502 upstream_error and cancel
+ok 23 - provisionSession: polling error -> 502 upstream_error and cancel
+  ---
+  duration_ms: 0.236474
+  type: 'test'
+  ...
+# Subtest: provisionSession: READY without sessionKey is an error and is cancelled
+ok 24 - provisionSession: READY without sessionKey is an error and is cancelled
+  ---
+  duration_ms: 0.273647
+  type: 'test'
+  ...
+# Subtest: provisionSession: aborted signal before create -> no remote call
+ok 25 - provisionSession: aborted signal before create -> no remote call
+  ---
+  duration_ms: 0.41006
+  type: 'test'
+  ...
+# Subtest: estimateCredits follows "2 upfront + 2 per started 6 s"
+ok 26 - estimateCredits follows "2 upfront + 2 per started 6 s"
+  ---
+  duration_ms: 0.28248
+  type: 'test'
+  ...
+# Subtest: audit redaction drops credential fields and masks secret-shaped values
+ok 27 - audit redaction drops credential fields and masks secret-shaped values
+  ---
+  duration_ms: 1.42161
+  type: 'test'
+  ...
+1..27
+# tests 50
+# suites 13
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4926.99442
+
+> nyxa-runway-dev-characters@0.2.0 secret-scan
+> node scripts/secret-scan.mjs
+
+secret-scan: 33 files, 0 hit(s)

@@ -32,7 +32,7 @@ main {
 h1 { margin: 0; font-size: 1.4rem; }
 .note, #status { color: var(--muted); margin: 0; }
 .picker { display: flex; gap: 8px; align-items: center; }
-select, button {
+select, button, input {
   font: inherit;
   padding: 8px 14px;
   border-radius: 8px;

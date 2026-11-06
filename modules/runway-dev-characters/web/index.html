@@ -8,19 +8,32 @@
   <body>
     <main>
       <h1>Runway Character</h1>
-      <p class="note">DRAFT-Demo. Jede Session verbraucht Runway-Dev-Credits. Mikrofonfreigabe erforderlich.</p>
-      <div class="picker">
-        <label for="preset">Character</label>
-        <select id="preset"></select>
+      <p class="note">
+        DRAFT-Demo V0.2, nur lokale Entwicklung. Jede Session verbraucht Runway-Dev-Credits. Audio, Video und
+        Transkript werden bei Runway verarbeitet. Nicht mit Minderjährigen oder realen Schüler:innen verwenden.
+      </p>
+
+      <form id="login" class="picker" hidden>
+        <label for="token">Zugangstoken</label>
+        <input id="token" type="password" autocomplete="off" spellcheck="false" />
+        <button type="submit">Anmelden</button>
+      </form>
+
+      <div id="app" hidden>
+        <div class="picker">
+          <label for="preset">Character</label>
+          <select id="preset"></select>
+        </div>
+        <p id="budget" class="note"></p>
+        <video id="avatar" autoplay playsinline></video>
+        <div class="controls">
+          <button id="start">Starten</button>
+          <button id="mute" disabled>Stumm</button>
+          <button id="end" disabled>Beenden</button>
+        </div>
+        <ol id="transcript" aria-live="polite"></ol>
       </div>
-      <video id="avatar" autoplay playsinline></video>
-      <div class="controls">
-        <button id="start">Starten</button>
-        <button id="mute" disabled>Stumm</button>
-        <button id="end" disabled>Beenden</button>
-      </div>
-      <p id="status" role="status">Bereit</p>
-      <ol id="transcript" aria-live="polite"></ol>
+      <p id="status" role="status">Lade …</p>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

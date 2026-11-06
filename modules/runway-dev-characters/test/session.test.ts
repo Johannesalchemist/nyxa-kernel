@@ -1,42 +1,20 @@
+/**
+ * Unit tests for avatar resolution, provisioning and cost estimate (MOCK level:
+ * proves local logic only).
+ */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  createSession,
-  resolveAvatar,
-  SessionError,
-  type RealtimeSessionsClient,
-} from '../src/session.ts';
+import { estimateCredits } from '../src/cost.ts';
+import { provisionSession, resolveAvatar, SessionError } from '../src/session.ts';
+import { FakeClock, MockRunway } from './helpers.ts';
 
-function mockClient(statuses: Array<{ status: string; sessionKey?: string; failure?: string; failureCode?: string }>) {
-  const calls = { create: [] as unknown[], retrieve: 0, deleted: [] as string[] };
-  const client: RealtimeSessionsClient = {
-    realtimeSessions: {
-      async create(body) {
-        calls.create.push(body);
-        return { id: 'sess-1' };
-      },
-      async retrieve() {
-        const s = statuses[Math.min(calls.retrieve, statuses.length - 1)];
-        calls.retrieve++;
-        return s;
-      },
-      async delete(id) {
-        calls.deleted.push(id);
-      },
-    },
-  };
-  return { client, calls };
-}
+const preset = { type: 'runway-preset', presetId: 'influencer' } as const;
 
-const noSleep = async () => {};
-
-test('resolveAvatar accepts documented presets only', () => {
-  assert.deepEqual(resolveAvatar('cooking-teacher', undefined), {
-    type: 'runway-preset',
-    presetId: 'cooking-teacher',
-  });
+test('resolveAvatar accepts documented, allowlisted presets only', () => {
+  assert.deepEqual(resolveAvatar('cooking-teacher', undefined), { type: 'runway-preset', presetId: 'cooking-teacher' });
   assert.throws(() => resolveAvatar('mina', undefined), SessionError);
   assert.throws(() => resolveAvatar(undefined, ''), SessionError);
+  assert.throws(() => resolveAvatar('cooking-teacher', undefined, ['influencer']), SessionError);
 });
 
 test('resolveAvatar prefers a configured custom avatar uuid', () => {
@@ -45,40 +23,89 @@ test('resolveAvatar prefers a configured custom avatar uuid', () => {
   assert.throws(() => resolveAvatar('influencer', 'not-a-uuid'), SessionError);
 });
 
-test('createSession polls until READY and returns only sessionId/sessionKey', async () => {
-  const { client, calls } = mockClient([
-    { status: 'NOT_READY' },
-    { status: 'NOT_READY' },
-    { status: 'READY', sessionKey: 'sk' },
-  ]);
-  const creds = await createSession(client, { type: 'runway-preset', presetId: 'influencer' }, { sleep: noSleep });
-  assert.deepEqual(creds, { sessionId: 'sess-1', sessionKey: 'sk' });
-  assert.equal(calls.retrieve, 3);
-  assert.deepEqual(calls.create[0], {
-    model: 'gwm1_avatars',
-    avatar: { type: 'runway-preset', presetId: 'influencer' },
-    maxDuration: 300,
-  });
+test('provisionSession polls until READY and returns only id, key and expiry', async () => {
+  const mock = new MockRunway({ script: ['NOT_READY', 'NOT_READY', 'READY'] });
+  const clock = new FakeClock();
+  const creds = await provisionSession(mock, preset, { maxDuration: 120, sleep: clock.sleep, now: clock.now });
+  assert.deepEqual(Object.keys(creds).sort(), ['expiresAt', 'sessionId', 'sessionKey']);
+  assert.equal(mock.retrieves, 3);
+  assert.deepEqual(mock.creates[0], { model: 'gwm1_avatars', avatar: preset, maxDuration: 120 });
+  assert.equal(mock.deletes.length, 0);
 });
 
-test('createSession surfaces FAILED with failureCode', async () => {
-  const { client } = mockClient([{ status: 'FAILED', failure: 'no credits', failureCode: 'X' }]);
+test('provisionSession: FAILED -> 502 with failureCode and cancel', async () => {
+  const mock = new MockRunway({ script: ['FAILED'] });
+  const clock = new FakeClock();
   await assert.rejects(
-    createSession(client, { type: 'runway-preset', presetId: 'influencer' }, { sleep: noSleep }),
-    (e: SessionError) => e.httpStatus === 502 && e.failureCode === 'X',
+    provisionSession(mock, preset, { maxDuration: 60, sleep: clock.sleep, now: clock.now }),
+    (e: SessionError) => e.httpStatus === 502 && e.failureCode === 'MOCK_FAILED' && e.code === 'provisioning_failed',
   );
+  assert.equal(mock.deletes.length, 1);
 });
 
-test('createSession times out and cancels the pending session', async () => {
-  const { client, calls } = mockClient([{ status: 'NOT_READY' }]);
-  let t = 0;
+test('provisionSession: timeout -> 504 and cancel', async () => {
+  const mock = new MockRunway({ script: ['NOT_READY'] });
+  const clock = new FakeClock();
   await assert.rejects(
-    createSession(client, { type: 'runway-preset', presetId: 'influencer' }, {
-      sleep: noSleep,
-      now: () => (t += 1000),
-      timeoutMs: 3000,
-    }),
+    provisionSession(mock, preset, { maxDuration: 60, timeoutMs: 3000, sleep: clock.sleep, now: clock.now }),
     (e: SessionError) => e.httpStatus === 504,
   );
-  assert.deepEqual(calls.deleted, ['sess-1']);
+  assert.equal(mock.deletes.length, 1);
+});
+
+test('provisionSession: polling error -> 502 upstream_error and cancel', async () => {
+  const mock = new MockRunway({ retrieveError: true });
+  const clock = new FakeClock();
+  await assert.rejects(
+    provisionSession(mock, preset, { maxDuration: 60, sleep: clock.sleep, now: clock.now }),
+    (e: SessionError) => e.code === 'upstream_error',
+  );
+  assert.equal(mock.deletes.length, 1);
+});
+
+test('provisionSession: READY without sessionKey is an error and is cancelled', async () => {
+  const mock = new MockRunway();
+  mock.realtimeSessions.retrieve = async () => ({ status: 'READY' });
+  const clock = new FakeClock();
+  await assert.rejects(
+    provisionSession(mock, preset, { maxDuration: 60, sleep: clock.sleep, now: clock.now }),
+    (e: SessionError) => e.code === 'missing_session_key',
+  );
+  assert.equal(mock.deletes.length, 1);
+});
+
+test('provisionSession: aborted signal before create -> no remote call', async () => {
+  const mock = new MockRunway();
+  const ac = new AbortController();
+  ac.abort();
+  await assert.rejects(provisionSession(mock, preset, { maxDuration: 60, signal: ac.signal }), (e: SessionError) => e.code === 'client_aborted');
+  assert.equal(mock.creates.length, 0);
+});
+
+test('estimateCredits follows "2 upfront + 2 per started 6 s"', () => {
+  assert.equal(estimateCredits(0), 2);
+  assert.equal(estimateCredits(1), 4);
+  assert.equal(estimateCredits(6), 4);
+  assert.equal(estimateCredits(7), 6);
+  assert.equal(estimateCredits(120), 42);
+  assert.equal(estimateCredits(300), 102);
+});
+
+test('audit redaction drops credential fields and masks secret-shaped values', async () => {
+  const { MemoryAuditSink } = await import('../src/audit.ts');
+  const sink = new MemoryAuditSink();
+  sink.record({
+    action: 'x',
+    outcome: 'INFO',
+    reason: 'leak attempt Bearer abc.def key_ABCDEFGHIJKLMNOPQRSTUV0123',
+    sessionKey: 'sk-should-vanish',
+    controlToken: 'ct-should-vanish',
+    ip: '203.0.113.7',
+    transcript: 'private words',
+  });
+  const text = JSON.stringify(sink.events);
+  for (const s of ['sk-should-vanish', 'ct-should-vanish', '203.0.113.7', 'private words', 'abc.def', 'key_ABCDEF']) {
+    assert.ok(!text.includes(s), s);
+  }
+  assert.match(text, /\[REDACTED\]/);
 });

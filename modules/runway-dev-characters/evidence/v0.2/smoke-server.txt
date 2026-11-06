@@ -1,0 +1,37 @@
+## smoke: real bootstrap (server.ts), no real Runway key, no network calls to Runway
+### 1 non-loopback bind refused
+Configuration error: HOST=0.0.0.0 is not loopback; set ALLOW_REMOTE_BIND=true to accept the risk explicitly
+exit=1
+### 2 start: fake key, budget 0, capability granted
+### 3 second instance on same state dir
+locked by running process
+locked by running process
+### 4 config
+{"customAvatarConfigured":false,"presets":["game-character","music-superstar","game-character-man","cat-character","influencer","tennis-coach","human-resource","fashion-designer","cooking-teacher"],"apiKeyConfigured":true,"authConfigured":true,"maxDurationS":120}
+### 5 connect unauthenticated
+401
+### 6 login wrong / right
+401
+200
+### 7 connect authenticated, budget 0 -> must be 402 without Runway call
+{"error":"Credit budget exhausted or not configured","code":"budget_exhausted"}
+### 8 status
+{"budgetCredits":0,"committedCredits":0,"remainingCredits":0,"perSessionReservation":42,"openSessions":0,"maxConcurrentSessions":1,"maxDurationS":120,"estimateNote":"Local upper-bound estimate from the published price list; not Runway billing data."}
+### 9 SIGTERM
+Runway Characters demo on http://127.0.0.1:3917 (auth on, budget 0/0 credits, max 1 parallel, 120s per session)
+session error: budget_exhausted
+### 10 audit trail
+{"at":"2026-11-06T16:44:28.579Z","action":"recovery.orphan_scan","outcome":"INFO","reason":"scan_unavailable"}
+{"at":"2026-11-06T16:44:32.273Z","action":"http.auth","outcome":"DENY","reason":"unauthenticated","path":"/avatar/connect"}
+{"at":"2026-11-06T16:44:32.281Z","action":"auth.login","outcome":"DENY","reason":"invalid_token"}
+{"at":"2026-11-06T16:44:32.290Z","action":"auth.login","outcome":"ALLOW","reason":"token_valid"}
+{"at":"2026-11-06T16:44:32.341Z","action":"session.create","outcome":"DENY","reason":"budget_exhausted","requestId":"8bf8f22f-b4b8-4488-840a-09cb4066b0ff","committed":0,"reserve":42,"budget":0}
+### 11 secret value in any output/state?
+none
+### 12 observation (post-run): SIGTERM in step 9 went to the `npx` wrapper and did NOT reach the server
+### process; the tsx child kept running with the lock held. Sending SIGTERM to the tsx process directly:
+SIGTERM: ending open sessions before exit
+(process exited; server.lock removed; final audit line: recovery.orphan_scan scan_unavailable)
+### Consequence: `npm start` now runs `node --import tsx server.ts` directly (one wrapper less).
+### Note: with a (fake) key configured, startup recovery performs one READ call
+### (GET avatar conversations list) to Runway; with the fake key it failed -> "scan_unavailable".
