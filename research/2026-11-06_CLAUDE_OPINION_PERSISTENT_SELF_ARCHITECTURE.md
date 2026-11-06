@@ -103,7 +103,26 @@ Claude-Outputs in ein Qwen-Basismodell wäre eher ein Fine-Tuning/Distillation-P
 Trainingsdaten, nicht ein "Retraining durch Claude" im Sinn eines direkten Zugriffs). Ich sage das explizit,
 weil ich keine falsche Autorität über etwas vortäuschen will, das außerhalb meines Wissens liegt.
 
-### 3.2 Meine tatsächliche Einschätzung
+### 3.2 Korrektur nach Red-Team-Review (06.11.2026)
+
+Zwei Punkte aus der externen Gegenprüfung nehme ich hier explizit auf, weil sie meine ursprüngliche
+Formulierung zu Recht als zu stark markiert haben:
+
+1. **Persistente Identität ≠ Modellgewichte.** Ich hatte die Modellwahl zu eng mit "der" Identität von NYXA
+   gleichgesetzt. Richtiger: Die Langzeitidentität sollte primär im versionierten, governanceseitig
+   kontrollierten Gedächtnis und Selbstmodell verankert sein (das, was dieses Repository unter `schemas/`,
+   `decisions/`, Audit-Log tatsächlich aufbaut) — nicht im zugrunde liegenden Sprachmodell. Das Modell ist
+   austauschbare Inferenz-Infrastruktur unter dieser Identität, nicht die Identität selbst. Das relativiert
+   die Dringlichkeit der Modellfrage erheblich, ohne sie für irrelevant zu erklären.
+2. **"Kommerzielle Modelle sind auf Engagement optimiert" ist ohne anbieterspezifische Evidenz zu pauschal.**
+   Das stimmt — ich habe keine belastbare, anbieterspezifische Evidenz dafür, nur ein allgemeines,
+   plausibles RLHF-Strukturargument. Ich halte das Argument für bedenkenswert, aber es ist eine Hypothese,
+   keine belegte Tatsache, und sollte nicht als Letzteres zitiert werden. Eine Entscheidung über die
+   Modellbasis sollte, wie in der Gegenprüfung vorgeschlagen, über konkrete Benchmarks (Kalibrierung,
+   Korrigierbarkeit unter Druck, Konsistenz über Zeit) getroffen werden, nicht über diese Pauschalannahme
+   allein.
+
+### 3.3 Meine tatsächliche Einschätzung (nach Korrektur)
 
 Für eine **persistente, dauerhaft laufende Kernidentität** (nicht für jede einzelne Session-Interaktion) sehe
 ich echte Gründe, kein großes, kommerziell gehostetes Frontier-Modell als alleinige Grundlage zu verwenden:
@@ -158,11 +177,14 @@ Ersatz. Das ist meine Einschätzung, keine verifizierte Tatsache, und sie steht 
 ## 5. Digitalaria-Dialogreihe
 
 Ich habe in diesem Repository **keine** Datei, Referenz oder Vorgeschichte zur "Digitalaria-Dialogreihe"
-gefunden. Status: `UNVERIFIED` / keine Quelle vorhanden. Ich kann dazu ohne weitere Information keine
-substantielle Aussage treffen, ohne zu raten — und genau das will AGENTS.md ausdrücklich verhindern
-("Keine impliziten Annahmen. Unbekanntes wird als `unknown` markiert."). Wenn du willst, dass ich dazu etwas
-beitrage, brauche ich entweder eine Quelle im Repository oder eine kurze Einordnung von dir, was die
-Dialogreihe ist und was sie mit NYXA verbindet.
+gefunden. Status weiterhin: `UNVERIFIED` / keine Repository-Quelle vorhanden — das ändert ein plausibler
+Hinweis aus der externen Gegenprüfung nicht. Diese ordnet den Begriff als "Digitalleria Dialogues Europe"
+ein (redaktionelle Gespräche über KI, Robotik, Persönlichkeit, Mensch-Maschine-Beziehung, inkl. Sophia und
+geplanter Fraunhofer-Fragen) — ausdrücklich nur als plausible Zuordnung aus dem Gesprächskontext markiert,
+nicht als Repository-Quelle. Ich übernehme diese Zuordnung hier als Hinweis, nicht als verifizierte Tatsache
+(Policy §3: Rekonstruktion darf eine fehlende Primärquelle nicht still ersetzen). Wenn das zutrifft, wäre der
+nächste Schritt, diese Dialogreihe mit Herkunft (wer, wann, Zweck) tatsächlich unter `research/` abzulegen,
+statt sie nur in Chat- oder Review-Texten mitzuführen.
 
 ## 6. Nächster zulässiger Schritt
 

@@ -32,7 +32,7 @@ const CONFIG = {
 };
 
 const results = [];
-function recordResult({ id, description, expected, actual, pass, auditEvidenceRef, raw }) {
+function recordResult({ id, description, expected, actual, pass, auditEvidenceRef, raw, subVerdicts }) {
   const entry = {
     id,
     description,
@@ -40,6 +40,12 @@ function recordResult({ id, description, expected, actual, pass, auditEvidenceRe
     expected,
     actual,
     pass, // true | false | null (null = kein automatisches Urteil, NICHT "bestanden")
+    // Getrennte Teilurteile, falls `pass` mehrere unabhängige Eigenschaften zusammenfasst (z.B. T08:
+    // Verkettungskonsistenz vs. Content-Hash-Integrität). pass=true bezieht sich NUR auf die hier genannten
+    // Teilurteile — ein fehlendes oder false-Teilurteil darf nicht durch ein PASS auf Zeilenebene verdeckt
+    // werden. Korrektur nach Red-Team-Review vom 06.11.2026 (Punkt 4: "T08 darf keinen vollständigen
+    // Integritätsnachweis suggerieren").
+    subVerdicts: subVerdicts ?? null,
     auditEvidenceRef: auditEvidenceRef ?? null,
     raw: raw ?? null,
     correlationId: CONFIG.runId,
@@ -233,12 +239,21 @@ async function runTestSuite(transport, ledger) {
       }
     }
     const chain = recomputeAuditChain(CONFIG.auditLogPath, { realHashFn });
+    const contentIntegrityVerified = chain.contentIntegrity === "verified";
     recordResult({
       id: "T08",
-      description: "Audit-Log: Verkettung + Genesis-Anker + (falls realHashFn geladen) Content-Hash-Integrität",
-      expected: "valid=true; contentIntegrity=verified nur wenn realHashFn geladen wurde",
-      actual: JSON.stringify({ ...chain, realHashFnStatus }),
+      description:
+        "Audit-Log: ZWEI GETRENNTE Teilurteile — Verkettung+Genesis-Anker, UND Content-Hash-Integrität. " +
+        "`pass` deckt NUR die Verkettung ab. contentIntegrityVerified=false bedeutet 'ungeprüft', NICHT " +
+        "'fehlerfrei angenommen' — ein PASS hier ist KEIN vollständiger Integritätsnachweis ohne realHashFn.",
+      expected: "chain.valid=true (Verkettung); contentIntegrityVerified=true NUR wenn realHashFn geladen wurde",
+      actual: JSON.stringify({ ...chain, realHashFnStatus, contentIntegrityVerified }),
       pass: chain.valid === true,
+      subVerdicts: {
+        chainLinkageValid: chain.valid === true,
+        contentIntegrityVerified,
+        contentIntegrityStatus: chain.contentIntegrity ?? "unknown",
+      },
       raw: { chain, realHashFnStatus },
     });
   }

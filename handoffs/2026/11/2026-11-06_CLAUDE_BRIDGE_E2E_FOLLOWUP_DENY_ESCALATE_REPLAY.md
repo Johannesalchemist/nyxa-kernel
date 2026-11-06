@@ -20,23 +20,47 @@ ungültige/geschlossene Session), aber keine der beiden folgenden, fachlich getr
    „arbeitsbahnhof.crm.test_upsert"-Canary vorgesehen war (nie ausgeführt, siehe frühere Session-Historie —
    kein Repository-Artefakt dazu vorhanden, daher hier nur als Kontext, nicht als Quelle zitiert).
 
-## 2. Bekannte Lücke vor Implementierung (muss zuerst geklärt werden)
+## 2. Inventar (Update 06.11.2026, nach Red-Team-Review — jetzt direkt verifiziert, nicht nur zitiert)
 
-Dieser Auftrag kann nicht blind implementiert werden, ohne zuerst zu klären, **welche konkrete Komponente**
-DENY/ESCALATE/Replay tatsächlich entscheidet:
+Diese Session hat `Johannesalchemist/nyxa-kernel-runtime` (öffentlich, anonymer Lesezugriff) tatsächlich
+geklont (`a50e376`) und den Quellcode gelesen, nicht nur den Review-Befund übernommen. Ergebnis:
 
-- Ist es der Bridge-Prozess selbst (`nyxa-claude-mcp-bridge.service` / `bridge.cjs`)?
-- Ist es die Governed-Memory-Runtime (`AuditLog.js`-Umgebung, `gamma`-artige C1–C5-Prüfung aus früheren
-  NYXA-MCP-Observierungen)?
-- Ist es ein noch nicht in diesem Repository dokumentierter Multi-Agent-Kernel-Core
-  (`Johannesalchemist/nyxa-kernel-runtime`, laut ADR-0002 "Runtime computes -> Memory persists -> Audit
-  explains")?
+- **MAC-001 bis MAC-008 existieren bereits**, implementiert in `src/core/multiAgentGovernance.ts` und
+  abgedeckt in `src/core/multiAgentGovernance.test.ts` (acht `it("MAC-00X ...")`-Fälle, exakte Namen
+  verifiziert). Diese Tests NICHT neu erfinden — das widerspräche AGENTS.md ("Bestehende Commandlets ... vor
+  Inline-Workarounds").
+- `evaluateMultiAgentPreflight()` liefert eine `PreflightDecision` mit `disposition` ∈
+  `{ALLOW, DENY, ESCALATE, SERIALIZE, NEGOTIATE}` (Typ in `multiAgentGovernance.ts` Zeile 5–6 u.a. verifiziert).
+  `assessEvidence()` liefert u.a. `dissentState` ∈ `{NONE, PRESENT, DECISIVE_PRIVATE_EVIDENCE}`.
+- **Beide Funktionen sind reine Berechnungsfunktionen ohne Enforcement-Wirkung.** Verifiziert per
+  repo-weitem `grep` auf `evaluateMultiAgentPreflight`/`assessEvidence`/`mac-preflight`: Aufrufer sind
+  ausschließlich (a) die eigene Testdatei und (b) `src/cli/runner.ts`, das die Entscheidung über die
+  CLI-Commandlets `mac-preflight`/`mac-evidence` nur als JSON nach stdout schreibt. **Keine** andere Stelle im
+  Repository (`kernel.ts`, `index.ts`, `apps/temporal/*`) liest dieses Ergebnis, um eine tatsächliche
+  Mutation/Tool-Ausführung zu gatten. Das bestätigt den externen Review-Befund "Berechnung ist nicht
+  Enforcement" direkt am Quellcode, nicht nur als Behauptung.
+- `DECISIVE_PRIVATE_EVIDENCE` ist ein **Statuswert** auf dem `EvidenceAssessment`-Rückgabeobjekt
+  (`dissentState`), keine ausgeführte `ESCALATE`-Aktion. Es gibt keinen Code, der diesen Status automatisch
+  in eine `evaluateMultiAgentPreflight`-Eskalation überführt — der Übergang (Review-Punkt 3) fehlt
+  nachweislich.
 
-Ohne diese Klärung würde ein Testfall-Autor raten müssen, welchen Vertrag er prüft — das widerspricht
-AGENTS.md ("Keine impliziten Annahmen. Unbekanntes wird als `unknown` markiert."). **Erster Schritt vor
-Implementierung: Klärung mit Jo, welche Komponente adressiert wird, und ob ihr MAC-001–MAC-008-Testpack
-(laut ADR-0002) bereits existiert und wiederverwendet werden kann/soll statt eines neuen Bridge-spezifischen
-Tests.**
+### Woraus folgt: was dieser Folgeauftrag tatsächlich testen kann
+
+Nicht testbar, weil nicht existent: "wird eine DENY/ESCALATE-Entscheidung tatsächlich durchgesetzt" — dafür
+gibt es noch keinen Enforcement-Pfad zum Nachweisen. Ein Test, der das behauptet zu prüfen, würde etwas
+Nicht-Existentes simulieren (AGENTS.md: keine impliziten Annahmen).
+
+Testbar und sinnvoll, ohne etwas zu erfinden:
+
+- **Korrektheit der reinen Entscheidungsfunktion** (MAC-001–008 decken das im Runtime-Repo bereits ab —
+  hier nur referenzieren, nicht duplizieren).
+- **Der Enforcement-Lücke selbst als benannter, reproduzierbarer Befund:** ein Testfall, der zeigt, dass eine
+  von `evaluateMultiAgentPreflight` als `DENY` eingestufte Aktion trotzdem technisch ausführbar bleibt, wenn
+  sie nicht manuell über die CLI vorgeschaltet wird — d.h. der Test beweist die Lücke, nicht ihre Abwesenheit.
+  Das ist der eigentliche "Negativtest", den Jo in der Review für den nächsten Schritt verlangt hat.
+- **Replay bleibt weiterhin ungeklärt** (siehe Abschnitt 3, R01/R02) — dafür wurde im Runtime-Repo keine
+  Nonce-/Grant-Mechanik gefunden; das ist eine separate, noch offene Komponente (vermutlich Bridge- oder
+  Governed-Memory-Ebene, nicht der Kernel-Core).
 
 ## 3. Geplante Testfälle (Entwurf, vorbehaltlich Abschnitt 2)
 
@@ -78,13 +102,17 @@ Tests.**
 - Vor Implementierung: Preflight-Checkliste und strukturierte Attestation (siehe bestehendes
   `lib/preflight.mjs`) gelten unverändert weiter.
 
-## 5. Nächster zulässiger Schritt
+## 5. Nächster zulässiger Schritt (aktualisiert nach Inventar)
 
-1. Mit Jo kl—ren, welche Komponente DENY/ESCALATE/Replay tatsächlich entscheidet (Abschnitt 2).
-2. Prüfen, ob ein MAC-001–MAC-008-Testpack (ADR-0002) bereits in `nyxa-kernel-runtime` existiert — falls ja,
-   dieses wiederverwenden statt neu zu bauen (AGENTS.md: bestehende Mechanismen vor neuen Tools).
-3. Erst danach: Testfall-Implementierung nach demselben Muster wie `schemas/bridge-e2e/` (MockTransport-
+1. Testfall "Enforcement-Lücke nachweisbar" implementieren (siehe Abschnitt 2) — gegen eine lokale Kopie/
+   einen Mock des Kernel-Cores, nicht gegen Produktion.
+2. MAC-001–008 im Runtime-Repo referenzieren statt duplizieren; falls Erweiterung nötig ist, PR gegen
+   `nyxa-kernel-runtime` vorschlagen, nicht Paralleltests in `nyxa-kernel` aufbauen.
+3. Replay-Verantwortlichkeit klären: welche Komponente (Bridge, Governed-Memory, oder noch keine) soll
+   Nonce-/Grant-basierten Replay-Schutz tragen? Im Kernel-Core nicht vorhanden — Klärung mit Jo nötig, bevor
+   R01/R02 implementiert werden.
+4. Danach: Testfall-Implementierung nach demselben Muster wie `schemas/bridge-e2e/` (MockTransport-
    Selbsttest zuerst, dann isolierte Instanz, dann — nach gesonderter Freigabe — reale Prüfung).
 
-Dieser Auftrag bleibt bis zur Klärung aus Abschnitt 2 auf Planungsstufe. Keine Implementierung ohne diese
-Klärung, um kein erfundenes Governance-Verhalten zu testen.
+Der Replay-Teil bleibt auf Planungsstufe (Komponente ungeklärt). Der DENY/ESCALATE-Teil ist jetzt präzise
+genug spezifiziert (Enforcement-Lücke als Testziel), um implementiert zu werden, ohne etwas zu erfinden.
