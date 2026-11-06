@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NYXA · Runway Character</title>
+  </head>
+  <body>
+    <main>
+      <h1>Runway Character</h1>
+      <p class="note">DRAFT-Demo. Jede Session verbraucht Runway-Dev-Credits. Mikrofonfreigabe erforderlich.</p>
+      <div class="picker">
+        <label for="preset">Character</label>
+        <select id="preset"></select>
+      </div>
+      <video id="avatar" autoplay playsinline></video>
+      <div class="controls">
+        <button id="start">Starten</button>
+        <button id="mute" disabled>Stumm</button>
+        <button id="end" disabled>Beenden</button>
+      </div>
+      <p id="status" role="status">Bereit</p>
+      <ol id="transcript" aria-live="polite"></ol>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
