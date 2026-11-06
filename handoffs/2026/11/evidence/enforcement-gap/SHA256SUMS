@@ -1,0 +1,4 @@
+# SHA-256 manifest Enforcement-Gap Phase A-D, branch agent/runway-characters-v0.2, generated 2026-11-06T16:56:17Z
+b96c14af53190fcce53a3c05850367d684606081708683b5f15077361567508c  handoffs/2026/11/2026-11-06_CLAUDE_ENFORCEMENT_GAP_PHASE_A-D.md
+b3f479e0222377485012367b9c7bdeb0628b6465e16449ba997e6e9e705da9dd  handoffs/2026/11/evidence/enforcement-gap/eg-test-run.txt
+625338b0c500e87577855a29f45dc05bca694ff293df0a8fc2f4a3fa939512d2  handoffs/2026/11/evidence/enforcement-gap/enforcementGap.cli.test.ts.patch

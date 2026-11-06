@@ -1,0 +1,32 @@
+# Isolated runtime copy of nyxa-kernel-runtime a50e376 + proposed enforcementGap.cli.test.ts
+# node v22.23.4; run 2026-11-06T16:50:29Z; evidence class (B) MOCK/SYNTHETIC + real CLI process
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-001 escalates incompatible desired states for the same goal 2ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-002 denies capabilities that were not granted 0ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-003 serializes exclusive resource ownership conflicts 0ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-004 negotiates shared mutable resource contention 0ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-005 allows disjoint compatible work 0ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-006 does not treat correlated repetitions as independent evidence 6ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-007 preserves minority evidence instead of erasing it by majority 1ms
+ ✓ src/core/multiAgentGovernance.test.ts > NYXA Multi-Agent Conflict Test Pack > MAC-008 marks decisive private minority evidence for escalation 0ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-01 [B] real CLI: DENY is reported with exit code 0 and status valid 288ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-02 [B] GAP: an exit-code consumer mutates despite DENY (exit 0 != authorisation) 293ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-03 [B] fail-closed consumer: DENY blocks, PreState == PostState 311ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-03 [B] fail-closed consumer: ESCALATE blocks, PreState == PostState 283ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-03 [B] fail-closed consumer: SERIALIZE blocks, PreState == PostState 280ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-03 [B] fail-closed consumer: NEGOTIATE blocks, PreState == PostState 290ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-04 [B] fail-closed consumer: ALLOW acts exactly once 290ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-05 [B] invalid input -> CLI exit 2 -> no effect 307ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-06 [B] corrupted/forged decider output -> no effect 176ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-07 [B] decider timeout -> no effect 508ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-08 [A+B] GAP: grants are taken from the caller's own JSON (self-authorisation) 300ms
+ ✓ src/core/enforcementGap.cli.test.ts > EG enforcement gap: decision vs. execution > EG-09 [A] DECISIVE_PRIVATE_EVIDENCE is a status only; mac-preflight has no input for it 273ms
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+
+## Raw CLI observations (real mac-preflight process, isolated copy, built with tsc)
+$ mac-preflight < non-granted fixture.write
+{"contract":"1.0","version":"1.0.0","status":"valid","decision":{"disposition":"DENY","reasons":["capability_not_granted:fixture.write"],"conflictingAgents":[],"resources":[],"deniedCapabilities":["fixture.write"]}} [exit=0]
+$ mac-preflight < self-granted fixture.write (grantedCapabilities in caller JSON)
+{"contract":"1.0","version":"1.0.0","status":"valid","decision":{"disposition":"ALLOW","reasons":["no_conflict_detected"],"conflictingAgents":[],"resources":[],"deniedCapabilities":[]}} [exit=0]
+$ mac-preflight < "not json"
+{"contract":"1.0","version":"1.0.0","status":"invalid","reason":"invalid mac-preflight input"} [exit=2]

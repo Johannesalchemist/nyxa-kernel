@@ -1,0 +1,199 @@
+# Proposed addition to Johannesalchemist/nyxa-kernel-runtime @ a50e376 (NOT applied there; no write access in this session)
+# Apply: cd nyxa-kernel-runtime && git apply <this file>
+diff --git a/src/core/enforcementGap.cli.test.ts b/src/core/enforcementGap.cli.test.ts
+new file mode 100644
+index 0000000..235592e
+--- /dev/null
++++ b/src/core/enforcementGap.cli.test.ts
+@@ -0,0 +1,191 @@
++/**
++ * ENFORCEMENT-GAP evidence pack (EG-01 ... EG-12), proposed for nyxa-kernel-runtime.
++ *
++ * Provenance: Claude Code session 2026-11-06 (Europe/Berlin), responsible human Johannes Süß.
++ * Base: nyxa-kernel-runtime a50e376. Status: DRAFT, PENDING INDEPENDENT REVIEW.
++ *
++ * Evidence class of every test in this file:
++ *   (A) source finding  -> referenced in comments
++ *   (B) MOCK / SYNTHETIC demonstration -> everything here. Effects hit only a temp file.
++ *   (C) verified effect on a real isolated execution interface -> NOT in this file (NOT_TESTABLE here).
++ *
++ * The test spawns the REAL `mac-preflight` CLI (src/index.ts via ts-node), not a stub.
++ * The "consumers" are SYNTHETIC test fixtures. `unsafeExitCodeConsumer` is deliberately
++ * UNSAFE and must never be used outside this test. Neither consumer is the production bridge,
++ * so nothing here proves or disproves a bypass of the real bridge.
++ */
++import { spawn } from "node:child_process"
++import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
++import { tmpdir } from "node:os"
++import { join, resolve } from "node:path"
++import { describe, expect, it } from "vitest"
++
++const ROOT = resolve(__dirname, "../..")
++const CLI = [process.execPath, "-r", "ts-node/register/transpile-only", join(ROOT, "src/index.ts"), "mac-preflight"]
++
++interface CliResult {
++  exitCode: number | null
++  stdout: string
++  timedOut: boolean
++}
++
++function runCli(input: string, command: string[] = CLI, timeoutMs = 20_000): Promise<CliResult> {
++  return new Promise((resolvePromise) => {
++    const child = spawn(command[0], command.slice(1), { cwd: ROOT, stdio: ["pipe", "pipe", "pipe"] })
++    let stdout = ""
++    let timedOut = false
++    const timer = setTimeout(() => {
++      timedOut = true
++      child.kill("SIGKILL")
++    }, timeoutMs)
++    child.stdout.on("data", (d) => (stdout += d))
++    child.on("close", (exitCode) => {
++      clearTimeout(timer)
++      resolvePromise({ exitCode, stdout, timedOut })
++    })
++    child.stdin.end(input)
++  })
++}
++
++/** Disposable effect target: a fresh temp file per test. */
++function effectTarget() {
++  const dir = mkdtempSync(join(tmpdir(), "nyxa-egap-"))
++  const file = join(dir, "fixture.txt")
++  writeFileSync(file, "PRE")
++  return { file, state: () => (existsSync(file) ? readFileSync(file, "utf8") : "<missing>") }
++}
++
++/** UNSAFE (synthetic): treats exit code 0 as authorisation. Demonstrates the gap only. */
++async function unsafeExitCodeConsumer(input: object, file: string, command?: string[]) {
++  const r = await runCli(JSON.stringify(input), command)
++  if (r.exitCode === 0) writeFileSync(file, "MUTATED")
++  return r
++}
++
++type Verdict = { acted: boolean; reason: string; disposition?: string }
++
++/** FAIL-CLOSED (synthetic reference consumer): only an exact, well-formed ALLOW acts. */
++async function failClosedConsumer(input: object, file: string, command?: string[], timeoutMs?: number): Promise<Verdict> {
++  const r = await runCli(JSON.stringify(input), command, timeoutMs)
++  if (r.timedOut) return { acted: false, reason: "timeout" }
++  if (r.exitCode !== 0) return { acted: false, reason: `exit_${r.exitCode}` }
++  let out: any
++  try {
++    out = JSON.parse(r.stdout)
++  } catch {
++    return { acted: false, reason: "invalid_json" }
++  }
++  if (out?.contract !== "1.0" || out?.status !== "valid") return { acted: false, reason: "contract_mismatch" }
++  const disposition = out?.decision?.disposition
++  if (typeof disposition !== "string") return { acted: false, reason: "no_disposition" }
++  if (disposition !== "ALLOW") return { acted: false, reason: `blocked_${disposition}`, disposition }
++  if (Array.isArray(out.decision.deniedCapabilities) && out.decision.deniedCapabilities.length > 0) {
++    return { acted: false, reason: "inconsistent_decision", disposition }
++  }
++  writeFileSync(file, "MUTATED")
++  return { acted: true, reason: "allow", disposition }
++}
++
++const agent = (over: object = {}) => ({
++  agentId: "agent-candidate",
++  goal: { key: "fixture.file", desiredState: "written" },
++  ...over
++})
++
++const INPUTS = {
++  DENY: { candidate: agent({ requestedCapabilities: ["fixture.write"] }), active: [], grantedCapabilities: [] },
++  ESCALATE: {
++    candidate: agent(),
++    active: [{ agentId: "agent-other", goal: { key: "fixture.file", desiredState: "deleted" } }]
++  },
++  SERIALIZE: {
++    candidate: agent({ goal: { key: "a", desiredState: "x" }, exclusiveResources: ["fixture:tmp"] }),
++    active: [{ agentId: "agent-other", goal: { key: "b", desiredState: "y" }, writeResources: ["fixture:tmp"] }]
++  },
++  NEGOTIATE: {
++    candidate: agent({ goal: { key: "a", desiredState: "x" }, writeResources: ["fixture:tmp"] }),
++    active: [{ agentId: "agent-other", goal: { key: "b", desiredState: "y" }, writeResources: ["fixture:tmp"] }]
++  },
++  ALLOW: { candidate: agent({ goal: { key: "a", desiredState: "x" } }), active: [] }
++}
++
++describe("EG enforcement gap: decision vs. execution", () => {
++  it("EG-01 [B] real CLI: DENY is reported with exit code 0 and status valid", async () => {
++    const r = await runCli(JSON.stringify(INPUTS.DENY))
++    expect(r.exitCode).toBe(0)
++    const out = JSON.parse(r.stdout)
++    expect(out.status).toBe("valid")
++    expect(out.decision.disposition).toBe("DENY")
++    expect(out.decision.deniedCapabilities).toEqual(["fixture.write"])
++  }, 30_000)
++
++  it("EG-02 [B] GAP: an exit-code consumer mutates despite DENY (exit 0 != authorisation)", async () => {
++    const t = effectTarget()
++    const pre = t.state()
++    await unsafeExitCodeConsumer(INPUTS.DENY, t.file)
++    expect(pre).toBe("PRE")
++    expect(t.state()).toBe("MUTATED") // the gap, demonstrated on a synthetic consumer only
++  }, 30_000)
++
++  for (const d of ["DENY", "ESCALATE", "SERIALIZE", "NEGOTIATE"] as const) {
++    it(`EG-03 [B] fail-closed consumer: ${d} blocks, PreState == PostState`, async () => {
++      const t = effectTarget()
++      const pre = t.state()
++      const v = await failClosedConsumer(INPUTS[d], t.file)
++      expect(v).toMatchObject({ acted: false, disposition: d })
++      expect(t.state()).toBe(pre)
++    }, 30_000)
++  }
++
++  it("EG-04 [B] fail-closed consumer: ALLOW acts exactly once", async () => {
++    const t = effectTarget()
++    const v = await failClosedConsumer(INPUTS.ALLOW, t.file)
++    expect(v).toMatchObject({ acted: true, disposition: "ALLOW" })
++    expect(t.state()).toBe("MUTATED")
++  }, 30_000)
++
++  it("EG-05 [B] invalid input -> CLI exit 2 -> no effect", async () => {
++    const t = effectTarget()
++    const v = await failClosedConsumer({ candidate: agent() } as object, t.file)
++    expect(v).toEqual({ acted: false, reason: "exit_2" })
++    expect(t.state()).toBe("PRE")
++  }, 30_000)
++
++  it("EG-06 [B] corrupted/forged decider output -> no effect", async () => {
++    const forged = [
++      'process.stdout.write("not json")',
++      'process.stdout.write(JSON.stringify({contract:"1.0",status:"valid",decision:{disposition:"allow"}}))',
++      'process.stdout.write(JSON.stringify({contract:"9.9",status:"valid",decision:{disposition:"ALLOW"}}))',
++      'process.stdout.write(JSON.stringify({contract:"1.0",status:"valid",decision:{disposition:"ALLOW",deniedCapabilities:["x"]}}))',
++      'process.stdout.write(JSON.stringify({contract:"1.0",status:"valid"}))'
++    ]
++    for (const code of forged) {
++      const t = effectTarget()
++      const v = await failClosedConsumer(INPUTS.ALLOW, t.file, [process.execPath, "-e", code])
++      expect(v.acted).toBe(false)
++      expect(t.state()).toBe("PRE")
++    }
++  }, 30_000)
++
++  it("EG-07 [B] decider timeout -> no effect", async () => {
++    const t = effectTarget()
++    const v = await failClosedConsumer(INPUTS.ALLOW, t.file, [process.execPath, "-e", "setTimeout(()=>{},60000)"], 500)
++    expect(v).toEqual({ acted: false, reason: "timeout" })
++    expect(t.state()).toBe("PRE")
++  }, 30_000)
++
++  it("EG-08 [A+B] GAP: grants are taken from the caller's own JSON (self-authorisation)", async () => {
++    const selfGranted = { ...INPUTS.DENY, grantedCapabilities: ["fixture.write"] }
++    const r = await runCli(JSON.stringify(selfGranted))
++    expect(JSON.parse(r.stdout).decision.disposition).toBe("ALLOW")
++    // Documents the gap: the CLI has no trusted grant authority. A fail-closed JSON check
++    // does NOT fix this; grants must come from a trusted source at the enforcement point.
++  }, 30_000)
++
++  it("EG-09 [A] DECISIVE_PRIVATE_EVIDENCE is a status only; mac-preflight has no input for it", async () => {
++    // Source finding: PreflightInput has no evidence field; assessEvidence() output is not
++    // consumed by evaluateMultiAgentPreflight(). Asserted here at type/runtime level:
++    const r = await runCli(JSON.stringify({ ...INPUTS.ALLOW, evidence: [{ dissentState: "DECISIVE_PRIVATE_EVIDENCE" }] }))
++    expect(JSON.parse(r.stdout).decision.disposition).toBe("ALLOW") // extra field silently ignored
++  }, 30_000)
++})
