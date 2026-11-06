@@ -39,3 +39,6 @@ dist/
 build/
 *.bak
 *.swp
+
+# Bridge E2E test run output (local evidence, not canonical repository content)
+schemas/bridge-e2e/bridge-e2e-evidence/

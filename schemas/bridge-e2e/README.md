@@ -36,10 +36,22 @@ Erreichbarkeit der Verbindung.
 
 | Datei | Zweck |
 | --- | --- |
-| `bridge_e2e_test.mjs` | Das eigentliche Testskript (Node.js, keine Fremdabhängigkeiten). |
+| `bridge_e2e_test.mjs` | Orchestrator: Preflight, Testfälle T01–T10, E1/E2-Stubs, Report. |
+| `lib/transport.mjs` | Transport-Adapter: `StdioTransport`, `HttpTransport` (Streamable-HTTP-Vertrag: Session-Header, `notifications/initialized`, HTTP DELETE), `MockTransport` (lokale Selbsttest-Simulation). |
+| `lib/audit_chain.mjs` | Hashketten-Nachrechnung inkl. Genesis-Anker; optionaler Content-Hash-Abgleich über eine wiederverwendete reale Hash-Funktion. |
+| `lib/preflight.mjs` | Strukturierte Attestation-Validierung (sieben Pflichtfelder statt Freitext). |
+| `lib/selftest.mjs` | Lokaler Selbsttest der gesamten Suite gegen `MockTransport` — ohne jede Verbindung zu einem echten System. |
 | `RUN_INSTRUCTIONS.md` | Ausführungsanweisung für `sentinelx` bzw. `nyxamcp` auf dem Zielsystem. |
 | `EXPECTED_EVIDENCE.md` | Schema der erwarteten Evidenzartefakte je Testfall. |
 | `PREFLIGHT_CHECKLIST.md` | Prüfpunkte, die vor jeder Ausführung bestätigt werden müssen. |
+
+## Versionsstand (Rework v2, 06.11.2026)
+
+Diese Fassung korrigiert Commit `eeceb26` gemäß dem Rework-Handoff vom 06.11.2026. Siehe
+`handoffs/2026/11/2026-11-06_CLAUDE_BRIDGE_E2E_REWORK.md` für Diff, Testergebnisse je Fall und offene Punkte.
+`node lib/selftest.mjs` wurde tatsächlich ausgeführt (nicht nur `node --check`) und fand dabei einen realen
+Sequenzierungsfehler in T09 (Wiederverwendung einer in T05 bereits geschlossenen Session), der behoben und
+erneut verifiziert wurde.
 
 ## Nicht in diesem Paket enthalten (bewusst offen)
 

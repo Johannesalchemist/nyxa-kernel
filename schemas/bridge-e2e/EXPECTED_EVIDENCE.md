@@ -32,7 +32,7 @@ Auswertung als offen behandelt, niemals als PASS gezählt.
 | T07 | Zwei unterscheidbare `sessionId`-Werte; Audit-Log enthält beide `correlationId`-Suffixe (`:A`, `:B`) ohne Vermischung der jeweiligen Ereignisfelder. |
 | T08 | `recomputeAuditChain`-Ergebnis mit `valid: true` über die **gesamte** Datei unter `BRIDGE_E2E_AUDIT_LOG_PATH`, nicht nur über die in diesem Lauf erzeugten Zeilen. |
 | T09 | `raw.error` für den unbekannten Tool-Aufruf; `foundInAudit: true` — der fehlgeschlagene Aufruf selbst muss im Audit auftauchen, nicht nur erfolgreiche Aufrufe. |
-| T10 | Selbsttest des Prüfwerkzeugs an synthetischer Datei unter `BRIDGE_E2E_EVIDENCE_DIR/t10-synthetic-*.log`; `valid: false`, `reason: missing_hash_field`. Keine Wirkung auf das Zielsystem. |
+| T10 | Sieben Fixtures unter `BRIDGE_E2E_EVIDENCE_DIR/t10-*.log`: eine echte Genesis-verankerte Positivkontrolle (`valid:true`) plus sechs Fälle mit je genau einer Manipulation — `tampered_event`, `wrong_previous` (beide → `previous_hash_mismatch`), `missing_hash_field`, `corrupted_line`, `missing_genesis_anchor`, `truncated_empty_chain`. Jeder Fall muss aus dem jeweils erwarteten Grund scheitern, nicht aus einem beliebigen anderen. Keine Wirkung auf das Zielsystem. |
 | E2 (Stub) | `executed: false` im Bericht. Jede Abweichung (`executed: true` ohne gesonderte, dokumentierte Freigabe) ist selbst ein Befund, kein Testergebnis. |
 
 ## Externer Ledger-Anker

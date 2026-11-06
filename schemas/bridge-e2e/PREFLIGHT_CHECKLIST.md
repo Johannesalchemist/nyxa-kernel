@@ -11,8 +11,10 @@ Diese Liste ist verpflichtend und manuell vom ausführenden Menschen (nicht vom 
      konfigurierte Pfad).
    - SHA-256 von `AuditLog.js` im laufenden Prozesspfad wurde gebildet und gegen den Dev-/Repo-Stand verglichen.
      Abweichung → Abbruch, kein Testlauf.
-   - Ergebnis dieses Punktes ist vor Skriptstart als Freitext in `BRIDGE_E2E_TARGET_ATTESTATION` (Umgebungsvariable
-     oder Datei, siehe `RUN_INSTRUCTIONS.md`) hinterlegt. Fehlt dieser Wert, bricht das Skript ab.
+   - Ergebnis dieses Punktes wird als strukturiertes JSON unter `BRIDGE_E2E_TARGET_ATTESTATION_FILE` hinterlegt
+     (sieben Pflichtfelder, siehe `lib/preflight.mjs` und `RUN_INSTRUCTIONS.md`). Ein Freitext reicht seit dem
+     Rework vom 06.11.2026 nicht mehr aus — das Skript validiert Feldnamen, Typen und lehnt `false` bei den
+     `*Confirmed`-Feldern ab.
 
 2. **Scope-Isolation bestätigt**
    - Zielkonfiguration (`BRIDGE_E2E_ENDPOINT` / `BRIDGE_E2E_CMD`) zeigt nachweislich auf eine isolierte Test- oder
