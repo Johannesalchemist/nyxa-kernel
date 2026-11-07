@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nyxa:unified-room:v0.1:executor-config",
+  "title": "NYXA Executor Configuration V0.1",
+  "description": "DRAFT. Administrative configuration, changeable only by an authorized human.",
+  "type": "object",
+  "required": ["executor", "mode", "timezone", "allowed_task_types", "allowed_operations", "max_parallel"],
+  "properties": {
+    "executor": { "type": "string" },
+    "mode": { "enum": ["DIRECT", "ON_APPROVAL", "HOURLY", "DAILY", "MANUAL", "PAUSED"] },
+    "interval_minutes": { "type": "integer", "minimum": 1 },
+    "daily_time": { "type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$" },
+    "timezone": { "type": "string", "default": "Europe/Berlin" },
+    "allowed_task_types": { "type": "array", "items": { "type": "string" } },
+    "allowed_operations": { "type": "array", "items": { "type": "string" } },
+    "daily_budget_cents": { "type": "integer", "minimum": 0 },
+    "max_parallel": { "type": "integer", "minimum": 1 },
+    "verification_policy": { "enum": ["required"] }
+  },
+  "additionalProperties": false
+}

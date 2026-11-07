@@ -1,0 +1,55 @@
+<!--
+  NYXA Room — compact task panel (embeddable fragment for apps/dashboard/room.html).
+  Provenance: Claude Code for Johannes Süß, 2026-11-07 (Europe/Berlin). DRAFT, NOT DEPLOYED.
+  Uses only /api/v2/* with the Room's stored bearer token. No secrets in the page.
+  Approve sends the exact scope_hash displayed, so an approval can never cover a different scope.
+-->
+<section id="nyxa-task-panel" aria-label="Aufträge">
+  <style>
+    #nyxa-task-panel{font:13px/1.4 system-ui,sans-serif;color:var(--fg,#e8e8f0);background:var(--panel,#15151f);border:1px solid #2a2a3a;border-radius:8px;padding:10px;max-width:520px}
+    #nyxa-task-panel h3{margin:0 0 6px;font-size:14px}
+    #nyxa-task-panel .row{display:flex;gap:6px;align-items:center;justify-content:space-between;border-top:1px solid #23233a;padding:6px 0}
+    #nyxa-task-panel .st{font-size:11px;padding:1px 6px;border-radius:10px;background:#2a2a3a;white-space:nowrap}
+    #nyxa-task-panel .PENDING_APPROVAL{background:#5a4a12}#nyxa-task-panel .RUNNING,#nyxa-task-panel .CLAIMED{background:#123a5a}
+    #nyxa-task-panel .FAILED,#nyxa-task-panel .DENIED,#nyxa-task-panel .ESCALATED{background:#5a1a1a}#nyxa-task-panel .COMPLETED{background:#1a4a2a}
+    #nyxa-task-panel button{font:inherit;font-size:12px;padding:2px 8px;border-radius:6px;border:1px solid #444;background:#222;color:inherit;cursor:pointer}
+    #nyxa-task-panel .meta{color:#9a9ab0;font-size:11px}
+  </style>
+  <h3>Aufträge</h3>
+  <div class="meta" id="ntp-summary">lädt …</div>
+  <div class="meta" id="ntp-next"></div>
+  <div id="ntp-list"></div>
+  <script>
+  (function(){
+    const API = window.API || '';
+    const token = () => { try { return localStorage.getItem('token') || ''; } catch { return ''; } };
+    const h = () => ({ 'Content-Type':'application/json', Authorization:'Bearer ' + token() });
+    const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const fmt = iso => iso ? new Date(iso).toLocaleString('de-DE',{timeZone:'Europe/Berlin',dateStyle:'short',timeStyle:'short'}) : '—';
+    async function j(url, opt){ const r = await fetch(API + url, { headers:h(), ...opt }); return r.json(); }
+    async function act(id, action, scope_hash){
+      const body = action === 'approve' ? { scope_hash } : { reason: 'Room-Panel' };
+      const r = await j(`/api/v2/tasks/${encodeURIComponent(id)}/${action}`, { method:'POST', body: JSON.stringify(body) });
+      if (!r.ok) alert('Abgelehnt: ' + (r.error || 'unbekannt'));
+      load();
+    }
+    async function load(){
+      try {
+        const [s, t, c, a] = await Promise.all([j('/api/v2/status/summary'), j('/api/v2/tasks'), j('/api/v2/executors/claude'), j('/api/v2/executors/ari')]);
+        if (!s.ok) { document.getElementById('ntp-summary').textContent = 'Kein Zugriff (' + (s.error||'') + ')'; return; }
+        const x = s.summary;
+        document.getElementById('ntp-summary').textContent = `Freigabe offen: ${x.pending_approval} · läuft: ${x.running} · zu prüfen: ${x.awaiting_verification} · eskaliert: ${x.escalated} · fehlgeschlagen/verweigert: ${x.failed + x.denied} · verifiziert: ${x.completed_verified}`;
+        document.getElementById('ntp-next').textContent = [c, a].filter(e => e.ok).map(e => `${e.config.executor}: ${e.config.mode}, nächste Abholung ${fmt(e.next_run)}`).join(' · ');
+        const rows = (t.tasks || []).slice(-25).reverse().map(k => `
+          <div class="row"><div><b>${esc(k.executor)}</b> · ${esc(k.task_type)} <span class="meta">${esc(k.task_id.slice(0,8))} · ${fmt(k.updated_at)}${k.error ? ' · ' + esc(k.error) : ''}</span></div>
+          <div><span class="st ${esc(k.status)}">${esc(k.status)}</span>
+          ${k.status === 'PENDING_APPROVAL' ? `<button data-a="approve" data-id="${esc(k.task_id)}" data-h="${esc(k.scope_hash)}" title="Scope ${esc(k.scope.allowed_operations.join(', '))}">Freigeben</button><button data-a="deny" data-id="${esc(k.task_id)}">Ablehnen</button>` : ''}
+          ${['APPROVED','CLAIMED','RUNNING'].includes(k.status) ? `<button data-a="revoke" data-id="${esc(k.task_id)}">Widerrufen</button>` : ''}</div></div>`).join('');
+        const list = document.getElementById('ntp-list'); list.innerHTML = rows || '<div class="meta">Keine Aufträge.</div>';
+        list.querySelectorAll('button').forEach(b => b.onclick = () => act(b.dataset.id, b.dataset.a, b.dataset.h));
+      } catch (e) { document.getElementById('ntp-summary').textContent = 'Fehler: ' + e.message; }
+    }
+    load(); setInterval(load, 30000);
+  })();
+  </script>
+</section>

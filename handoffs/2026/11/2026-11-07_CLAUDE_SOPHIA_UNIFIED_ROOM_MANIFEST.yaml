@@ -1,0 +1,129 @@
+# Manifest: Sophia Unified Room V0.1
+# generated_by: Claude Code (Anthropic) · responsible_human: Johannes Süß · session: 2026-11-07 Europe/Berlin
+# source: Implementation Handoff 2026-11-07 (SOURCE-BOUND) · review_status: PENDING · artifact_status: DRAFT
+# the manifest does not hash itself
+files:
+  - path: decisions/ADR-0003_SOPHIA_UNIFIED_ROOM_AND_GOVERNED_TASK_QUEUE.md
+    sha256: 86d79c75b487be73a195ea19634995bfe002cd92ae3c5f26313fb1ac4980dc44
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: handoffs/2026/11/2026-11-07_CLAUDE_SOPHIA_UNIFIED_ROOM_HANDOFF.md
+    sha256: c3ec7fff350a04c2e299101648219b655d976524714c7712c3461113c74a3d45
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/README.md
+    sha256: 2ac809caf7c803b9bd5b57a66a6460b4b2eda328b96a00010665cedc6df22927
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/bin/worker.cjs
+    sha256: 38a107d14a445df8cc5cc3f997aba41f59023c6c698278815a08ccbf222122cb
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/docs/BETRIEBSHANDBUCH.md
+    sha256: 4baa1aee0166f6a7a0a7b2adaa68e4c0a9f6d958df6b4cfea00ce44eb5db294a
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/docs/CONTRACT.md
+    sha256: 8ac75eb211936a5595f0daa1550a5f281032714797ea9398ce3cfea1b28ae890
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/docs/P0_SERVER_B_PATCH_PROPOSAL.md
+    sha256: 6b0e3251b7599d65760c0b793b6deb9719f0a617ba53f17bf3b3f5ee529b259e
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/package.json
+    sha256: 67dda539caf4178568a83ad07dbe7a243e5b75865f539d195e513a976277b696
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/auth.cjs
+    sha256: 65d316b927300fbe0220639050cbd276275a165c8c3e5755f1e66edd345a2baa
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/conversation-bus.cjs
+    sha256: c6c63052609ade01b751cef6eea32fb257ea3ef85b15727fe4fb2ab53a562b6b
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/db.cjs
+    sha256: 55932a26c4302726bbbd22b74c628964d2c7450ccf2ba529a637ce5052fe826a
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/executors.cjs
+    sha256: 10aaf4223025ed6dffeaa0f17ecccafb92dcf51c3d25efdb1d1c8f81dce3c3fc
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/http-api.cjs
+    sha256: 66afc5b42e48102423199970bc8e28acba98cf6245f9aba12c0e2e46fc993d3c
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/index.cjs
+    sha256: bbb7e72b6e937dc6009ca1ba776b4c70ee1b3304c51dc3e21325ad7d50e7004b
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/mail-gate.cjs
+    sha256: db6bac4fe7f8cb1864bd54495b6ce60d65187412ee3db5970cbe67036d1e6ac4
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/scheduler.cjs
+    sha256: 46c029d010101683e4d080c921680ec519b00d3170e7adae0301e779be277dc3
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/src/task-queue.cjs
+    sha256: eb0c347004e59861b5ca579b7f0ba02f9414f8b910256bfee06b5cb94f65285e
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/auth.test.cjs
+    sha256: f5286768f4da56d80e6cea9d0520188a07f3ed8d1496c63aaccc61ab738e4732
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/conversation-bus.test.cjs
+    sha256: 5c47aed0b9cc8746a47856e311ba34ba113a380c504446912f00a340d3fa12bb
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/helpers.cjs
+    sha256: 0d15630b5057fe1c74f50d27dae1502045b419ad345bb01ce6bc446ca469ea33
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/http-api.test.cjs
+    sha256: 83db50c9ff839e8521cf0383d61b67136802faf5c22e5fccd2b051c43ae00ccc
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/mail-gate.test.cjs
+    sha256: dea5b0be54d4c31f457a966ad2997c0c78d1f8e270c3217598fa80e9315a474a
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/multiprocess.test.cjs
+    sha256: 2c6e28da4b980dac89b1e658d7182deff05313ff76366446f62625bd5aaddd27
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/scheduler.test.cjs
+    sha256: 322fcded5e709973015befed807389a0192ccc65848d1467f89550d6ebab3503
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/schema-conformance.test.cjs
+    sha256: cace828abb1d0d99da252036278cd86324baa52bd021a59acfbae466c6d7ec14
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/test/task-queue.test.cjs
+    sha256: 8dcd88fd8db72487e8eb49629f7f657bf007b30b2b59c0f9b7352147d7bc13c9
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: modules/sophia-unified-room/ui/task-panel.html
+    sha256: f20e765e3b4ff7cdc803a981ad6b480b8eaae456fa11af2b73b4b3e549f64e48
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: schemas/unified-room/v0.1/executor-config.schema.json
+    sha256: b9f079bb11f9eb7f71259a93d42d8c3efcaad7418d22065fe70f76bbd17219cb
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: schemas/unified-room/v0.1/fixtures/task.invalid.json
+    sha256: db4df5f233b884337891c5c42a30e4bda1e5ef2778459188acda994c9ac7ecd1
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: schemas/unified-room/v0.1/message.schema.json
+    sha256: b3bc22885f5a3669ab3365a8ff7cc916d741eb48446366f1088108c95fd1749f
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND
+  - path: schemas/unified-room/v0.1/task.schema.json
+    sha256: 16bef1bb39b15f8de58dabe9887264ff60980d4f1679fbc95d99cf26771eb8a6
+    artifact_status: DRAFT
+    source_status: SOURCE-BOUND

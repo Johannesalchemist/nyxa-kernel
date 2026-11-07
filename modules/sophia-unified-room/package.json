@@ -1,0 +1,14 @@
+{
+  "name": "@nyxa/sophia-unified-room",
+  "version": "0.1.0-draft",
+  "private": true,
+  "description": "NYXA Unified Room: conversation bus, governed task queue, scheduler, executor contract (Claude, Ari/GPT) and governed mail gate. DRAFT, NOT DEPLOYED.",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=22.13" },
+  "main": "src/index.cjs",
+  "bin": { "nyxa-room-worker": "bin/worker.cjs" },
+  "scripts": {
+    "test": "node --no-warnings --test test/*.test.cjs"
+  },
+  "dependencies": {}
+}

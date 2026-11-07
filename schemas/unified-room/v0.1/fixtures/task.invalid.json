@@ -1,0 +1,15 @@
+{
+  "task_id": "not-a-uuid",
+  "created_by": "sophia",
+  "requested_by": "sophia",
+  "executor": "claude",
+  "task_type": "analysis",
+  "scope": { "resources": [], "allowed_operations": [] },
+  "context_refs": [],
+  "execution_mode": "WHENEVER",
+  "approval_status": "pending",
+  "status": "MERGED",
+  "idempotency_key": "",
+  "correlation_id": "c",
+  "created_at": "2026-11-07T10:00:00.000Z"
+}
