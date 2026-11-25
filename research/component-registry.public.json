@@ -1,0 +1,160 @@
+{
+ "schema": "nyxa-component-registry-v1/public",
+ "generated_at": "2026-11-25T23:03:33.429Z",
+ "curated_at": "2026-11-25T22:25:00Z",
+ "state_vocabulary": [
+  "NOT_FOUND",
+  "UNREACHABLE",
+  "SPECIFIED_ONLY",
+  "IMPLEMENTED",
+  "FUNCTIONALLY_VERIFIED"
+ ],
+ "deployment_vocabulary": [
+  "none",
+  "shadow",
+  "production"
+ ],
+ "components": [
+  {
+   "id": "gamma-governance",
+   "name": "Gamma governance C1-C5 + E0",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "production",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "self-model-v1",
+   "name": "Persistent self model V1",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "production",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "self-model-v2",
+   "name": "Self model V2 (provenance, E0_OPEN, retraction)",
+   "state": "IMPLEMENTED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "memory-candidate-store",
+   "name": "Memory candidate store",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "production",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "evidence-passport",
+   "name": "Evidence Passport V1",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "dream-consolidation",
+   "name": "Dream consolidation / ablation",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "sophia-heartbeat",
+   "name": "Sophia heartbeat V0.1 (7+3 reflection units)",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "shadow",
+   "discovered_ref_count": 32
+  },
+  {
+   "id": "v3-cognitive",
+   "name": "NYXA V3 cognitive integration",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "shadow",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "runpod-connector",
+   "name": "Governed Runpod connector",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "embodiment",
+   "name": "Embodiment (nyxa.embodiment.v1)",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "ric-suite",
+   "name": "RIC-01 relational intelligence conformance suite",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 4
+  },
+  {
+   "id": "nyxa-studio",
+   "name": "NYXA Studio",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 0
+  },
+  {
+   "id": "authority-passkey",
+   "name": "Passkey authority / delegation frames",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "production",
+   "discovered_ref_count": 5
+  },
+  {
+   "id": "runpod-budget-watchdog",
+   "name": "Runpod budget watchdog",
+   "state": "IMPLEMENTED",
+   "deployment": "none",
+   "discovered_ref_count": 60
+  },
+  {
+   "id": "pocket-kernel",
+   "name": "Pocket kernel",
+   "state": "UNREACHABLE",
+   "deployment": "none",
+   "discovered_ref_count": 0
+  },
+  {
+   "id": "riva-training-factory",
+   "name": "RIVA pilot V0 (training factory itself not found)",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "none",
+   "discovered_ref_count": 1
+  },
+  {
+   "id": "discovery",
+   "name": "NYXA discovery V1 (this generator)",
+   "state": "FUNCTIONALLY_VERIFIED",
+   "deployment": "shadow",
+   "discovered_ref_count": 5
+  }
+ ],
+ "conflicts": [
+  {
+   "id": "C-SERVER-C",
+   "summary": "Routing registry marks server C retired (host offline >40 days); toolbox hard-codes its connector as degraded. Routing is correct; toolbox registration to be aligned.",
+   "status": "RESOLVED_ANALYSIS_FIX_PENDING"
+  },
+  {
+   "id": "A1-E0-CANDIDATES",
+   "summary": "E0 derives evidence strength from claim tags only (CLAIM 0.4 < required 0.7); unattested agent memory candidates can never pass, conflicting with owner-approved autonomous candidate submission while keeping E0.",
+   "status": "OPEN_DECISION"
+  },
+  {
+   "id": "R-ROOT",
+   "summary": "Runtime, bridge and MCP roots are owned by the service account; agent session has no privilege escalation (NoNewPrivs). Privileged steps need one owner-executed root runbook.",
+   "status": "BLOCKER"
+  },
+  {
+   "id": "K2-RUNTIME-LINEAGE",
+   "summary": "Runtime is a separate git history with 11 uncommitted live patches in governance-critical files; V3, Runpod and new adapters live in another line. Release requires reconciliation, not a plain deploy.",
+   "status": "OPEN_DECISION"
+  }
+ ]
+}

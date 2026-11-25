@@ -24,4 +24,12 @@ Dieses Repository ist **öffentlich**. Es ist NYXAs kanonische Quelle für Selbs
 
 ## Stand der letzten Claude-Session
 
-Siehe `handoffs/2026/11/2026-11-25_CLAUDE_ACCESS_AND_MEMORY_SYNC_REQUEST.md` und `film/architecture-of-becoming/docs/CAPABILITY_EVIDENCE_MATRIX.md`.
+Siehe `handoffs/2026/11/2026-11-25_CLAUDE_GO_INTEGRATION_RESULT.md` (neuester Stand), `research/COMPONENT_STATUS_MATRIX.md` und `research/component-registry.public.json`.
+
+## Inventur-Regel
+
+`NOT_FOUND` erst vergeben, nachdem alle lokalen Branches, Worktrees, Verzeichnisnamen, User-Timer sowie die Handoffs und Mappings anderer Agenten geprüft wurden. Die NYXA Discovery V1 macht das automatisch.
+
+## Rechte
+
+Agenten-Sessions auf den Servern haben keine Rechteausweitung. Privilegierte Schritte gehören in ein vom Betreiber ausgeführtes root-Runbook. Die Docker-Gruppe ist kein zulässiger Ersatz für root.
