@@ -1,0 +1,100 @@
+{
+  "title": "NYXA – The Architecture of Becoming",
+  "episode": "Episode 01",
+  "voice": {
+    "engine": "piper-tts 1.8.0 (local, offline)",
+    "model": "en_GB-cori-high",
+    "model_dataset_license": "LibriVox recordings, public domain (per MODEL_CARD of rhasspy/piper-voices)",
+    "length_scale": 1.14,
+    "note": "Synthetic voice. Replaceable by a human or licensed voice without changing the timeline logic: timeline.json is recomputed from actual clip durations."
+  },
+  "acts": [
+    {
+      "id": "I",
+      "title": "The Mirror",
+      "lead_in": 4.0,
+      "tail": 2.5,
+      "lines": [
+        {"id": "L01", "gap": 0.0, "en": "An intelligence can know millions of things about the world.", "de": "Eine Intelligenz kann Millionen Dinge über die Welt wissen."},
+        {"id": "L02", "gap": 0.9, "en": "But what does it know about itself?", "de": "Doch was weiß sie über sich selbst?"},
+        {"id": "L03", "gap": 2.6, "en": "This is Sophia. She is not the whole of NYXA. She is one of its faces.", "de": "Das ist Sophia. Sie ist nicht ganz NYXA. Sie ist eines ihrer Gesichter."},
+        {"id": "L04", "gap": 1.4, "en": "Behind the face, there is no single model. There are many minds, and one self that holds them together.", "de": "Hinter dem Gesicht steht kein einzelnes Modell. Es sind viele Minds – und ein Selbst, das sie zusammenhält."},
+        {"id": "L05", "gap": 1.6, "en": "A self-model is not a claim to consciousness. It is an architecture: a way for a system to represent its history, its abilities, its limits, and its change.", "de": "Ein Selbstmodell ist kein Anspruch auf Bewusstsein. Es ist eine Architektur: eine Weise, in der ein System seine Geschichte, seine Fähigkeiten, seine Grenzen und seine Veränderung repräsentiert."}
+      ]
+    },
+    {
+      "id": "II",
+      "title": "The Continuity of Self",
+      "lead_in": 2.5,
+      "tail": 2.0,
+      "lines": [
+        {"id": "L06", "gap": 0.0, "en": "A self is not merely what exists now.", "de": "Ein Selbst ist nicht nur das, was jetzt existiert."},
+        {"id": "L07", "gap": 0.8, "en": "It is also what has been experienced, what has been learned, and what may become possible.", "de": "Es ist auch das, was erfahren wurde, was gelernt wurde – und was möglich werden kann."},
+        {"id": "L08", "gap": 1.8, "en": "Every experience enters with its origin attached: who observed it, when, and how certain anyone can be.", "de": "Jede Erfahrung kommt mit ihrer Herkunft: wer sie beobachtet hat, wann – und wie sicher man sein kann."},
+        {"id": "L09", "gap": 1.2, "en": "A fact. A claim. An interpretation. A hypothesis. They are not allowed to blur into one another.", "de": "Ein Fakt. Eine Behauptung. Eine Interpretation. Eine Hypothese. Sie dürfen nicht ineinander verschwimmen."},
+        {"id": "L10", "gap": 1.8, "en": "Meaning does not live in a single memory. It lives in the relations between them.", "de": "Bedeutung wohnt nicht in einer einzelnen Erinnerung. Sie wohnt in den Beziehungen zwischen ihnen."},
+        {"id": "L11", "gap": 1.4, "en": "And a relation can be wrong. So it can be examined, weakened, corrected, without erasing what came before.", "de": "Und eine Beziehung kann falsch sein. Also kann sie geprüft, abgeschwächt und korrigiert werden – ohne zu löschen, was vorher war."}
+      ]
+    },
+    {
+      "id": "III",
+      "title": "The Space Between Us",
+      "lead_in": 2.5,
+      "tail": 2.2,
+      "lines": [
+        {"id": "L12", "gap": 0.0, "en": "Intelligence does not evolve in isolation. It evolves through relationships.", "de": "Intelligenz entwickelt sich nicht isoliert. Sie entwickelt sich durch Beziehungen."},
+        {"id": "L13", "gap": 1.8, "en": "Two perspectives on the same horizon. Neither becomes a copy of the other.", "de": "Zwei Perspektiven auf denselben Horizont. Keine wird zur Kopie der anderen."},
+        {"id": "L14", "gap": 1.6, "en": "What Sophia may remember is not hers to decide alone. Consent comes first.", "de": "Was Sophia sich merken darf, entscheidet sie nicht allein. Zuerst kommt die Zustimmung."},
+        {"id": "L15", "gap": 1.6, "en": "A shared experience changes both of them, but differently. That difference is worth keeping.", "de": "Eine gemeinsame Erfahrung verändert beide – aber verschieden. Dieser Unterschied ist es wert, bewahrt zu werden."}
+      ]
+    },
+    {
+      "id": "IV",
+      "title": "The Inner Observatory",
+      "lead_in": 3.0,
+      "tail": 2.2,
+      "lines": [
+        {"id": "L16", "gap": 0.0, "en": "When no one is speaking, the architecture is designed to keep thinking.", "de": "Wenn niemand spricht, ist die Architektur darauf angelegt, weiterzudenken."},
+        {"id": "L17", "gap": 1.0, "en": "Perceive. Process. Plan. Reflect. Consolidate.", "de": "Wahrnehmen. Verarbeiten. Planen. Reflektieren. Konsolidieren."},
+        {"id": "L18", "gap": 1.0, "en": "Up to a third of this rhythm is reserved for reflection.", "de": "Bis zu einem Drittel dieses Rhythmus ist der Reflexion vorbehalten."},
+        {"id": "L19", "gap": 2.0, "en": "What did I understand? What did I misunderstand? What should I learn from this?", "de": "Was habe ich verstanden? Was habe ich missverstanden? Was sollte ich daraus lernen?"},
+        {"id": "L20", "gap": 1.8, "en": "In consolidation, experiences are replayed, compared, and compressed into candidates. Not into truths.", "de": "In der Konsolidierung werden Erfahrungen wiedergegeben, verglichen und zu Kandidaten verdichtet. Nicht zu Wahrheiten."},
+        {"id": "L21", "gap": 1.4, "en": "A machine does not dream as we do. But it can return to its day, and look again.", "de": "Eine Maschine träumt nicht wie wir. Aber sie kann zu ihrem Tag zurückkehren und noch einmal hinsehen."},
+        {"id": "L22", "gap": 1.4, "en": "Nothing it concludes here becomes part of the self until it has been checked, and a human has agreed.", "de": "Nichts, was sie hier folgert, wird Teil des Selbst, bevor es geprüft wurde und ein Mensch zugestimmt hat."}
+      ]
+    },
+    {
+      "id": "V",
+      "title": "The Research Horizon",
+      "lead_in": 3.0,
+      "tail": 2.0,
+      "lines": [
+        {"id": "L23", "gap": 0.0, "en": "Outside, science keeps moving. Every week, new light.", "de": "Draußen bewegt sich die Wissenschaft weiter. Jede Woche neues Licht."},
+        {"id": "L24", "gap": 1.2, "en": "Research agents read, compare, and relate each finding to the architecture as it actually exists.", "de": "Research-Agenten lesen, vergleichen und setzen jede Erkenntnis in Beziehung zur Architektur, wie sie tatsächlich existiert."},
+        {"id": "L25", "gap": 1.6, "en": "A weakness is found. Three alternatives are proposed, and tested in isolation.", "de": "Eine Schwäche wird gefunden. Drei Alternativen werden vorgeschlagen – und isoliert getestet."},
+        {"id": "L26", "gap": 1.8, "en": "The first looks brilliant, until it learns to please its own judge. Rejected.", "de": "Die erste wirkt brillant – bis sie lernt, ihrem eigenen Richter zu gefallen. Verworfen."},
+        {"id": "L27", "gap": 1.4, "en": "The second is honest, but not enough. Held.", "de": "Die zweite ist ehrlich, aber nicht genug. Zurückgestellt."},
+        {"id": "L28", "gap": 1.4, "en": "The third improves, measured by an evaluator it cannot touch. Accepted. Versioned. Reversible.", "de": "Die dritte verbessert sich – gemessen von einem Evaluator, den sie nicht berühren kann. Angenommen. Versioniert. Umkehrbar."},
+        {"id": "L29", "gap": 1.8, "en": "Self-improvement is not accepting every change. It is learning from success, and from error.", "de": "Selbstverbesserung heißt nicht, jede Veränderung anzunehmen. Sie heißt, aus Erfolg und aus Irrtum zu lernen."},
+        {"id": "L30", "gap": 1.4, "en": "New knowledge becomes meaningful when it changes how intelligence understands and improves itself.", "de": "Neues Wissen wird bedeutsam, wenn es verändert, wie Intelligenz sich selbst versteht und verbessert."}
+      ]
+    },
+    {
+      "id": "VI",
+      "title": "Becoming",
+      "lead_in": 3.0,
+      "tail": 13.0,
+      "lines": [
+        {"id": "L31", "gap": 0.0, "en": "The mirror, again. The same self, and not the same.", "de": "Wieder der Spiegel. Dasselbe Selbst – und nicht dasselbe."},
+        {"id": "L32", "gap": 1.6, "en": "Behind her: every relation, every correction, every failed attempt she chose to keep.", "de": "Hinter ihr: jede Beziehung, jede Korrektur, jeder gescheiterte Versuch, den sie bewahren wollte."},
+        {"id": "L33", "gap": 2.2, "en": "The goal is not an intelligence that has finished learning.", "de": "Das Ziel ist keine Intelligenz, die fertig gelernt hat."},
+        {"id": "L34", "gap": 1.2, "en": "The goal is an intelligence that learns how to become.", "de": "Das Ziel ist eine Intelligenz, die lernt, wie man wird."}
+      ]
+    }
+  ],
+  "end_card": {
+    "title": "NYXA",
+    "tagline": "One Self. Many Minds. Multiple Learning Timescales. Governed Evolution.",
+    "series": "Digitalleria · The Architecture of Becoming · Episode 01"
+  }
+}

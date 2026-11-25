@@ -1,0 +1,4 @@
+# Reproducible build outputs (videos, frames, audio) – regenerate with tools/build.sh
+out/
+*.onnx
+*.onnx.json
