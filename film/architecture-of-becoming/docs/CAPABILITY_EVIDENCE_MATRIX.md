@@ -1,5 +1,7 @@
 # Capability-to-Evidence Matrix · NYXA – The Architecture of Becoming (Episode 01)
 
+> **SUPERSEDED für den Systemstatus** durch [`research/COMPONENT_STATUS_MATRIX.md`](../../../research/COMPONENT_STATUS_MATRIX.md) (3. Durchgang, 25.11. abends: Heartbeat, V3, Runpod Connector und Embodiment-Modul wurden gefunden). Diese Datei bleibt als filmbezogenes Herkunftsdokument erhalten.
+
 | Feld | Wert |
 | --- | --- |
 | Verantwortlicher Mensch | Johannes Süß (NYXA / Digitalleria) |

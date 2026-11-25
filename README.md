@@ -65,7 +65,7 @@ Für Selbstverbesserung konkretisiert NYXA diesen Kreislauf so:
 
 ## Was bereits existiert – und wie belastbar es ist
 
-NYXA unterscheidet streng zwischen *existiert*, *getestet*, *ausgerollt* und *live verifiziert*. Der folgende Stand stammt aus einer Bestandsaufnahme vom 25.11.2026. Sie war nur lesend und lief über den NYXA-MCP und direkte Server-Inspektion. Details und Belege stehen in der [Capability-to-Evidence-Matrix](film/architecture-of-becoming/docs/CAPABILITY_EVIDENCE_MATRIX.md).
+NYXA unterscheidet streng zwischen *existiert*, *getestet*, *ausgerollt* und *live verifiziert*. Der folgende Stand stammt aus einer Bestandsaufnahme vom 25.11.2026. Sie war nur lesend und lief über den NYXA-MCP, direkte Server-Inspektion inklusive Branches, Worktrees und Shadow-Dienste sowie die GitHub-Suche. Die kanonische Übersicht mit Zustandsvokabular (`NOT_FOUND` · `UNREACHABLE` · `SPECIFIED_ONLY` · `IMPLEMENTED` · `FUNCTIONALLY_VERIFIED` × Deployment `none` / `shadow` / `production`) steht in der [Component Status Matrix](research/COMPONENT_STATUS_MATRIX.md).
 
 | Baustein | Was er leistet | Stand |
 | --- | --- | --- |
@@ -77,7 +77,10 @@ NYXA unterscheidet streng zwischen *existiert*, *getestet*, *ausgerollt* und *li
 | **Relational Intelligence (RIC-01)** | Konformitätssuite (200 Fälle, 10 Familien, zwei unabhängige Gold-Orakel) und Studie M1 | Forschung, isoliert |
 | **Multi-Agent Conflict Governance** ([ADR-0002](decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md)) | `DENY → ESCALATE → SERIALIZE → NEGOTIATE → ALLOW`, Minderheitenevidenz bleibt erhalten | ADR `PROPOSED`, Runtime-Implementierung im PR |
 | **NYXA Studio 0.1** | Lokaler Workspace-Pilot (81 Routen, semantischer Befehlsbus) | getesteter Pilot |
-| Sophia Heartbeat · Embodiment Core · Governed Runpod Connector · V3/M1 | Kognitiver Rhythmus · Verkörperung · GPU-Training · Integration | **in dieser Bestandsaufnahme nicht verifiziert** |
+| **Sophia Heartbeat V0.1** | Kognitiver Rhythmus: 7 Prüf- und 3 Reflexionseinheiten (30 %) pro Ereignis | funktional verifiziert, **läuft im Shadow-Betrieb** |
+| **NYXA V3 Cognitive Integration** | Lernklassen, Prognose-Ledger, Eval-Harness, Entwurf ≠ Wirksamkeit | funktional verifiziert (Branch), **Shadow-Betrieb** |
+| **Governed Runpod Connector** | GPU-Training mit Positivliste und Kostenwächter (60 min / 2 USD) | funktional verifiziert (Branch), nicht ausgerollt |
+| **Embodiment** (`nyxa.embodiment.v1`) | Gesichts-Landmarken → Avatar-Frame für Sophia | Modul getestet, nicht integriert |
 
 ### Ein Ergebnis, auf das wir stolz sind, gerade weil es negativ ist
 
