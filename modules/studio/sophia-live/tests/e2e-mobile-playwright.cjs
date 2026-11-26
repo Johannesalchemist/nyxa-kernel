@@ -1,0 +1,34 @@
+const { chromium, devices } = require('playwright');
+(async () => {
+  const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] });
+  const ctx = await browser.newContext({ ...devices['Pixel 7'] });
+  await ctx.grantPermissions(['microphone'], { origin: 'https://studio.digitalleria.com' });
+  await ctx.grantPermissions(['microphone'], { origin: 'https://thechat.future24.eu' });
+  const page = await ctx.newPage();
+  const out = {};
+  await page.goto('https://studio.digitalleria.com/', { waitUntil: 'networkidle' });
+  out.studio_link = await page.locator('a[href="/sophia-live.html"]').count();
+  await page.goto('https://studio.digitalleria.com/sophia-live.html', { waitUntil: 'load' });
+  const fh = await page.waitForSelector('#sl-room');
+  const frame = await fh.contentFrame();
+  await frame.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(3000);
+  out.state = await page.locator('#sl-state').textContent();
+  out.frame_url = frame.url();
+  out.frame_title = await frame.title();
+  out.has_mic_btn = await frame.locator('#micBtn').count();
+  out.top_mic_policy = await page.evaluate(() => document.featurePolicy ? document.featurePolicy.allowsFeature('microphone') : 'n/a');
+  out.frame_mic_policy = await frame.evaluate(() => document.featurePolicy ? document.featurePolicy.allowsFeature('microphone') : 'n/a');
+  out.frame_getUserMedia = await frame.evaluate(async () => { try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); const n = s.getAudioTracks().length; s.getTracks().forEach(t => t.stop()); return 'ok:' + n + ' audio track'; } catch (e) { return 'error:' + e.name; } });
+  out.frame_rtc = await frame.evaluate(() => typeof RTCPeerConnection);
+  out.broker_unauth = await frame.evaluate(async () => (await fetch('/api/room/live/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sdp: 'v=0' }) })).status);
+  out.broker_caps = await frame.evaluate(async () => (await fetch('/api/room/openai-capabilities')).json());
+  // Negative: a non-Room origin must not get the microphone on the main Studio page.
+  await page.goto('https://studio.digitalleria.com/', { waitUntil: 'load' });
+  out.studio_root_mic_policy = await page.evaluate(() => document.featurePolicy ? document.featurePolicy.allowsFeature('microphone') : 'n/a');
+  await page.goto('https://studio.digitalleria.com/sophia-live.html', { waitUntil: 'load' });
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: process.argv[2] + '/sophia-live-mobile.png' });
+  console.log(JSON.stringify(out, null, 1));
+  await browser.close();
+})().catch(e => { console.error('E2E_ERROR', e.message); process.exit(1); });

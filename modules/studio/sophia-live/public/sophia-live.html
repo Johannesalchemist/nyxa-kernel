@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102823">
+<meta name="description" content="NYXA Studio – Live-Dialog mit Sophia über die gemeinsame NYXA-Echtzeitsitzung.">
+<!-- WP-SOPHIA-LIVE-STUDIO 2026-11-26 Europe/Berlin. Owner: Johannes Suess. Generated with Claude Code.
+     Reuses the existing The Room realtime broker (thechat.future24.eu /api/room/live/session):
+     one Sophia identity, instructions, tools, memory and Tool-Call gate. No new broker, no secrets here. -->
+<link rel="manifest" href="/app.manifest.json">
+<link rel="icon" href="/icon.svg">
+<link rel="stylesheet" href="/sophia-live.css">
+<title>Sophia Live – NYXA Studio</title>
+</head>
+<body>
+<header class="sl-bar">
+  <a class="sl-back" href="/" aria-label="Zurück zu NYXA Studio">←</a>
+  <div class="sl-orb" aria-hidden="true">S</div>
+  <div class="sl-title"><strong>Sophia</strong><small id="sl-state">Verbinde mit The Room …</small></div>
+  <a class="sl-open" id="sl-open" href="https://thechat.future24.eu/dashboard/room.html" target="_blank" rel="noopener noreferrer">Eigener Tab</a>
+</header>
+<main class="sl-main">
+  <iframe id="sl-room"
+    title="Sophia Live in NYXA The Room"
+    src="https://thechat.future24.eu/dashboard/room.html"
+    allow="microphone https://thechat.future24.eu; autoplay https://thechat.future24.eu"
+    referrerpolicy="no-referrer"
+    loading="eager"></iframe>
+</main>
+<footer class="sl-note">
+  Gleiche Sophia wie in The Room: dieselbe Echtzeitsitzung, Identität, Erinnerung und Werkzeug-Freigaben.
+  Mikrofon nur nach deiner Browser-Freigabe. Aktionen nur mit „Tool Call“. Melde dich im Fenster an, falls nötig.
+</footer>
+<script type="module" src="/sophia-live.mjs"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+--- nyxa-studio-20261124/server.mjs  (sha256 6b22046d...e386, before)
++++ nyxa-studio-20261124/server.mjs  (sha256 bacedc52...b5f9, after)
+@@ after the pathname parse line @@
++ // WP-SOPHIA-LIVE-STUDIO 2026-11-26: exact-path scoped exception; every other path keeps the strict policy.
++ if(pathname==='/sophia-live.html'){headers['Content-Security-Policy']=headers['Content-Security-Policy'].replace("default-src 'self';","default-src 'self'; frame-src https://thechat.future24.eu;");headers['Permissions-Policy']='camera=(), microphone=(self "https://thechat.future24.eu"), autoplay=(self "https://thechat.future24.eu"), geolocation=()';}
+  if(pathname==='/health')return send(...)
+
+--- public/index.html (sha256 43e3a490...6eb1, before) / (3cbfe3a6...9d96, after)
+-<p class="chat-note">Öffne Bereiche per Text. Der KI-Dialog und die Live-Stimme sind noch nicht verbunden.</p>
++<p class="chat-note">Öffne Bereiche per Text. <a href="/sophia-live.html">Live mit Sophia sprechen</a> – echte Sophia-Stimme über The Room.</p>
