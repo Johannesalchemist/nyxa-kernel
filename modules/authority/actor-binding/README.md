@@ -10,7 +10,7 @@
 | Ausgangsversion | `/opt/nyxa-claude-mcp-bridge/bridge.cjs` sha256 `0492f1e12f79ea1010388ff3ffd6d351f096fec70831f18a2964614f2cd57804` (live, byte-identisch mit `nyxa-authority-consolidation-20261124/bridge-claude.cjs`) |
 | Quellenstatus | `SOURCE-VERIFIED` (Live-Code von Server B gelesen) |
 | Epistemischer Status | `DRAFT` |
-| Implementierungsstatus | `IMPLEMENTED` · `TESTED` (isoliert + realer Tailnet-Transport mit Stub-Backend) — **nicht** `CONNECTED`, **nicht** `ACTIVATED` |
+| Implementierungsstatus | `IMPLEMENTED` · `TESTED` (isoliert 11/11 + realer knotenübergreifender Tailnet-Test Server A → B mit Stub-Backend) — **nicht** `CONNECTED`, **nicht** `ACTIVATED`. Review R1 (selbe Instanz): `REVIEW-R1.md`. Deployment-Auftrag: `DEPLOY-ORDER-WP-A1.md` |
 | Reviewstatus | Unabhängige Review ausstehend |
 | Vorgänger | `/home/jo/nyxa-authority-v2-candidate.mwydcf/release-v2/STATUS.md` (Blocker „Claude-Bridge ohne verifizierte Client-Identität“) |
 
@@ -49,9 +49,10 @@ Eigentümer root, Modus `0600`/`0640` (Gruppe `nyxamcp` lesend). Ein Bridge-Proz
 
 | Test | Umgebung | Ergebnis |
 |---|---|---|
-| `node --test actorBinding.test.mjs` (9 Tests: 7× Fail-Closed-Start, Identität/Aktorpropagation/Proposal-Spoofing/Session-Übernahme/LocalAPI-Ausfall, Legacy-Regression) | Server B, Node v22.23.3, SDK 1.30.0 | 9/9 PASS |
+| `node --test actorBinding.test.mjs` (Stand R1: 11 Tests inkl. R1/R2; ursprünglich 9 Tests: 7× Fail-Closed-Start, Identität/Aktorpropagation/Proposal-Spoofing/Session-Übernahme/LocalAPI-Ausfall, Legacy-Regression) | Server B, Node v22.23.3, SDK 1.30.0 | 9/9 PASS |
 | dieselbe Suite | Claude-Code-Container, Node v22.23.5, SDK 1.30.0 frisch installiert | 9/9 PASS |
-| `e2e-real-tailscale.sh` (realer `tailscaled`, reale Tailnet-IP, Stub-Backend) | Server B | `E2E_RESULT=PASS` (5 Prüfungen inkl. realer 403 für nicht gebundenen Knoten) |
+| ~~`e2e-real-tailscale.sh`~~ (erster Lauf, band den Bridge-Host selbst; durch R1 ungültig und entfernt) | Server B | historisch PASS |
+| `e2e-cross-node.sh` (realer tailscaled; Bridge auf B, Client auf A) nach R1/R2 | Server A + B | B: Host-Knoten in Bindung → Start verweigert; lokaler Prozess auf B → 403. A: authentifiziert, Backend-Akteur `claude`, direkter und Toolbox-Spoof abgewiesen |
 
 Nicht getestet: produktives Governed Backend, reale Claude-Client-Verbindung, produktive Wirkung, Deployment und Rollback unter systemd.
 

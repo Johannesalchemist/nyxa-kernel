@@ -96,6 +96,44 @@ function whois(socketPath, address, port, timeoutMs = 2000) {
   });
 }
 
+/**
+ * Review fix R1 (device != agent): StableID of the node running this bridge.
+ * Every local process on that host would authenticate as this node, so callers
+ * must refuse a binding that allows it. Resolves null when LocalAPI is unusable.
+ */
+function localSelfStableId(socketPath, timeoutMs = 2000) {
+  return new Promise((resolve) => {
+    const req = http.request({
+      socketPath, method: "GET", path: "/localapi/v0/status?peers=false",
+      headers: { Host: "local-tailscaled.sock" }, timeout: timeoutMs,
+    }, (res) => {
+      let body = "";
+      res.setEncoding("utf8");
+      res.on("data", (c) => { if (body.length < 1048576) body += c; });
+      res.on("end", () => {
+        if (res.statusCode !== 200) return resolve(null);
+        try {
+          const id = JSON.parse(body)?.Self?.ID;
+          resolve(typeof id === "string" && STABLE_ID.test(id) ? id : null);
+        } catch { resolve(null); }
+      });
+    });
+    req.on("timeout", () => { req.destroy(); resolve(null); });
+    req.on("error", () => resolve(null));
+    req.end();
+  });
+}
+
+/** Review fix R2: collect every `proposal` object nested in tool arguments (bounded depth). */
+function collectProposals(value, depth = 0, out = []) {
+  if (depth > 6 || !value || typeof value !== "object") return out;
+  for (const [k, v] of Object.entries(value)) {
+    if (k === "proposal") out.push(v);
+    collectProposals(v, depth + 1, out);
+  }
+  return out;
+}
+
 /** Authorize a resolved peer against the binding. Returns the peer node id or null. */
 function authorizePeer(binding, peer) {
   if (!peer) return null;
@@ -104,4 +142,4 @@ function authorizePeer(binding, peer) {
   return hit ? hit.nodeStableId : null;
 }
 
-module.exports = { loadActorBinding, whois, authorizePeer, normalizeAddr, BindingError };
+module.exports = { loadActorBinding, whois, authorizePeer, normalizeAddr, localSelfStableId, collectProposals, BindingError };

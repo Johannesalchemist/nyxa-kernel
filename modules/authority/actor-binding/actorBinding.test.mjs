@@ -15,8 +15,14 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "nyxa-ab-"));
 const SOCK = path.join(tmp, "ts.sock");
 let whoisAnswer = "PEER_A"; // stable id the mock reports for any address, or null
 let whoisDown = false;
+let selfId = "SELFNODE01"; // StableID the mock reports for the bridge host itself, or null
 const lapi = http.createServer((req, res) => {
   if (whoisDown) { req.socket.destroy(); return; }
+  if (req.url.startsWith("/localapi/v0/status")) {
+    if (selfId === null) { res.writeHead(503); return res.end(); }
+    res.writeHead(200, { "content-type": "application/json" });
+    return res.end(JSON.stringify({ Self: { ID: selfId } }));
+  }
   if (!req.url.startsWith("/localapi/v0/whois?addr=") || whoisAnswer === null) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { "content-type": "application/json" });
   res.end(JSON.stringify({ Node: { StableID: whoisAnswer }, UserProfile: { LoginName: "owner@example.test" } }));
@@ -101,6 +107,22 @@ test("startup fails closed: symlinked binding", async () => {
   assert.match(b.log(), /not_regular_file/);
 });
 
+test("review R1: bridge host itself in allowedPeers refuses start (device != agent)", async () => {
+  selfId = "PEERAAAA1";
+  const b = startBridge({ BRIDGE_ACTOR_BINDING_FILE: writeBinding("self.json", good) });
+  assert.notEqual(await b.ready, true);
+  assert.match(b.log(), /self_node_not_allowed/);
+  selfId = "SELFNODE01";
+});
+
+test("review R1: unknown host identity refuses start (fail closed)", async () => {
+  selfId = null;
+  const b = startBridge({ BRIDGE_ACTOR_BINDING_FILE: writeBinding("noself.json", good) });
+  assert.notEqual(await b.ready, true);
+  assert.match(b.log(), /self_identity_unavailable/);
+  selfId = "SELFNODE01";
+});
+
 test("bound bridge: identity, actor propagation, proposal mismatch, session takeover, LocalAPI outage", async (t) => {
   const b = startBridge({ BRIDGE_ACTOR_BINDING_FILE: writeBinding("good.json", good),
     NYXA_MANDATE_DATA_DIR: "/opt/nyxa-governed-memory-mcp-runtime/data-authority-v1" });
@@ -128,6 +150,22 @@ test("bound bridge: identity, actor propagation, proposal mismatch, session take
 
   const ok = payload(await rpc(b.port, call(5, "nyxa_propose_action", { proposal: { actor: "claude", action: "x" } }), sid));
   assert.deepEqual([ok.forwarded, ok.proposal_actor, ok.backend_actor], [true, "claude", "claude"]);
+
+  // Review R2: alternative governed paths carrying a proposal (toolbox wrapper, nesting, arrays).
+  for (const [i, args] of [
+    { name: "nyxa.dev.run_test", input: { proposal: { actor: "chatgpt", action: "nyxa_run_test" } } },
+    { batch: [{ deep: { proposal: { actor: "sophia" } } }] },
+    { input: { proposal: null } },
+    { input: { proposal: [{ actor: "claude" }] } },
+  ].entries()) {
+    const r = payload(await rpc(b.port, call(20 + i, "toolbox_execute", args), sid));
+    assert.equal(r.domain, "TRANSPORT_IDENTITY", "nested/alternative proposal path denied #" + i);
+    assert.equal(r.forwarded, undefined);
+  }
+  const tb = payload(await rpc(b.port, call(30, "toolbox_execute", { name: "nyxa.dev.run_test", input: { proposal: { actor: "claude" } } }), sid));
+  assert.equal(tb.forwarded, true, "matching toolbox proposal forwarded");
+  const plain = payload(await rpc(b.port, call(31, "toolbox_list", {}), sid));
+  assert.equal(plain.forwarded, true, "calls without proposals unaffected");
 
   whoisAnswer = "PEERBBBB2"; // also allowed, but did not open this session
   assert.equal((await rpc(b.port, call(6, "stub_whoami", {}), sid)).status, 403, "session takeover by other node denied");

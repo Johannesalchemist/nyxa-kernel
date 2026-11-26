@@ -27,7 +27,7 @@ const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
 const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
 const { createMcpExpressApp } = require("@modelcontextprotocol/sdk/server/express.js");
 const { ListToolsRequestSchema, CallToolRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
-const { loadActorBinding, whois, authorizePeer } = require("./tailscaleIdentity.cjs");
+const { loadActorBinding, whois, authorizePeer, localSelfStableId, collectProposals } = require("./tailscaleIdentity.cjs");
 
 const BIND_HOST = process.env.BRIDGE_BIND_HOST || "127.0.0.1";
 if (BIND_HOST === "0.0.0.0" || BIND_HOST === "::") {
@@ -120,10 +120,13 @@ async function closeAll(reason) {
   await Promise.all([...sessions.keys()].map((sid) => cleanupSession(sid, reason)));
 }
 
+// Review fix R2: every proposal reachable in the arguments (direct, toolbox-wrapped or
+// otherwise nested) must name the bound actor; nyxa_propose_action must carry one.
 function proposalActorMismatch(params) {
-  if (!BINDING || !params || params.name !== "nyxa_propose_action") return false;
-  const p = params.arguments && params.arguments.proposal;
-  return !p || typeof p !== "object" || p.actor !== BINDING.actor;
+  if (!BINDING || !params) return false;
+  const found = collectProposals(params.arguments);
+  if (params.name === "nyxa_propose_action" && found.length === 0) return true;
+  return found.some((p) => !p || typeof p !== "object" || Array.isArray(p) || p.actor !== BINDING.actor);
 }
 
 async function createSession(nodeStableId) {
@@ -262,6 +265,14 @@ async function main() {
       shutdown("backend_disconnected", 1).catch(() => process.exit(1));
     }
   };
+  if (BINDING) {
+    // Review fix R1: refuse to start if the bridge host itself is an allowed peer, or if
+    // the host identity cannot be established (fail closed before the backend starts).
+    const self = await localSelfStableId(BINDING.localApiSocket);
+    if (!self) throw new Error("actor_binding_invalid:self_identity_unavailable");
+    if (BINDING.allowedPeers.some((p) => p.nodeStableId === self))
+      throw new Error("actor_binding_invalid:self_node_not_allowed");
+  }
   await backend.connect(backendTransport);
   const discovered = await backend.listTools();
   if (!discovered || !Array.isArray(discovered.tools)) throw new Error("backend_tools_list_invalid");
