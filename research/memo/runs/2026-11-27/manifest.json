@@ -1,0 +1,20 @@
+{
+ "schema": "nyxa-reflection-qa-dataset-v1",
+ "version": "2026-11-27.1",
+ "records": 16,
+ "sha256": "d27510752dbe73935b925a7cc02086c5e99fc50397af8e591132b3e2acd7d8c5",
+ "governance": {
+  "input": 16,
+  "excluded": {},
+  "training": 16
+ },
+ "source_paper": "arXiv:2605.15156v2",
+ "training_authorized": false,
+ "generator_provenance": {
+  "generator": "Claude (Claude Code cloud session, model family Claude; exact model id recorded in the session only)",
+  "session": "Claude Code session 2026-11-27, Continuation R3",
+  "created": "2026-11-27",
+  "authorized_corpus": "nyxa-kernel public repository documents (KNOSPEL.md, ADR-0002); no personal data",
+  "method": "manual application of MeMo Sec. 4.1 stage-1 prompts (direct + indirect extraction) by the model session"
+ }
+}

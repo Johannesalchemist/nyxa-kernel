@@ -6,7 +6,7 @@
 | Verantwortlicher Mensch | Johannes Süß |
 | Erzeugendes System | Claude Code (Cloud-Session) |
 | Datum | 2026-11-27, Europe/Berlin |
-| Status | `IMPLEMENTED` · `TESTED` (isoliert 9/9; reales V2-Backend auf Server B 10/11, Fall 9 durch vorhandene Modus-Untergrenze abgewiesen) · **nicht** `CONNECTED`/`ACTIVATED` |
+| Status | `IMPLEMENTED` · `TESTED` (isoliert 12/12; reales V2-Backend R3: alle adversarialen Fälle PASS inkl. Fall 9 und positivem ALLOW-Kontrollfall im Modus `draft`) · **nicht** `CONNECTED`/`ACTIVATED` |
 | Quellen | Live-Code Server B: `passkeyAuthorityV1.js` (`canonicalHumanGate`, Ed25519), `dist/server.js` (`handleProposeAction`, Toolbox-Effektpfad), `governance/proposal.js` (`ProposalSchema`) |
 | Reviewstatus | ausstehend (nicht durch Claude) |
 
@@ -24,8 +24,15 @@
 
 `actorAttestation.mjs`, `actorAttestationGate.mjs` (Env: `NYXA_ACTOR_ATTESTATION_MODE=off|required`, `NYXA_AGENT_PASSPORTS`, `NYXA_ATTESTATION_NONCE_DIR`), `patch_attestation.py` (exakte Anker, Trefferzahl-Prüfung), `actorAttestation.test.mjs`, `e2e-backend.sh` + `e2e-backend-client.mjs`.
 
-## Offene Befunde
+## R3: Authority Closure
 
-- **R8:** `nyxa_mandate_issue/derive/revoke` und `nyxa_human_grant_issue` sind Schreib-Tools außerhalb des Proposal-Pfads und noch nicht attestiert. Nächster Schritt: Attestierung über die kanonischen Tool-Argumente (gleicher Vertrag, `proposal_sha256` → `arguments_sha256`).
+- Direkt-Tools `nyxa_mandate_issue/derive/revoke`, `nyxa_human_grant_issue` im Dispatcher attestierungspflichtig (Subjekt `{tool, arguments}`), Argumente ohne `attestation` an die unveränderten Handler.
+- Trennung Identität/Berechtigung: Verifikation liefert immer `authorityGranted:false`; reale Tests zeigen, dass attestierte Aufrufe weiterhin an Mandat (`patch_mandate_required`), Delegationsspeicher bzw. Human-Gate-Token scheitern.
+- Schlüssel: `not_before`/`not_after` (Rotation), `revoked_key_ids`, Registry und Verzeichnis müssen dem Operator gehören (`NYXA_PASSPORTS_OWNER_UID`, Standard root) → keine Selbstregistrierung.
+- Replay: 8 konkurrierende Prozesse und 2 Instanzen auf einer Nonce → genau 1 Gewinner; nach Neustart weiterhin Replay.
+
+## Offene Befunde (historisch R2)
+
+- **R8 — in R3 geschlossen:** Die Schreib-Tools außerhalb des Proposal-Pfads waren in R2 nicht attestiert; seit R3 sind sie über den kanonischen Tool-Argument-Digest attestierungspflichtig (siehe oben).
 - **Agenten ohne lokalen Laufzeitprozess** (Claude-Webconnector über `mcp.future24.eu`) können nicht selbst signieren → dort OAuth 2.1 (MCP 2026-07-28) statt Attestierung.
-- Direkte Effekt-Tools im `required`-Modus: nur `nyxa_apply_patch` zusätzlich gesperrt; im Draft-Modus greift bereits die Modus-Untergrenze.
+- Direkte Effekt-Tools im `required`-Modus: `nyxa_apply_patch` zusätzlich gesperrt (R3 im Modus `draft` real bestätigt); `nyxa_run_test` direkt bleibt über die vorhandene Test-Target-Allowlist geregelt.

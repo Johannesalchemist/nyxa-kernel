@@ -29,6 +29,14 @@ EDITS = [
     ('toolbox effect forward', 'return await this.handleProposeAction({ proposal: rawProposal });',
      'return await this.handleProposeAction({ proposal: rawProposal, ...(args.attestation !== undefined ? { attestation: args.attestation } : {}) });', 1),
 ]
+# R3: direct write tools outside the proposal path. Exact anchors from the V2 dispatcher:
+#   if (name === "<tool>") {\n  assertKeys(input, [...]);\n  return await this.<handler>(input);
+TOOL_RX = re.compile(r'(            if \(name === "(nyxa_mandate_issue|nyxa_mandate_derive|nyxa_mandate_revoke|nyxa_human_grant_issue)"\) \{\n)'
+                     r'(                assertKeys\()input(, \[[^\]]*\]\);\n)'
+                     r'(                return await this\.\w+\()input(\);)')
+TOOL_REPL = (r'\1                const __att = await (await import("../authority/actorAttestationGate.mjs")).gateDirectTool(name, input);\n'
+             r'                if (!__att.ok) return toolJsonResult({ policy_decision: "DENY", domain: "ATTESTATION", reason: __att.reason, tool: name }, true);\n'
+             r'\3__att.args\4\5__att.args\6')
 DIRECT = (re.compile(r'if \(process\.env\.NYXA_DEVELOPMENT_ACTOR\)(\s+throw new ConnectorError\("development_mandate_proposal_required")'),
           r'if (process.env.NYXA_DEVELOPMENT_ACTOR || process.env.NYXA_ACTOR_ATTESTATION_MODE === "required")\1', 1)
 
@@ -40,6 +48,9 @@ def main(src, dst):
         if n != count:
             sys.exit(f"HOLD: anchor '{name}' matched {n}x, expected {count}x")
         text = text.replace(old, new)
+    text, n = TOOL_RX.subn(TOOL_REPL, text)
+    if n != 4:
+        sys.exit(f"HOLD: anchor 'direct write tools' matched {n}x, expected 4x")
     rx, repl, count = DIRECT
     text, n = rx.subn(repl, text)
     if n != count:

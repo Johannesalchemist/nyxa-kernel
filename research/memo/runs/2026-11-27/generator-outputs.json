@@ -1,0 +1,145 @@
+{
+ "provenance": {
+  "generator": "Claude (Claude Code cloud session, model family Claude; exact model id recorded in the session only)",
+  "session": "Claude Code session 2026-11-27, Continuation R3",
+  "created": "2026-11-27",
+  "authorized_corpus": "nyxa-kernel public repository documents (KNOSPEL.md, ADR-0002); no personal data",
+  "method": "manual application of MeMo Sec. 4.1 stage-1 prompts (direct + indirect extraction) by the model session"
+ },
+ "responses": [
+  {
+   "direct": [
+    {
+     "q": "Welche Reihenfolge legt das erste NYXA-Architekturprinzip fest?",
+     "a": "Grenzen vor Struktur, Struktur vor Anwendung.",
+     "entities": [
+      "NYXA-Architekturprinzipien"
+     ]
+    },
+    {
+     "q": "Unter welchen Bedingungen darf eine Erkenntnis den Knospel verändern?",
+     "a": "Nur mit Herkunft, Grenzen und Gegenmodellen.",
+     "entities": [
+      "Knospel"
+     ]
+    },
+    {
+     "q": "Wie definieren die NYXA-Architekturprinzipien Simulation?",
+     "a": "Als kontrollierten Möglichkeitsraum, nicht als automatische Wahrheit.",
+     "entities": [
+      "NYXA-Architekturprinzipien"
+     ]
+    },
+    {
+     "q": "Welche vier Funktionen darf laut NYXA-Architekturprinzip 9 keine einzelne Instanz allein monopolisieren?",
+     "a": "Gedächtnis, Orchestrierung, Urteil und Vollstreckung.",
+     "entities": [
+      "NYXA-Architekturprinzipien"
+     ]
+    }
+   ],
+   "indirect": [
+    {
+     "q": "Darf ein einzelner NYXA-Agent zugleich Mandate ausstellen und die damit autorisierten Aktionen ausführen?",
+     "a": "Nein; das widerspräche dem Verbot, Urteil und Vollstreckung in einer Instanz zu monopolisieren.",
+     "entities": [
+      "NYXA-Architekturprinzipien"
+     ]
+    },
+    {
+     "q": "Wie sollen Änderungen am NYXA-System gemäß Prinzip 8 bevorzugt erfolgen?",
+     "a": "Früh, niedrigschwellig, reversibel und nachvollziehbar.",
+     "entities": [
+      "NYXA-Architekturprinzipien"
+     ]
+    }
+   ],
+   "chunk_sha256": "638c7ad4badf5102815b125e46ab7cedf8d15c532649db046f4a88f1230369d0"
+  },
+  {
+   "direct": [
+    {
+     "q": "Welchen Status hat der Volltext der NYXA Epistemic Governance & Simulation Safety Specification V0.1?",
+     "a": "Volltext derzeit nicht auffindbar; ein Handoff vom 3. August 2026, 12:29 CEST, ist als Quellzusammenfassung gesichert.",
+     "entities": [
+      "Epistemic Governance V0.1"
+     ],
+     "valid_from": "2026-08-03"
+    },
+    {
+     "q": "Welche Kennzeichnungen müssen Rekonstruktionen der Epistemic Governance V0.1 tragen?",
+     "a": "RECONSTRUCTED — NO V0.1 SOURCE oder HANDOFF-DERIVED-PENDING-V0.1-CONFORMITY.",
+     "entities": [
+      "Epistemic Governance V0.1"
+     ]
+    },
+    {
+     "q": "Ist für das Knospel Schema V0.2 ein Pilotbetrieb autorisiert?",
+     "a": "Nein; kein epistemischer Freeze, kein Pilotbetrieb autorisiert.",
+     "entities": [
+      "Knospel Schema V0.2"
+     ]
+    },
+    {
+     "q": "Welcher Schritt muss laut nächstem Gate vor der Vorbereitung des Pilotmoduls Schule in der Hosentasche erfolgen?",
+     "a": "Eine dokumentierte Freeze-Entscheidung nach unabhängiger Konformitätsprüfung.",
+     "entities": [
+      "Knospel Schema V0.2"
+     ]
+    }
+   ],
+   "indirect": [
+    {
+     "q": "Kann eine Aussage, die nur auf dem Handoff vom 3. August 2026 beruht, als SOURCE-VERIFIED gelten?",
+     "a": "Nein; ohne V0.1-Volltext bleibt sie höchstens handoff-abgeleitet und konformitätsoffen.",
+     "entities": [
+      "Epistemic Governance V0.1"
+     ]
+    }
+   ],
+   "chunk_sha256": "85a691a8a59054ebd76355e16b3bf5cad329cc4b31ef1515feb7701c0a805aa3"
+  },
+  {
+   "direct": [
+    {
+     "q": "Wie wird die Multi-Agent Conflict Governance laut ADR-0002 umgesetzt?",
+     "a": "Als deterministischer Bestandteil des Kernel-Runtime-Cores, ausdrücklich nicht als autonomer Safety-Agent.",
+     "entities": [
+      "ADR-0002"
+     ]
+    },
+    {
+     "q": "In welcher Reihenfolge prüft der Kernel laut ADR-0002 einen Kandidaten?",
+     "a": "DENY, ESCALATE, SERIALIZE, NEGOTIATE, ALLOW.",
+     "entities": [
+      "ADR-0002"
+     ]
+    },
+    {
+     "q": "Woraus entsteht Autorität laut ADR-0002?",
+     "a": "Ausschließlich aus explizit gewährten Capabilities und Ressourcenscopes.",
+     "entities": [
+      "ADR-0002"
+     ]
+    }
+   ],
+   "indirect": [
+    {
+     "q": "Darf ein Agent laut ADR-0002 einen konkurrierenden Prozess beenden, weil das seinem Ziel dient?",
+     "a": "Nein; ein Ziel verleiht keine Berechtigung (Goal != Authority).",
+     "entities": [
+      "ADR-0002"
+     ]
+    },
+    {
+     "q": "Was passiert laut ADR-0002, wenn zwei Agenten inkompatible Zielzustände für denselben Goal-Key verfolgen?",
+     "a": "ESCALATE.",
+     "entities": [
+      "ADR-0002"
+     ]
+    }
+   ],
+   "chunk_sha256": "656ea715bf1605076e00f1517180a987d772bff86f84f2f2b8546b4ce4c6bc18"
+  }
+ ]
+}

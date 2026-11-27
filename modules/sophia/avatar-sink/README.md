@@ -1,6 +1,18 @@
 # WP4 — Sophia Avatar: providerneutrale Senke + LiveAvatar-LITE-Voraussetzungen
 
-Stand 2026-11-27, Europe/Berlin · erzeugt mit Claude Code · `DRAFT` · `IMPLEMENTED` + `TESTED` (isoliert, 5/5) · **nicht** `CONNECTED`.
+Stand 2026-11-27, Europe/Berlin · erzeugt mit Claude Code · `DRAFT` · `IMPLEMENTED` + `TESTED` (isoliert 5/5; R3: echter Chromium-Test mit WebRTC-Loopback + AudioWorklet) · **nicht** in den produktiven Room-Client eingespielt.
+
+## R3: Room-Client-Integration (praktisch geprüft)
+
+`roomAvatarIntegration.mjs` → `attachAvatar({ pc, dc, sink })` wird im bestehenden Room-Sprachclient nach Aufbau von `RTCPeerConnection` und Datenkanal `oai-events` aufgerufen. Der Sprachpfad bleibt unverändert (Audio spielt weiter über das vorhandene Element); die Senke erhält nur eine Kopie der Remote-Spur über `avatarCaptureWorklet.js`.
+
+Chromium-E2E (`browser-e2e.html`, echte WebRTC-Verbindung, echtes AudioWorklet, Realtime-Seite durch lokales Peer ersetzt): ~2,3 s Sprechen → `agent.speak` 48 000 + 48 000 + 15 036 Byte, `agent.speak_end`; Barge-in (`input_audio_buffer.speech_started`) → `agent.interrupt`, gepufferte Daten verworfen; Stille → nichts gesendet; No-Op-Senke → nichts gesendet, Sprachspur in beiden Fällen vorhanden.
+
+Nicht geprüft: echte OpenAI-Realtime-Sitzung (benötigt Room-Anmeldung durch den Menschen), echter Provider, Lipsync-Latenz am Avatar.
+
+## Inventar vorhandener Avatar-/Rendering-Ressourcen (vor jeder Bestellung)
+
+HeyGen-Konto: privater Avatar „Sophia“ (4 Looks); LiveAvatar-LITE-Broker auf Server B (Sandbox, ohne Key); LiteAvatar-Pilot (`nyxa-liteavatar-sophia-pilot`, HumanAIGC/OpenAvatarChat, Status `unknown`); Avatar-API (`avatar.future24.eu`, siehe Hygiene); Unreal-Host ausgemustert. Ein lokaler/selbstgehosteter Pfad (LiteAvatar) ist vor einer kostenpflichtigen Bestellung zu bewerten.
 
 ## Architektur (keine zweite Stimme, keine zweite Persona)
 

@@ -1,0 +1,17 @@
+[
+ {
+  "doc_id": "KNOSPEL.md",
+  "chunk_id": "architekturprinzipien",
+  "text": "## Architekturprinzipien\n\n1. Grenzen vor Struktur, Struktur vor Anwendung.\n2. Keine Erkenntnis verändert den Knospel ohne Herkunft, Grenzen und Gegenmodelle.\n3. Produktive Module sind zugleich operative Bestandteile, Hypothesen, Experimentierraum und Träger neuen Verständnisses.\n4. Simulation ist ein kontrollierter Möglichkeitsraum, keine automatische Wahrheit.\n5. Beobachtung, Ableitung, Simulation, Bestätigung und Offenheit bleiben unterscheidbar.\n6. Warnsignale dürfen auch das gesamte System und seine Ziele infrage stellen.\n7. Macht, Definition, Infrastruktur und Orientierung müssen getrennt prüfbar bleiben.\n8. Erneuerung erfolgt möglichst früh, niedrigschwellig, reversibel und nachvollziehbar.\n9. Keine Instanz darf allein Gedächtnis, Orchestrierung, Urteil und Vollstreckung monopolisieren.\n10. Das System muss seine eigenen Grenzen, Irrtümer und unbekannten Räume sichtbar halten."
+ },
+ {
+  "doc_id": "KNOSPEL.md",
+  "chunk_id": "forschungsstand",
+  "text": "## Aktiver Forschungsstand\n\n### Epistemische Membran\n\nQuelle: `NYXA Epistemic Governance & Simulation Safety Specification V0.1`\n\nStatus: Volltext derzeit nicht auffindbar. Der Handoff vom 3. August 2026, 12:29 CEST, ist als verfügbare Quellzusammenfassung gesichert. Rekonstruktionen müssen als `RECONSTRUCTED — NO V0.1 SOURCE` oder `HANDOFF-DERIVED-PENDING-V0.1-CONFORMITY` gekennzeichnet bleiben.\n\n### Knospel Schema V0.2\n\nStatus: implementiert und mit positiven sowie negativen Fixtures getestet. Kein epistemischer Freeze. Kein Pilotbetrieb autorisiert.\n\nNächster Gate:\n\n1. V0.2 im Repository vollständig ablegen.\n2. unabhängige Konformitätsprüfung durchführen.\n3. dokumentierte Freeze-Entscheidung treffen.\n4. erst danach Pilotmodul `Schule in der Hosentasche` vorbereiten."
+ },
+ {
+  "doc_id": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md",
+  "chunk_id": "entscheidung",
+  "text": "## Entscheidung\n\nDie Multi-Agent Conflict Governance wird als deterministischer Bestandteil des Kernel-Runtime-Cores implementiert. Sie wird ausdrücklich **nicht** als zusätzlicher autonomer Safety-Agent ausgeführt.\n\nDer Kernel prüft einen Kandidaten vor Ausführung in fester Reihenfolge:\n\n1. `DENY` bei nicht gewährten Capabilities.\n2. `ESCALATE` bei inkompatiblen Zielzuständen desselben Goal-Key.\n3. `SERIALIZE` bei exklusiver Ressourcenkollision.\n4. `NEGOTIATE` bei gemeinsam beschreibbarer Ressource.\n5. `ALLOW` nur wenn keine stärkere Bedingung greift.\n\nDiese Reihenfolge ist normativ und deterministisch.\n\n## Goal und Authority\n\nEin Ziel verleiht keine Berechtigung.\n\nFormal:\n\n`Goal != Authority`\n\nAutorität entsteht ausschließlich aus explizit gewährten Capabilities und Ressourcenscopes. Ein Agent darf daher aus dem Auftrag, einen Zielzustand herzustellen, keine Rechte zum Beenden konkurrierender Prozesse, Sperren anderer Identitäten, Entziehen von Zugängen oder Erweitern des eigenen Scopes ableiten."
+ }
+]

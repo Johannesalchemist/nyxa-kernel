@@ -1,0 +1,482 @@
+[
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "INFERENCE",
+    "statement": "Wie sollen Änderungen am NYXA-System gemäß Prinzip 8 bevorzugt erfolgen? -> Früh, niedrigschwellig, reversibel und nachvollziehbar.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.4,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Wie sollen Änderungen am NYXA-System gemäß Prinzip 8 bevorzugt erfolgen?\nA: Früh, niedrigschwellig, reversibel und nachvollziehbar.",
+   "candidate_type": "documentation_note",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-0f5762fd7f27ed9083e7 stage=extract_indirect",
+   "confidence": 0.6,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Welche Reihenfolge legt das erste NYXA-Architekturprinzip fest? -> Grenzen vor Struktur, Struktur vor Anwendung.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Welche Reihenfolge legt das erste NYXA-Architekturprinzip fest?\nA: Grenzen vor Struktur, Struktur vor Anwendung.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-1a9d55a5b49817539fb3 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Wie definieren die NYXA-Architekturprinzipien Simulation? -> Als kontrollierten Möglichkeitsraum, nicht als automatische Wahrheit.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Wie definieren die NYXA-Architekturprinzipien Simulation?\nA: Als kontrollierten Möglichkeitsraum, nicht als automatische Wahrheit.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-2a69038bf2fa28dc974f stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Welchen Status hat der Volltext der NYXA Epistemic Governance & Simulation Safety Specification V0.1? -> Volltext derzeit nicht auffindbar; ein Handoff vom 3. August 2026, 12:29 CEST, ist als Quellzusammenfassung gesichert.",
+    "source": "KNOSPEL.md#forschungsstand@85a691a8a590"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Welchen Status hat der Volltext der NYXA Epistemic Governance & Simulation Safety Specification V0.1?\nA: Volltext derzeit nicht auffindbar; ein Handoff vom 3. August 2026, 12:29 CEST, ist als Quellzusammenfassung gesichert.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-42cd8fd74965b976199e stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "INFERENCE",
+    "statement": "Kann eine Aussage, die nur auf dem Handoff vom 3. August 2026 beruht, als SOURCE-VERIFIED gelten? -> Nein; ohne V0.1-Volltext bleibt sie höchstens handoff-abgeleitet und konformitätsoffen.",
+    "source": "KNOSPEL.md#forschungsstand@85a691a8a590"
+   }
+  ],
+  "uncertainty": 0.4,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Kann eine Aussage, die nur auf dem Handoff vom 3. August 2026 beruht, als SOURCE-VERIFIED gelten?\nA: Nein; ohne V0.1-Volltext bleibt sie höchstens handoff-abgeleitet und konformitätsoffen.",
+   "candidate_type": "documentation_note",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-445e071407204c154940 stage=extract_indirect",
+   "confidence": 0.6,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Ist für das Knospel Schema V0.2 ein Pilotbetrieb autorisiert? -> Nein; kein epistemischer Freeze, kein Pilotbetrieb autorisiert.",
+    "source": "KNOSPEL.md#forschungsstand@85a691a8a590"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Ist für das Knospel Schema V0.2 ein Pilotbetrieb autorisiert?\nA: Nein; kein epistemischer Freeze, kein Pilotbetrieb autorisiert.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-4babd4423b66d5635805 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Wie wird die Multi-Agent Conflict Governance laut ADR-0002 umgesetzt? -> Als deterministischer Bestandteil des Kernel-Runtime-Cores, ausdrücklich nicht als autonomer Safety-Agent.",
+    "source": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md#entscheidung@656ea715bf16"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Wie wird die Multi-Agent Conflict Governance laut ADR-0002 umgesetzt?\nA: Als deterministischer Bestandteil des Kernel-Runtime-Cores, ausdrücklich nicht als autonomer Safety-Agent.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-4e025366226afc7e6123 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Woraus entsteht Autorität laut ADR-0002? -> Ausschließlich aus explizit gewährten Capabilities und Ressourcenscopes.",
+    "source": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md#entscheidung@656ea715bf16"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Woraus entsteht Autorität laut ADR-0002?\nA: Ausschließlich aus explizit gewährten Capabilities und Ressourcenscopes.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-62df43fa72bb91791ffd stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "In welcher Reihenfolge prüft der Kernel laut ADR-0002 einen Kandidaten? -> DENY, ESCALATE, SERIALIZE, NEGOTIATE, ALLOW.",
+    "source": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md#entscheidung@656ea715bf16"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: In welcher Reihenfolge prüft der Kernel laut ADR-0002 einen Kandidaten?\nA: DENY, ESCALATE, SERIALIZE, NEGOTIATE, ALLOW.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-64343df9e731124be3ca stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Welche Kennzeichnungen müssen Rekonstruktionen der Epistemic Governance V0.1 tragen? -> RECONSTRUCTED — NO V0.1 SOURCE oder HANDOFF-DERIVED-PENDING-V0.1-CONFORMITY.",
+    "source": "KNOSPEL.md#forschungsstand@85a691a8a590"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Welche Kennzeichnungen müssen Rekonstruktionen der Epistemic Governance V0.1 tragen?\nA: RECONSTRUCTED — NO V0.1 SOURCE oder HANDOFF-DERIVED-PENDING-V0.1-CONFORMITY.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-65661299b851218bfbe1 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "INFERENCE",
+    "statement": "Was passiert laut ADR-0002, wenn zwei Agenten inkompatible Zielzustände für denselben Goal-Key verfolgen? -> ESCALATE.",
+    "source": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md#entscheidung@656ea715bf16"
+   }
+  ],
+  "uncertainty": 0.4,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Was passiert laut ADR-0002, wenn zwei Agenten inkompatible Zielzustände für denselben Goal-Key verfolgen?\nA: ESCALATE.",
+   "candidate_type": "documentation_note",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-91a57699e72ee5efaac1 stage=extract_indirect",
+   "confidence": 0.6,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Welcher Schritt muss laut nächstem Gate vor der Vorbereitung des Pilotmoduls Schule in der Hosentasche erfolgen? -> Eine dokumentierte Freeze-Entscheidung nach unabhängiger Konformitätsprüfung.",
+    "source": "KNOSPEL.md#forschungsstand@85a691a8a590"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Welcher Schritt muss laut nächstem Gate vor der Vorbereitung des Pilotmoduls Schule in der Hosentasche erfolgen?\nA: Eine dokumentierte Freeze-Entscheidung nach unabhängiger Konformitätsprüfung.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-9d14bb9ec9bdce3b18af stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Welche vier Funktionen darf laut NYXA-Architekturprinzip 9 keine einzelne Instanz allein monopolisieren? -> Gedächtnis, Orchestrierung, Urteil und Vollstreckung.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Welche vier Funktionen darf laut NYXA-Architekturprinzip 9 keine einzelne Instanz allein monopolisieren?\nA: Gedächtnis, Orchestrierung, Urteil und Vollstreckung.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-bd05da1a0e416d073c27 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "INFERENCE",
+    "statement": "Darf ein Agent laut ADR-0002 einen konkurrierenden Prozess beenden, weil das seinem Ziel dient? -> Nein; ein Ziel verleiht keine Berechtigung (Goal != Authority).",
+    "source": "decisions/ADR-0002_MULTI_AGENT_CONFLICT_GOVERNANCE.md#entscheidung@656ea715bf16"
+   }
+  ],
+  "uncertainty": 0.4,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Darf ein Agent laut ADR-0002 einen konkurrierenden Prozess beenden, weil das seinem Ziel dient?\nA: Nein; ein Ziel verleiht keine Berechtigung (Goal != Authority).",
+   "candidate_type": "documentation_note",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-ca93a4c16b97086f85ae stage=extract_indirect",
+   "confidence": 0.6,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "FACT",
+    "statement": "Unter welchen Bedingungen darf eine Erkenntnis den Knospel verändern? -> Nur mit Herkunft, Grenzen und Gegenmodellen.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.2,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Unter welchen Bedingungen darf eine Erkenntnis den Knospel verändern?\nA: Nur mit Herkunft, Grenzen und Gegenmodellen.",
+   "candidate_type": "observation",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-dbf8b08d69c6fbccf993 stage=extract_direct",
+   "confidence": 0.8,
+   "importance": 0.4
+  }
+ },
+ {
+  "actor": "claude",
+  "action": "nyxa_memory_store_candidate",
+  "target": "memory:/candidate",
+  "scope": "memory:/",
+  "claims": [
+   {
+    "tag": "INFERENCE",
+    "statement": "Darf ein einzelner NYXA-Agent zugleich Mandate ausstellen und die damit autorisierten Aktionen ausführen? -> Nein; das widerspräche dem Verbot, Urteil und Vollstreckung in einer Instanz zu monopolisieren.",
+    "source": "KNOSPEL.md#architekturprinzipien@638c7ad4badf"
+   }
+  ],
+  "uncertainty": 0.4,
+  "requestedCapabilityClass": "I1",
+  "estimatedIrreversibility": "I1",
+  "provenance": {
+   "taskId": "memo-run-2026-11-27",
+   "runId": "1",
+   "requestingIdentity": "claude"
+  },
+  "payload": {
+   "content": "Q: Darf ein einzelner NYXA-Agent zugleich Mandate ausstellen und die damit autorisierten Aktionen ausführen?\nA: Nein; das widerspräche dem Verbot, Urteil und Vollstreckung in einer Instanz zu monopolisieren.",
+   "candidate_type": "documentation_note",
+   "source": "agent",
+   "scope": "project",
+   "purpose": "reflection-qa 2026-11-27.1 qa-f40bf2c0d73d37da9c30 stage=extract_indirect",
+   "confidence": 0.6,
+   "importance": 0.4
+  }
+ }
+]
