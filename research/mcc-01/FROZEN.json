@@ -1,0 +1,11 @@
+{
+ "schema": "nyxa-mcc01-freeze-v1",
+ "version": "mcc01-sut-v3",
+ "frozen_at": "2026-11-27",
+ "note": "Frozen before any independent corpus exists. D v1->v2 (relevance-first) and v2->v3 (F-MCC-1) were fixed on the INTERNAL corpus; those numbers are diagnostic only. Any change => new version + new independent corpus.",
+ "files": {
+  "research/mcc-01/mechanismBench.mjs": "9ea422737ce58b6060bbd35f7df50393f54910e70201b792983da13fcbbc0edf",
+  "modules/cognition/continuity/continuity.mjs": "2448b6162ad9d99347327865d40cc63993ed79c2db2fd03776c656c7ec4e8df6",
+  "modules/cognition/continuity/transfer.mjs": "6d72af64638d62f1c12dff5eccd8e76cd5652dd3d9815b2a27193d1f9046b8f1"
+ }
+}

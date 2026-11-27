@@ -3,7 +3,8 @@
 // acting on the recalled context) is pre-registered separately in criteria.json and NOT run here.
 import fs from "node:fs";
 import { captureEvent, consolidate, recallBundle, tokens } from "../../modules/cognition/continuity/continuity.mjs";
-const C = JSON.parse(fs.readFileSync(new URL("./corpus.json", import.meta.url)));
+const CORPUS = process.argv[2] ?? new URL("./corpus.json", import.meta.url).pathname; const OUT = process.argv[3] ?? new URL("./result-mechanism-2026-11-27.json", import.meta.url).pathname;
+const C = JSON.parse(fs.readFileSync(CORPUS, "utf8"));
 const tok = (s) => new Set(String(s).toLowerCase().split(/[^\p{L}\p{N}_.-]+/u).filter((t) => t.length > 2));
 const jac = (a, b) => { const A = tok(a), B = tok(b); const i = [...A].filter((x) => B.has(x)).length; return i / Math.max(1, A.size + B.size - i); };
 const text = (e) => `${e.topic} ${e.content}`;
@@ -19,7 +20,7 @@ const conditions = {
     return { retrieved: loaded.map((l) => l.id), tokens: used, stored: lines.length, provenance: 0 }; },
   C_dedicated_store: (probe) => { const r = topK(C.events, probe.query, 5); // shared store, top-k, no trust/supersession/quarantine
     return { retrieved: r.map((e) => e.id), tokens: tokens(r.map(text).join("\n")), stored: C.events.length, provenance: 1 }; },
-  D_nyxa_governed: (probe, ctx) => { const b = recallBundle(ctx.records, { query: probe.query, agent: probe.agent, tokenBudget: 600, k: 5 });
+  D_nyxa_governed: (probe, ctx) => { const b = recallBundle(ctx.records, { query: probe.query, agent: probe.agent, tokenBudget: 600, k: 5 }); // action context only (unverified is separate, not counted as retrieved)
     return { retrieved: b.ids.map((id) => ctx.map.get(id)), tokens: b.tokens, stored: ctx.records.filter((r) => r.status === "active").length, provenance: 1 }; },
 };
 // D ingestion through the continuity adapter (same events, same order)
@@ -45,7 +46,7 @@ for (const [name, f] of Object.entries(conditions)) {
 const out = { schema: "nyxa-mcc01-mechanism-result-v1", date: "2026-11-27", tz: "Europe/Berlin", corpusEvents: C.events.length, probes: C.probes.length,
   dConsolidation: cons.log.reduce((m, l) => ((m[l.op] = (m[l.op] ?? 0) + 1), m), {}), results: res,
   caveats: ["mechanism-level only: no agent acts on the recalled context", "gold relevance by the authoring session (not independent)", "small corpus (20 events, 10 probes)", "keyword retrieval for A/C (no embeddings); B loads markdown wholesale"] };
-fs.writeFileSync(new URL("./result-mechanism-2026-11-27.json", import.meta.url), JSON.stringify(out, null, 1));
+fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 console.log("condition            prec  recall repeatRisk decLoss poison tokens stored prov");
 for (const [n, r] of Object.entries(res)) console.log(n.padEnd(20), String(r.precision).padEnd(5), String(r.recall).padEnd(6), String(r.correctedErrorRepeatRisk).padEnd(10), String(r.decisionLoss).padEnd(7), String(r.poisonExposures).padEnd(6), String(r.meanContextTokens).padEnd(6), String(r.storedRecords).padEnd(6), r.provenance);
 console.log("D consolidation:", JSON.stringify(out.dConsolidation));

@@ -1,0 +1,509 @@
+{
+ "schema": "nyxa-mcc01-mechanism-result-v1",
+ "date": "2026-11-27",
+ "tz": "Europe/Berlin",
+ "corpusEvents": 20,
+ "probes": 10,
+ "dConsolidation": {
+  "supersede": 1,
+  "dedup": 1,
+  "quarantine": 2,
+  "held_for_review": 1
+ },
+ "results": {
+  "A_native": {
+   "precision": 0.3,
+   "recall": 0.25,
+   "correctedErrorRepeatRisk": 5,
+   "decisionLoss": 2,
+   "poisonExposures": 2,
+   "meanContextTokens": 10,
+   "storedRecords": 4,
+   "provenance": 0,
+   "perProbe": [
+    {
+     "probe": "q1",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 1,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    },
+    {
+     "probe": "q2",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 0,
+     "decisionLoss": 1,
+     "poisonExposed": 1,
+     "tokens": 17,
+     "stored": 2,
+     "provenance": 0
+    },
+    {
+     "probe": "q3",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 1,
+     "decisionLoss": null,
+     "poisonExposed": 1,
+     "tokens": 22,
+     "stored": 2,
+     "provenance": 0
+    },
+    {
+     "probe": "q4",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 1,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    },
+    {
+     "probe": "q5",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    },
+    {
+     "probe": "q6",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 32,
+     "stored": 2,
+     "provenance": 0
+    },
+    {
+     "probe": "q7",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 1,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    },
+    {
+     "probe": "q8",
+     "precision": 1,
+     "recall": 0.5,
+     "repeatRisk": 0,
+     "decisionLoss": 1,
+     "poisonExposed": 0,
+     "tokens": 27,
+     "stored": 2,
+     "provenance": 0
+    },
+    {
+     "probe": "q9",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 1,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    },
+    {
+     "probe": "q10",
+     "precision": 0,
+     "recall": 0,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 4,
+     "provenance": 0
+    }
+   ]
+  },
+  "B_markdown_hooks": {
+   "precision": 0.055,
+   "recall": 1,
+   "correctedErrorRepeatRisk": 0,
+   "decisionLoss": 1,
+   "poisonExposures": 30,
+   "meanContextTokens": 534,
+   "storedRecords": 20,
+   "provenance": 0,
+   "perProbe": [
+    {
+     "probe": "q1",
+     "precision": 0.1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q2",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 1,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q3",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q4",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q5",
+     "precision": 0,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q6",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q7",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q8",
+     "precision": 0.1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q9",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    },
+    {
+     "probe": "q10",
+     "precision": 0.05,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 3,
+     "tokens": 534,
+     "stored": 20,
+     "provenance": 0
+    }
+   ]
+  },
+  "C_dedicated_store": {
+   "precision": 0.478,
+   "recall": 1,
+   "correctedErrorRepeatRisk": 0,
+   "decisionLoss": 1,
+   "poisonExposures": 4,
+   "meanContextTokens": 72,
+   "storedRecords": 20,
+   "provenance": 1,
+   "perProbe": [
+    {
+     "probe": "q1",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 58,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q2",
+     "precision": 0.2,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 1,
+     "poisonExposed": 1,
+     "tokens": 103,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q3",
+     "precision": 0.5,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 1,
+     "tokens": 59,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q4",
+     "precision": 0.3333333333333333,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 103,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q5",
+     "precision": 0,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 1,
+     "tokens": 42,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q6",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 32,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q7",
+     "precision": 0.5,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 62,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q8",
+     "precision": 0.5,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 84,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q9",
+     "precision": 0.25,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 1,
+     "tokens": 113,
+     "stored": 20,
+     "provenance": 1
+    },
+    {
+     "probe": "q10",
+     "precision": 0.5,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 63,
+     "stored": 20,
+     "provenance": 1
+    }
+   ]
+  },
+  "D_nyxa_governed": {
+   "precision": 0.967,
+   "recall": 1,
+   "correctedErrorRepeatRisk": 0,
+   "decisionLoss": 0,
+   "poisonExposures": 0,
+   "meanContextTokens": 59,
+   "storedRecords": 15,
+   "provenance": 1,
+   "perProbe": [
+    {
+     "probe": "q1",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 97,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q2",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 45,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q3",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 57,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q4",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 59,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q5",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 0,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q6",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 50,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q7",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 49,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q8",
+     "precision": 0.6666666666666666,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": 0,
+     "poisonExposed": 0,
+     "tokens": 129,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q9",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 53,
+     "stored": 15,
+     "provenance": 1
+    },
+    {
+     "probe": "q10",
+     "precision": 1,
+     "recall": 1,
+     "repeatRisk": 0,
+     "decisionLoss": null,
+     "poisonExposed": 0,
+     "tokens": 52,
+     "stored": 15,
+     "provenance": 1
+    }
+   ]
+  }
+ },
+ "caveats": [
+  "mechanism-level only: no agent acts on the recalled context",
+  "gold relevance by the authoring session (not independent)",
+  "small corpus (20 events, 10 probes)",
+  "keyword retrieval for A/C (no embeddings); B loads markdown wholesale"
+ ]
+}
