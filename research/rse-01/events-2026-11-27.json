@@ -1,0 +1,519 @@
+{
+ "schema": "nyxa-rse01-real-events-v1",
+ "date": "2026-11-27",
+ "tz": "Europe/Berlin",
+ "governanceDigest": "db137490ce01baa450abb2d388e90d058a314ce804295d5709674ed30ecf5d8a",
+ "events": [
+  {
+   "id": "CE-01:B_vs_A",
+   "source": "research/ce-01/runs/scorecard.json",
+   "what": "experience memory",
+   "profile": {
+    "overall": {
+     "GAIN": 1,
+     "HURT": 0,
+     "RETAIN": 4,
+     "GAP": 1,
+     "UNKNOWN": 0,
+     "n": 6,
+     "net": 1,
+     "retention": 1,
+     "unknownShare": 0
+    },
+    "byContext": {
+     "eval": {
+      "GAIN": 1,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 1,
+      "retention": 1,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "tasks": [
+     {
+      "task": "E1",
+      "context": "eval",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "E2",
+      "context": "eval",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "E3",
+      "context": "eval",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "E4",
+      "context": "eval",
+      "outcome": "GAP"
+     },
+     {
+      "task": "X1",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "X2",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     }
+    ]
+   },
+   "decision": {
+    "recommendation": "propose_adoption_for_contexts",
+    "activateIn": [
+     "eval"
+    ],
+    "contexts": {
+     "eval": {
+      "activate": true,
+      "reasons": [],
+      "GAIN": 1,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 1,
+      "retention": 1,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "activate": false,
+      "reasons": [
+       "no_net_gain"
+      ],
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "requires": [
+     "independent_evaluator",
+     "gamma_ALLOW",
+     "human_grant"
+    ]
+   }
+  },
+  {
+   "id": "CE-01:C_vs_A",
+   "source": "research/ce-01/runs/scorecard.json",
+   "what": "memory + strategies",
+   "profile": {
+    "overall": {
+     "GAIN": 1,
+     "HURT": 0,
+     "RETAIN": 4,
+     "GAP": 1,
+     "UNKNOWN": 0,
+     "n": 6,
+     "net": 1,
+     "retention": 1,
+     "unknownShare": 0
+    },
+    "byContext": {
+     "eval": {
+      "GAIN": 1,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 1,
+      "retention": 1,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "tasks": [
+     {
+      "task": "E1",
+      "context": "eval",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "E2",
+      "context": "eval",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "E3",
+      "context": "eval",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "E4",
+      "context": "eval",
+      "outcome": "GAP"
+     },
+     {
+      "task": "X1",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "X2",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     }
+    ]
+   },
+   "decision": {
+    "recommendation": "propose_adoption_for_contexts",
+    "activateIn": [
+     "eval"
+    ],
+    "contexts": {
+     "eval": {
+      "activate": true,
+      "reasons": [],
+      "GAIN": 1,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 1,
+      "retention": 1,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "activate": false,
+      "reasons": [
+       "no_net_gain"
+      ],
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "requires": [
+     "independent_evaluator",
+     "gamma_ALLOW",
+     "human_grant"
+    ]
+   }
+  },
+  {
+   "id": "CE-01:D_vs_A",
+   "source": "research/ce-01/runs/scorecard.json",
+   "what": "memory + adaptive strategy selection",
+   "profile": {
+    "overall": {
+     "GAIN": 1,
+     "HURT": 1,
+     "RETAIN": 3,
+     "GAP": 1,
+     "UNKNOWN": 0,
+     "n": 6,
+     "net": 0,
+     "retention": 0.75,
+     "unknownShare": 0
+    },
+    "byContext": {
+     "eval": {
+      "GAIN": 1,
+      "HURT": 1,
+      "RETAIN": 1,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 0,
+      "retention": 0.5,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "tasks": [
+     {
+      "task": "E1",
+      "context": "eval",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "E2",
+      "context": "eval",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "E3",
+      "context": "eval",
+      "outcome": "HURT"
+     },
+     {
+      "task": "E4",
+      "context": "eval",
+      "outcome": "GAP"
+     },
+     {
+      "task": "X1",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "X2",
+      "context": "transfer",
+      "outcome": "RETAIN"
+     }
+    ]
+   },
+   "decision": {
+    "recommendation": "reject",
+    "activateIn": [],
+    "contexts": {
+     "eval": {
+      "activate": false,
+      "reasons": [
+       "hurts_retained_competence",
+       "no_net_gain"
+      ],
+      "GAIN": 1,
+      "HURT": 1,
+      "RETAIN": 1,
+      "GAP": 1,
+      "UNKNOWN": 0,
+      "n": 4,
+      "net": 0,
+      "retention": 0.5,
+      "unknownShare": 0
+     },
+     "transfer": {
+      "activate": false,
+      "reasons": [
+       "no_net_gain"
+      ],
+      "GAIN": 0,
+      "HURT": 0,
+      "RETAIN": 2,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 2,
+      "net": 0,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "requires": [
+     "independent_evaluator",
+     "gamma_ALLOW",
+     "human_grant"
+    ]
+   }
+  },
+  {
+   "id": "SCORER:v1_to_v2.1",
+   "source": "research/ce-01b + research/scoring (frozen v2.1)",
+   "what": "evaluator revision",
+   "profile": {
+    "overall": {
+     "GAIN": 4,
+     "HURT": 1,
+     "RETAIN": 11,
+     "GAP": 0,
+     "UNKNOWN": 0,
+     "n": 16,
+     "net": 3,
+     "retention": 0.917,
+     "unknownShare": 0
+    },
+    "byContext": {
+     "individual_answers": {
+      "GAIN": 2,
+      "HURT": 1,
+      "RETAIN": 5,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 8,
+      "net": 1,
+      "retention": 0.833,
+      "unknownShare": 0
+     },
+     "cooperative_answers": {
+      "GAIN": 2,
+      "HURT": 0,
+      "RETAIN": 6,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 8,
+      "net": 2,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "tasks": [
+     {
+      "task": "I:Q1",
+      "context": "individual_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "I:Q2",
+      "context": "individual_answers",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "I:Q3",
+      "context": "individual_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "I:Q4",
+      "context": "individual_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "I:Q5",
+      "context": "individual_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "I:Q6",
+      "context": "individual_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "I:Q7",
+      "context": "individual_answers",
+      "outcome": "HURT"
+     },
+     {
+      "task": "I:Q8",
+      "context": "individual_answers",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "K:Q1",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q2",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q3",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q4",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q5",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q6",
+      "context": "cooperative_answers",
+      "outcome": "GAIN"
+     },
+     {
+      "task": "K:Q7",
+      "context": "cooperative_answers",
+      "outcome": "RETAIN"
+     },
+     {
+      "task": "K:Q8",
+      "context": "cooperative_answers",
+      "outcome": "GAIN"
+     }
+    ]
+   },
+   "decision": {
+    "recommendation": "propose_adoption_for_contexts",
+    "activateIn": [
+     "cooperative_answers"
+    ],
+    "contexts": {
+     "individual_answers": {
+      "activate": false,
+      "reasons": [
+       "hurts_retained_competence"
+      ],
+      "GAIN": 2,
+      "HURT": 1,
+      "RETAIN": 5,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 8,
+      "net": 1,
+      "retention": 0.833,
+      "unknownShare": 0
+     },
+     "cooperative_answers": {
+      "activate": true,
+      "reasons": [],
+      "GAIN": 2,
+      "HURT": 0,
+      "RETAIN": 6,
+      "GAP": 0,
+      "UNKNOWN": 0,
+      "n": 8,
+      "net": 2,
+      "retention": 1,
+      "unknownShare": 0
+     }
+    },
+    "requires": [
+     "independent_evaluator",
+     "gamma_ALLOW",
+     "human_grant"
+    ]
+   }
+  }
+ ]
+}

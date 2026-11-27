@@ -20,6 +20,7 @@ button{font:inherit;border:1px solid var(--line);background:transparent;color:va
 <section id="learn"><h2>Lern- und Erfahrungsgelegenheiten</h2><ul></ul></section>
 <section id="shared"><h2>Gemeinsame Erkenntnisse</h2><ul></ul></section>
 <section id="exp"><h2>Experimente und nächste Schritte</h2><ul></ul></section>
+<section id="rse"><h2>Was Sophia aus realen Lernereignissen gelernt hat</h2><p class="note">GAIN = neu gelöst · HURT = vorher gelöst, jetzt nicht · RETAIN = erhalten · GAP = weiterhin offen · UNKNOWN = nicht prüfbar</p><ul></ul></section>
 </main>
 <script>
 // Renders a run/model JSON (same shape as demo/run-2026-11-27.json). Data source is injected by the host
@@ -37,6 +38,10 @@ window.renderEvolution=function(run,{onCorrect,onObject}={}){
     if(s.step==="explore") s.possibility.nextSteps.forEach((n)=>li("#exp",esc(n)));
     if(s.step==="question") s.asked.forEach((t)=>li("#q",esc(t)));
     if(s.step==="reflect") li("#shared",esc(s.reflection));
+  }
+  for(const e of (run.learningEvents||[])){
+    const o=e.outcome; li("#rse","<b>"+esc(e.id)+"</b> ("+esc(e.what)+")<br>GAIN "+o.GAIN+" · HURT "+o.HURT+" · RETAIN "+o.RETAIN+" · GAP "+o.GAP+" · UNKNOWN "+o.UNKNOWN
+      +'<br><span class="note">'+(e.recommendation==="reject"?"nicht übernommen":"übernehmen nur in: "+esc(e.activateIn.join(", ")))+" (Übernahme nur mit Freigabe)</span>");
   }
   document.body.addEventListener("click",(ev)=>{const c=ev.target.dataset.c,o=ev.target.dataset.o;if(c&&onCorrect)onCorrect(c);if(o&&onObject)onObject(o);});
 };

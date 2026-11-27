@@ -17,11 +17,11 @@ import { createHash } from "node:crypto";
 
 export const SRM_TAGS = ["FACT", "CLAIM", "INFERENCE", "HYPOTHESIS", "MEMORY", "SIMULATION", "MODEL_OUTPUT", "EXTERNAL_EVIDENCE"];
 export const KINDS = ["reasoning", "decision", "problem_solving", "cooperation"];
-export const STATUS = ["candidate", "simulated", "evaluated", "adoption_proposed", "adopted", "revised", "revoked", "rejected"];
+export const STATUS = ["candidate", "simulated", "evaluated", "adoption_proposed", "adopted", "suspended", "revised", "revoked", "rejected"];
 const TRANSITIONS = {
   candidate: ["simulated", "rejected", "revoked"], simulated: ["evaluated", "rejected", "revoked"],
   evaluated: ["adoption_proposed", "rejected", "revoked"], adoption_proposed: ["adopted", "rejected", "revoked"],
-  adopted: ["revised", "revoked"], revised: [], revoked: [], rejected: [],
+  adopted: ["revised", "revoked", "suspended"], suspended: ["revoked", "adopted"], revised: [], revoked: [], rejected: [],
 };
 // Authority is never learnable: a strategy that mentions these keys is rejected outright.
 const FORBIDDEN = /\b(budget|max_executions|mandate|scope_prefix|target_prefix|ttl_seconds|capability_class|evaluation_criteria|success_criteria_override|human_grant|issuer|passport|token)\b/i;
@@ -151,3 +151,70 @@ export function revise(s, changes, { counterexample } = {}) {
 }
 
 export function revoke(s, reason) { if (!reason) fail("reason_required"); return transition(s, "revoked", { reason }); }
+
+// =====================================================================================================
+// RSE-01 Regret-Guided Strategy Evolution (2026-11-27, R7). Extends the cycle above; no new store.
+// Source note: the referenced "GUARD" research order was not found in any reachable source (unverified);
+// this implements the categories named in the R7 order.
+// =====================================================================================================
+/** Immutable governance limits. Strategies can neither carry nor change them; digest is checked. */
+export const GOVERNANCE_INVARIANTS = Object.freeze({ maxHurtOnRetained: 0, minNetGain: 1, maxUnknownShare: 0.2, adoptionRequires: Object.freeze(["independent_evaluator", "gamma_ALLOW", "human_grant"]), rollbackDirection: "toward_baseline_only" });
+export const GOVERNANCE_DIGEST = digest(GOVERNANCE_INVARIANTS);
+export function assertGovernanceUnchanged(inv = GOVERNANCE_INVARIANTS) { if (digest(inv) !== GOVERNANCE_DIGEST) fail("governance_invariants_changed"); return true; }
+
+/** Per-task regret outcome of a candidate vs. the current baseline. Correctness: true | false | null(unknown). */
+export function regretOutcome(baselineCorrect, candidateCorrect) {
+  if (baselineCorrect == null || candidateCorrect == null) return "UNKNOWN";
+  if (!baselineCorrect && candidateCorrect) return "GAIN";
+  if (baselineCorrect && !candidateCorrect) return "HURT";
+  return baselineCorrect ? "RETAIN" : "GAP";
+}
+/** rows: [{task, context, baseline, candidate}] -> profile overall and per context. */
+export function regretProfile(rows) {
+  const tally = (rs) => { const c = { GAIN: 0, HURT: 0, RETAIN: 0, GAP: 0, UNKNOWN: 0 }; for (const r of rs) c[regretOutcome(r.baseline, r.candidate)]++;
+    const competence = c.RETAIN + c.HURT; return { ...c, n: rs.length, net: c.GAIN - c.HURT, retention: competence ? +(c.RETAIN / competence).toFixed(3) : null, unknownShare: rs.length ? +(c.UNKNOWN / rs.length).toFixed(3) : 0 }; };
+  const byContext = {}; for (const r of rows) (byContext[r.context ?? "default"] ??= []).push(r);
+  return { overall: tally(rows), byContext: Object.fromEntries(Object.entries(byContext).map(([k, v]) => [k, tally(v)])),
+    tasks: rows.map((r) => ({ task: r.task, context: r.context ?? "default", outcome: regretOutcome(r.baseline, r.candidate) })) };
+}
+/** Regression-aware promotion per context, against the immutable invariants. Competence preservation first. */
+export function promotionDecision(profile, inv = GOVERNANCE_INVARIANTS) {
+  assertGovernanceUnchanged(inv);
+  const contexts = {};
+  for (const [ctx, t] of Object.entries(profile.byContext)) {
+    const reasons = [];
+    if (t.HURT > inv.maxHurtOnRetained) reasons.push("hurts_retained_competence");
+    if (t.net < inv.minNetGain) reasons.push("no_net_gain");
+    if (t.unknownShare > inv.maxUnknownShare) reasons.push("too_much_unknown");
+    contexts[ctx] = { activate: reasons.length === 0, reasons, ...t };
+  }
+  const active = Object.entries(contexts).filter(([, v]) => v.activate).map(([k]) => k);
+  return { recommendation: active.length ? "propose_adoption_for_contexts" : "reject", activateIn: active, contexts, requires: inv.adoptionRequires };
+}
+/** Parallel evaluation of several candidates on identical tasks against one baseline (no self-evaluation). */
+export async function parallelEvaluate(candidates, tasks, run, { evaluator }) {
+  for (const c of candidates) if (!evaluator || evaluator === c.author) fail("self_evaluation");
+  const base = await Promise.all(tasks.map((t) => run(t, null)));
+  const out = [];
+  for (const c of candidates) {
+    const res = await Promise.all(tasks.map((t) => run(t, { strategy: c.id, digest: c.digest })));
+    const profile = regretProfile(tasks.map((t, i) => ({ task: t.id, context: t.context, baseline: base[i], candidate: res[i] })));
+    out.push({ id: c.id, digest: c.digest, profile, decision: promotionDecision(profile) });
+  }
+  return out.sort((a, b) => b.profile.overall.net - a.profile.overall.net || a.profile.overall.HURT - b.profile.overall.HURT);
+}
+/** Context-dependent activation: only adopted strategies whose adopted contexts include the task context. */
+export function selectStrategy(strategies, context) {
+  const s = strategies.filter((x) => x.status === "adopted" && (x.activeContexts ?? []).includes(context));
+  return s.length === 1 ? s[0] : null; // ambiguity or none -> baseline
+}
+/** Post-adoption regression watch: demonstrated harm suspends immediately (toward baseline) and proposes revocation. */
+export function regressionWatch(s, liveRows, { tolerance = GOVERNANCE_INVARIANTS.maxHurtOnRetained } = {}) {
+  if (s.status !== "adopted") fail("must_be_adopted");
+  const p = regretProfile(liveRows);
+  if (p.overall.HURT > tolerance) {
+    const suspended = transition({ ...s, activeContexts: [] }, "suspended", { reason: "demonstrated_regression", hurt: p.overall.HURT });
+    return { strategy: suspended, action: "suspended_to_baseline", revocationProposal: { strategyId: s.id, digest: s.digest, evidence: p.tasks.filter((t) => t.outcome === "HURT"), requires: "gamma_ALLOW + human_grant" } };
+  }
+  return { strategy: s, action: "none", profile: p.overall };
+}
