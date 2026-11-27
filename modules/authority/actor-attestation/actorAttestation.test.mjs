@@ -172,3 +172,30 @@ test("R3 DIRECT WRITE TOOLS: mandate_derive attested; tamper, scope, actor, unli
   assert.equal(V("nyxa_apply_patch", args, s(args)).reason, "tool_not_attestable");
   assert.equal(V("nyxa_mandate_derive", args, undefined).reason, "attestation_required");
 });
+
+test("R4 REVOCATION WITHOUT RESTART + CRASH BETWEEN NONCE AND EFFECT (at-most-once)", async () => {
+  const env = { ...process.env };
+  try {
+    const regDir = fs.mkdtempSync(path.join(tmp, "live-")); fs.chmodSync(regDir, 0o700);
+    const f = path.join(regDir, "passports.json"); fs.writeFileSync(f, JSON.stringify(reg)); fs.chmodSync(f, 0o600);
+    const nd = fs.mkdtempSync(path.join(tmp, "nonce-live-")); fs.chmodSync(nd, 0o700);
+    Object.assign(process.env, { NYXA_ACTOR_ATTESTATION_MODE: "required", NYXA_AGENT_PASSPORTS: f, NYXA_ATTESTATION_NONCE_DIR: nd,
+      NYXA_DEVELOPMENT_ACTOR: "claude", NYXA_PASSPORTS_OWNER_UID: String(UID) }); G._resetForTesting();
+    const now = NOW * 1000;
+    // Crash after the gate consumed the nonce but before the effect: the same attestation can never
+    // execute later (no double effect); the agent must re-sign -> at-most-once per attestation.
+    const p = proposal(); const a = sign(p);
+    assert.equal((await G.gateProposal(p, a, now)).ok, true);
+    /* simulated crash: effect never ran */
+    assert.equal((await G.gateProposal(p, a, now)).reason, "replay", "retry with same attestation after crash is not executed twice");
+    assert.equal((await G.gateProposal(p, sign(p), now)).ok, true, "fresh signature after crash proceeds (effect-level idempotency stays with the executor)");
+    // In-flight revocation: an attestation signed BEFORE revocation is rejected once the registry changes.
+    const pending = sign(proposal());
+    await new Promise((r) => setTimeout(r, 20));
+    fs.writeFileSync(f, JSON.stringify({ ...reg, revoked_key_ids: ["claude-dev-2026-11"] }));
+    assert.equal((await G.gateProposal(proposal(), pending, now)).reason, "passport_revoked", "revocation effective without restart");
+    // Registry removed -> fail closed.
+    fs.unlinkSync(f);
+    assert.equal((await G.gateProposal(proposal(), sign(proposal()), now)).reason, "attestation_config_invalid");
+  } finally { process.env = env; G._resetForTesting(); }
+});

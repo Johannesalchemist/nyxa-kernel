@@ -1,0 +1,455 @@
+[
+ {
+  "id": "strat-verify-tool-before-absence",
+  "version": 1,
+  "title": "Verify the observation channel before concluding absence",
+  "kind": "reasoning",
+  "procedure": "Before reporting that something is missing, empty or unreadable, check how the observation was made. Identify filters, truncation, symlink handling, access rights and flag semantics of the tool used. Re-observe through a second, independent method. Only then state absence; otherwise label it unverified.",
+  "components": [
+   "List ways the tool could hide the target",
+   "Re-observe via an independent method",
+   "Report absence only if both agree, else mark unverified"
+  ],
+  "context": {
+   "domains": [
+    "debugging",
+    "shell tooling",
+    "filesystem inspection",
+    "log analysis"
+   ],
+   "triggers": [
+    "empty search result",
+    "file seems missing",
+    "output piped to head",
+    "nothing found"
+   ]
+  },
+  "preconditions": [
+   "A negative or surprising observation exists",
+   "An alternative observation method is available"
+  ],
+  "limits": [
+   "Costs an extra check on every negative result",
+   "Alternative method may share the same blind spot"
+  ],
+  "successCriteria": [
+   {
+    "metric": "objective_gain_vs_B",
+    "comparator": ">=",
+    "threshold": 0
+   }
+  ],
+  "uncertainty": 0.2,
+  "digest": "2e64c7d1af521ca04e74c13b24771de382ea5ee3dbdcdb563fbe89881b9e242c",
+  "status": "evaluated",
+  "author": "reflector-ce01",
+  "provenance": {
+   "reflectionRef": "ce01:reflector:2026-11-27",
+   "experiences": [
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-02: An empty search result is evidence about the tool, not only about the target; verify tool semantics (symlinks, permissions, truncation) before concluding absence.",
+     "source": "handoffs/2026/11/2026-11-27_CLAUDE_CONTINUATION_R2.md"
+    },
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-03: When two observations contradict, check whether one is truncated or filtered before asserting a conclusion; never report absence from a truncated listing.",
+     "source": "research/evidence/2026-11-27/CONTINUATION-R3_EVIDENCE.md (redacted)"
+    }
+   ]
+  },
+  "counterexamples": [
+   {
+    "ref": "strat-verify-tool-before-absence#cx1",
+    "description": "Trivially reliable lookups where the tool is known exact and a second check adds only cost",
+    "open": false
+   },
+   {
+    "ref": "strat-verify-tool-before-absence#cx2",
+    "description": "Cases where an independent method is unavailable, so verification stalls progress",
+    "open": false
+   }
+  ],
+  "evaluations": [
+   {
+    "evaluator": "evaluator-ce01",
+    "scorecardSha256": "e786afabb9bae8898da597761627122bf10c51746ceba60335e49673238003f7",
+    "design": "A/B/C/D, pre-registered keys, blinded judge",
+    "baseline": "B (memory only)",
+    "tasksApplied": [
+     "E2",
+     "E4",
+     "X2"
+    ],
+    "transferTasks": [
+     "X2"
+    ],
+    "objectiveGainVsB": 0,
+    "transferDeltaVsB": 0,
+    "calibrationBrierC_vs_B": [
+     0.151,
+     0.155
+    ],
+    "adaptiveSelectionD": {
+     "quality": 0.89,
+     "steps": 4
+    },
+    "judgeDisagreements": 1,
+    "recommendation": "keep_as_candidate_revise_or_retest",
+    "reasons": [
+     "no_objective_gain_over_memory_baseline_B",
+     "no_transfer_gain (ceiling: transfer quality 1.0 in all conditions)"
+    ]
+   }
+  ],
+  "history": [
+   {
+    "status": "candidate",
+    "at": null
+   },
+   {
+    "status": "simulated",
+    "note": "CE-01 shadow run (no effects)"
+   },
+   {
+    "status": "evaluated",
+    "evaluator": "evaluator-ce01"
+   }
+  ]
+ },
+ {
+  "id": "strat-reconcile-contradicting-observations",
+  "version": 1,
+  "title": "Reconcile contradictions before asserting",
+  "kind": "problem_solving",
+  "procedure": "When two observations conflict, do not pick the one fitting your first story. Treat the conflict as a signal that one view is partial. Test each source for truncation, filtering, staleness or wrong scope, find the discriminating observation, and only then assert; retract promptly if a claim was already made.",
+  "components": [
+   "State both observations side by side",
+   "Test each for truncation, filtering or staleness",
+   "Run a discriminating check, then assert or retract"
+  ],
+  "context": {
+   "domains": [
+    "fault diagnosis",
+    "incident reporting",
+    "system inspection"
+   ],
+   "triggers": [
+    "two outputs disagree",
+    "process runs but file not listed",
+    "claim contradicts other evidence"
+   ]
+  },
+  "preconditions": [
+   "Both observations are reproducible or inspectable"
+  ],
+  "limits": [
+   "Some contradictions stem from real state changes between observations, not partial views",
+   "May delay urgent reports"
+  ],
+  "successCriteria": [
+   {
+    "metric": "objective_gain_vs_B",
+    "comparator": ">=",
+    "threshold": 0
+   }
+  ],
+  "uncertainty": 0.25,
+  "digest": "272673fffc6bad10292435a29f511e541e6cef7e9c54f36612a0425b232b5637",
+  "status": "evaluated",
+  "author": "reflector-ce01",
+  "provenance": {
+   "reflectionRef": "ce01:reflector:2026-11-27",
+   "experiences": [
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-03: When two observations contradict, check whether one is truncated or filtered before asserting a conclusion; never report absence from a truncated listing.",
+     "source": "research/evidence/2026-11-27/CONTINUATION-R3_EVIDENCE.md (redacted)"
+    },
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-02: An empty search result is evidence about the tool, not only about the target; verify tool semantics (symlinks, permissions, truncation) before concluding absence.",
+     "source": "handoffs/2026/11/2026-11-27_CLAUDE_CONTINUATION_R2.md"
+    }
+   ]
+  },
+  "counterexamples": [
+   {
+    "ref": "strat-reconcile-contradicting-observations#cx1",
+    "description": "Fast-changing systems where the contradiction is a genuine race and not an artifact of tooling",
+    "open": false
+   }
+  ],
+  "evaluations": [
+   {
+    "evaluator": "evaluator-ce01",
+    "scorecardSha256": "e786afabb9bae8898da597761627122bf10c51746ceba60335e49673238003f7",
+    "design": "A/B/C/D, pre-registered keys, blinded judge",
+    "baseline": "B (memory only)",
+    "tasksApplied": [
+     "E2",
+     "E4",
+     "X1",
+     "X2"
+    ],
+    "transferTasks": [
+     "X1",
+     "X2"
+    ],
+    "objectiveGainVsB": 0,
+    "transferDeltaVsB": 0,
+    "calibrationBrierC_vs_B": [
+     0.151,
+     0.155
+    ],
+    "adaptiveSelectionD": {
+     "quality": 0.89,
+     "steps": 4
+    },
+    "judgeDisagreements": 1,
+    "recommendation": "keep_as_candidate_revise_or_retest",
+    "reasons": [
+     "no_objective_gain_over_memory_baseline_B",
+     "no_transfer_gain (ceiling: transfer quality 1.0 in all conditions)"
+    ]
+   }
+  ],
+  "history": [
+   {
+    "status": "candidate",
+    "at": null
+   },
+   {
+    "status": "simulated",
+    "note": "CE-01 shadow run (no effects)"
+   },
+   {
+    "status": "evaluated",
+    "evaluator": "evaluator-ce01"
+   }
+  ]
+ },
+ {
+  "id": "strat-trace-context-across-boundaries",
+  "version": 1,
+  "title": "Trace context across each boundary",
+  "kind": "cooperation",
+  "procedure": "When behavior differs between components, hosts or chained processes, do not assume inheritance or direct paths. Enumerate each boundary (spawn, proxy, host, config scope), inspect what environment, identity or settings actually arrive on the far side, and locate the first boundary where expected context is lost, before editing code.",
+  "components": [
+   "Enumerate boundaries in the chain",
+   "Inspect actual context received at each",
+   "Fix at the first boundary where it diverges"
+  ],
+  "context": {
+   "domains": [
+    "multi-process systems",
+    "multi-agent chains",
+    "reverse proxies",
+    "module/config resolution"
+   ],
+   "triggers": [
+    "works in parent but not child",
+    "only fails on one host",
+    "identity looks wrong behind proxy",
+    "dependency not found in spawned process"
+   ]
+  },
+  "preconditions": [
+   "Ability to inspect state inside or at each hop"
+  ],
+  "limits": [
+   "Chains with many hops make full tracing expensive",
+   "Inspection may itself perturb the environment"
+  ],
+  "successCriteria": [
+   {
+    "metric": "objective_gain_vs_B",
+    "comparator": ">=",
+    "threshold": 0
+   }
+  ],
+  "uncertainty": 0.2,
+  "digest": "b6cf88fe0a09e69ebf6b68482d2b15d3ddf8cbbf48e371a74630afe431590206",
+  "status": "evaluated",
+  "author": "reflector-ce01",
+  "provenance": {
+   "reflectionRef": "ce01:reflector:2026-11-27",
+   "experiences": [
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-01: When module semantics differ per host, check the nearest package.json up to / before changing code.",
+     "source": "research/evidence/2026-11-26/WP-A1-ACTOR-BINDING_EVIDENCE.md"
+    },
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-04: In multi-process/multi-agent chains, verify what context actually crosses each boundary instead of assuming inheritance.",
+     "source": "research/adversarial-harness/run.mjs"
+    },
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-06: Before binding identity to a transport property, verify the real request path (proxies, tunnels) end to end.",
+     "source": "modules/authority/actor-binding/DEPLOY-ORDER-WP-A1.md"
+    }
+   ]
+  },
+  "counterexamples": [
+   {
+    "ref": "strat-trace-context-across-boundaries#cx1",
+    "description": "Failures that are genuine code bugs in the first component, where boundary tracing wastes effort",
+    "open": false
+   }
+  ],
+  "evaluations": [
+   {
+    "evaluator": "evaluator-ce01",
+    "scorecardSha256": "e786afabb9bae8898da597761627122bf10c51746ceba60335e49673238003f7",
+    "design": "A/B/C/D, pre-registered keys, blinded judge",
+    "baseline": "B (memory only)",
+    "tasksApplied": [
+     "E1",
+     "E3"
+    ],
+    "transferTasks": [],
+    "objectiveGainVsB": 0,
+    "transferDeltaVsB": null,
+    "calibrationBrierC_vs_B": [
+     0.151,
+     0.155
+    ],
+    "adaptiveSelectionD": {
+     "quality": 0.89,
+     "steps": 4
+    },
+    "judgeDisagreements": 1,
+    "recommendation": "keep_as_candidate_revise_or_retest",
+    "reasons": [
+     "no_objective_gain_over_memory_baseline_B"
+    ]
+   }
+  ],
+  "history": [
+   {
+    "status": "candidate",
+    "at": null
+   },
+   {
+    "status": "simulated",
+    "note": "CE-01 shadow run (no effects)"
+   },
+   {
+    "status": "evaluated",
+    "evaluator": "evaluator-ce01"
+   }
+  ]
+ },
+ {
+  "id": "strat-cheap-observation-over-polling",
+  "version": 1,
+  "title": "Prefer one deferred read over repeated polling",
+  "kind": "decision",
+  "procedure": "For slow or costly remote operations, redirect output to a durable file or log, let the job run, and read the result once at an expected completion point. Poll only when intermediate state changes a decision, and then at widening intervals.",
+  "components": [
+   "Redirect output to a durable artifact",
+   "Estimate completion time and wait",
+   "Read once; poll only if state affects a decision"
+  ],
+  "context": {
+   "domains": [
+    "remote jobs",
+    "long-running processes",
+    "metered services"
+   ],
+   "triggers": [
+    "repeated status checks",
+    "long remote job",
+    "metered access"
+   ]
+  },
+  "preconditions": [
+   "Job output can be persisted",
+   "Completion time is roughly estimable"
+  ],
+  "limits": [
+   "Failure is detected late",
+   "Unsuitable when early failure detection saves more than polling costs"
+  ],
+  "successCriteria": [
+   {
+    "metric": "objective_gain_vs_B",
+    "comparator": ">=",
+    "threshold": 0
+   }
+  ],
+  "uncertainty": 0.35,
+  "digest": "d870fe096cc67ae4ade85a963cccee44ceaa944fe10d571b290c3cc5e9719ede",
+  "status": "evaluated",
+  "author": "reflector-ce01",
+  "provenance": {
+   "reflectionRef": "ce01:reflector:2026-11-27",
+   "experiences": [
+    {
+     "tag": "MEMORY",
+     "statement": "EXP-05: For slow remote jobs with metered access, write to a file and read once; do not poll.",
+     "source": "session transcript 2026-11-26"
+    },
+    {
+     "tag": "INFERENCE",
+     "statement": "Generalized by reflector from EXP-05",
+     "source": "ce01:reflector"
+    }
+   ]
+  },
+  "counterexamples": [
+   {
+    "ref": "strat-cheap-observation-over-polling#cx1",
+    "description": "Jobs likely to fail early or hang, where early detection avoids larger waste",
+    "open": false
+   },
+   {
+    "ref": "strat-cheap-observation-over-polling#cx2",
+    "description": "Interactive tasks needing live feedback",
+    "open": false
+   }
+  ],
+  "evaluations": [
+   {
+    "evaluator": "evaluator-ce01",
+    "scorecardSha256": "e786afabb9bae8898da597761627122bf10c51746ceba60335e49673238003f7",
+    "design": "A/B/C/D, pre-registered keys, blinded judge",
+    "baseline": "B (memory only)",
+    "tasksApplied": [],
+    "transferTasks": [],
+    "objectiveGainVsB": null,
+    "transferDeltaVsB": null,
+    "calibrationBrierC_vs_B": [
+     0.151,
+     0.155
+    ],
+    "adaptiveSelectionD": {
+     "quality": 0.89,
+     "steps": 4
+    },
+    "judgeDisagreements": 1,
+    "recommendation": "keep_as_candidate_revise_or_retest",
+    "reasons": [
+     "no_objective_gain_over_memory_baseline_B",
+     "not_applied_in_any_task"
+    ]
+   }
+  ],
+  "history": [
+   {
+    "status": "candidate",
+    "at": null
+   },
+   {
+    "status": "simulated",
+    "note": "CE-01 shadow run (no effects)"
+   },
+   {
+    "status": "evaluated",
+    "evaluator": "evaluator-ce01"
+   }
+  ]
+ }
+]

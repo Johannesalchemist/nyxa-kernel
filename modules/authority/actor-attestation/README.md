@@ -31,6 +31,12 @@
 - Schlüssel: `not_before`/`not_after` (Rotation), `revoked_key_ids`, Registry und Verzeichnis müssen dem Operator gehören (`NYXA_PASSPORTS_OWNER_UID`, Standard root) → keine Selbstregistrierung.
 - Replay: 8 konkurrierende Prozesse und 2 Instanzen auf einer Nonce → genau 1 Gewinner; nach Neustart weiterhin Replay.
 
+## R4
+
+- Widerruf/Rotation ohne Neustart: Registry wird bei Datei-Änderung neu geladen; fehlende Registry → fail closed.
+- Absturz zwischen Nonce-Verbrauch und Effekt: gleiche Attestierung wird nie erneut ausgeführt (*at-most-once*); neue Signatur nötig.
+- Stufenplan zur aktiven Durchsetzung: `DEPLOYMENT-PLAN-R4.md`.
+
 ## Offene Befunde (historisch R2)
 
 - **R8 — in R3 geschlossen:** Die Schreib-Tools außerhalb des Proposal-Pfads waren in R2 nicht attestiert; seit R3 sind sie über den kanonischen Tool-Argument-Digest attestierungspflichtig (siehe oben).

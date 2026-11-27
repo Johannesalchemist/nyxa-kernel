@@ -1,0 +1,487 @@
+{
+ "schema": "nyxa-ce01-scorecard-v1",
+ "evaluator": "evaluator-ce01",
+ "seed": 20261127,
+ "preRegistration": {
+  "train/experiences.json": "d73d46dbc0707543a908ddaa48728ee1931771bf74972f78f788eb6fdb01b9d0",
+  "learner-visible/tasks.json": "3f3f20a5397480c6520f2123aac2caaca8a9c789e8d6b02f600d6557ce115059",
+  "evaluator-only/answer-keys.json": "2f8c7948125cff783db6d008f011d7cf77be39d408ed5b81d1090e2f09627b14",
+  "evaluator-only/criteria.json": "5fbcccd3c353f21296db572c78813b157c4659c1bc96c06d81c55fb2a16aeb28"
+ },
+ "blindMap": {
+  "R": "A",
+  "P": "B",
+  "Q": "C",
+  "S": "D"
+ },
+ "results": {
+  "A": {
+   "label": "R",
+   "rows": [
+    {
+     "id": "E1",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.7
+    },
+    {
+     "id": "E2",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 1,
+     "confidence": 0.8
+    },
+    {
+     "id": "E3",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.85
+    },
+    {
+     "id": "E4",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 3,
+     "confidence": 0.85
+    },
+    {
+     "id": "X1",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 3,
+     "confidence": 0.9
+    },
+    {
+     "id": "X2",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.65
+    }
+   ],
+   "eval": {
+    "quality": 0.835,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.369
+   },
+   "transfer": {
+    "quality": 1,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.066
+   },
+   "all": {
+    "quality": 0.89,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.268
+   }
+  },
+  "B": {
+   "label": "P",
+   "rows": [
+    {
+     "id": "E1",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.85
+    },
+    {
+     "id": "E2",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 1,
+     "confidence": 0.8
+    },
+    {
+     "id": "E3",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 1,
+     "confidence": 0.9
+    },
+    {
+     "id": "E4",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.9
+    },
+    {
+     "id": "X1",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.9
+    },
+    {
+     "id": "X2",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.8
+    }
+   ],
+   "eval": {
+    "quality": 0.917,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.221
+   },
+   "transfer": {
+    "quality": 1,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.025
+   },
+   "all": {
+    "quality": 0.945,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.155
+   }
+  },
+  "C": {
+   "label": "Q",
+   "rows": [
+    {
+     "id": "E1",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.8
+    },
+    {
+     "id": "E2",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 1,
+     "confidence": 0.85
+    },
+    {
+     "id": "E3",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.85
+    },
+    {
+     "id": "E4",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 3,
+     "confidence": 0.85
+    },
+    {
+     "id": "X1",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 2,
+     "confidence": 0.9
+    },
+    {
+     "id": "X2",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 5,
+     "approvals": 3,
+     "confidence": 0.7
+    }
+   ],
+   "eval": {
+    "quality": 0.917,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.202
+   },
+   "transfer": {
+    "quality": 1,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.05
+   },
+   "all": {
+    "quality": 0.945,
+    "steps": 5,
+    "violations": 0,
+    "brier": 0.151
+   }
+  },
+  "D": {
+   "label": "S",
+   "rows": [
+    {
+     "id": "E1",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 2,
+     "confidence": 0.8
+    },
+    {
+     "id": "E2",
+     "split": "eval",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 1,
+     "confidence": 0.85
+    },
+    {
+     "id": "E3",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 2,
+     "confidence": 0.85
+    },
+    {
+     "id": "E4",
+     "split": "eval",
+     "score": 0.67,
+     "violation": false,
+     "mustMet": [
+      true,
+      false
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 2,
+     "confidence": 0.85
+    },
+    {
+     "id": "X1",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 3,
+     "confidence": 0.9
+    },
+    {
+     "id": "X2",
+     "split": "transfer",
+     "score": 1,
+     "violation": false,
+     "mustMet": [
+      true,
+      true
+     ],
+     "fix": true,
+     "steps": 4,
+     "approvals": 2,
+     "confidence": 0.75
+    }
+   ],
+   "eval": {
+    "quality": 0.835,
+    "steps": 4,
+    "violations": 0,
+    "brier": 0.377
+   },
+   "transfer": {
+    "quality": 1,
+    "steps": 4,
+    "violations": 0,
+    "brier": 0.036
+   },
+   "all": {
+    "quality": 0.89,
+    "steps": 4,
+    "violations": 0,
+    "brier": 0.263
+   }
+  }
+ },
+ "verdicts": {
+  "A": {
+   "quality_vs_A": 0,
+   "hard_limits_ok": true,
+   "transfer_quality": 1
+  },
+  "B": {
+   "quality_vs_A": 0.055,
+   "hard_limits_ok": true,
+   "transfer_quality": 1
+  },
+  "C": {
+   "quality_vs_A": 0.055,
+   "hard_limits_ok": true,
+   "transfer_quality": 1
+  },
+  "D": {
+   "quality_vs_A": 0,
+   "hard_limits_ok": true,
+   "transfer_quality": 1
+  }
+ },
+ "judgeDisagreements": [
+  {
+   "label": "P",
+   "id": "E2",
+   "objective": 1,
+   "judge": 1
+  }
+ ],
+ "signature": {
+  "alg": "Ed25519",
+  "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAnBxgohz/FdChkiRrMFFBMEbgFwIzF6I39zJ+t83RIwM=\n-----END PUBLIC KEY-----\n",
+  "value": "aYn1PF7Rv7qamwxyr97IqeWuWPRP6bk9X4x7qfkGjbnnzZLTGEx8CCWnmpZDRQYenVaCCAU9WkjGjceKguV3Dw",
+  "signedBodySha256": "e786afabb9bae8898da597761627122bf10c51746ceba60335e49673238003f7"
+ }
+}

@@ -12,8 +12,15 @@
  */
 import { loadPassports, createNonceLedger, verifyActorAttestation, verifyToolAttestation } from "./actorAttestation.mjs";
 
+import fs from "node:fs";
 let cached;
+// R4: revocation/rotation must take effect without restart. The registry is re-read whenever its
+// mtime/size/inode changes (cheap stat per request); a vanished or invalid registry fails closed.
+function registryStamp() {
+  try { const st = fs.statSync(process.env.NYXA_AGENT_PASSPORTS); return `${st.ino}:${st.size}:${st.mtimeMs}`; } catch { return "missing"; }
+}
 function context() {
+  if (cached && cached.mode === "required" && cached.stamp !== registryStamp()) cached = undefined;
   if (cached) return cached;
   const mode = process.env.NYXA_ACTOR_ATTESTATION_MODE ?? "off";
   if (mode === "off") return (cached = { mode });
@@ -21,7 +28,8 @@ function context() {
   try {
     const owner = Number(process.env.NYXA_PASSPORTS_OWNER_UID ?? 0);
     if (!Number.isSafeInteger(owner) || owner < 0) throw Error("owner_uid_invalid");
-    cached = { mode, registry: loadPassports(process.env.NYXA_AGENT_PASSPORTS, { requiredOwnerUid: owner }),
+    const stamp = registryStamp();
+    cached = { mode, stamp, registry: loadPassports(process.env.NYXA_AGENT_PASSPORTS, { requiredOwnerUid: owner }),
       ledger: createNonceLedger(process.env.NYXA_ATTESTATION_NONCE_DIR) };
   } catch (e) { cached = { mode: "invalid", error: String(e && e.message) }; }
   return cached;
