@@ -68,6 +68,11 @@ function childEnv() {
     env.NYXA_MANDATE_DATA_DIR = process.env.NYXA_MANDATE_DATA_DIR;
   if (process.env.NYXA_AUTHORITY_ADAPTER_CONFIG === '/opt/nyxa-authority-v1/adapter.json')
     env.NYXA_AUTHORITY_ADAPTER_CONFIG = process.env.NYXA_AUTHORITY_ADAPTER_CONFIG;
+  // R9: one-click lifecycle + attestation (observe) for the bound backend; each value pinned exactly, never free-form.
+  const PINNED = { NYXA_AUTHORITY_LIFECYCLE_DIR: ['/var/lib/nyxa-authority-lifecycle'], NYXA_ACTOR_ATTESTATION_MODE: ['off', 'observe', 'required'],
+    NYXA_AGENT_PASSPORTS: ['/etc/nyxa-authority/agent-passports.json'], NYXA_ATTESTATION_NONCE_DIR: ['/var/lib/nyxa-attestation/nonces'],
+    NYXA_ATTESTATION_OBSERVE_LOG: ['/var/lib/nyxa-attestation/observe.jsonl'], NYXA_PASSPORTS_OWNER_UID: ['0'] };
+  for (const [k, allowed] of Object.entries(PINNED)) if (allowed.includes(process.env[k])) env[k] = process.env[k];
   // Process-level authenticated actor: sourced only from the pinned binding.
   if (BINDING) env.NYXA_DEVELOPMENT_ACTOR = BINDING.actor;
   return env;
