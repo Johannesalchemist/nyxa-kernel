@@ -30,7 +30,7 @@
 |---|---|---|---|
 | F1 | Repo privat | **offen** — `nyxa-kernel` und `nyxa-kernel-runtime` sind public | Repo-Liste |
 | F1b | History-Rewrite | **offen**, setzt F1-Entscheidung voraus | — |
-| F2 | Avatar-Migration | **offen, Risiko besteht fort**: Dienst läuft als root, `0.0.0.0:4000`, `server.js` gehört `jo` (Modus 664) | `ps`, `ss`, `stat` |
+| F2 | Avatar-Migration | **offen, Risiko besteht fort** (Details nur geschützt auf Server B) | Live-Prüfung |
 | F3 | Authority-V2-Release | **offen**: Bridge und Governed Memory ohne Attestierungs-Variablen. `observe` ist jetzt verfügbar (Stufe 2) | `systemctl show` |
 | F4 | Autorisierungsserver | **offen** | — |
 | F5 | LiveAvatar-Kauf | **zurückgestellt**, bis LiteAvatar bewertet ist | — |
