@@ -10,6 +10,7 @@
  */
 import fs from "node:fs"; import path from "node:path";
 import { heartbeatJob } from "./evolutionRuntime.mjs";
+import { developmentOpportunities } from "../evolutionExtensions.mjs";
 const arg = (k, d) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const state = arg("state"), out = arg("out"), participants = (arg("participants", "nyxa-owner")).split(",");
 const nowIso = new Date().toISOString();
@@ -27,7 +28,14 @@ try {
     outcome: Object.fromEntries(["GAIN", "HURT", "RETAIN", "GAP", "UNKNOWN"].map((k) => [k, e.profile.overall[k]])), recommendation: e.decision.recommendation, activateIn: e.decision.activateIn })) : [];
   const eff = fs.existsSync(rseFile) ? (JSON.parse(fs.readFileSync(rseFile, "utf8")).efficiency ?? []).map((e) => ({ id: e.id, costUnits: e.costUnits, relative: e.relative,
     qualityDelta: e.qualityDelta, promote: e.decision.promote, reasons: e.decision.reasons, breakEven: e.breakEven })) : [];
-  const projection = { schema: "nyxa-sophia-evolution-heartbeat-v1", at: nowIso, results, learningEvents: rse, efficiencyEvents: eff, externalActions: [] };
+  // R8: development opportunities -> proposed experiments + consolidated validated results, each exactly once (silent; no contact).
+  const ob = path.join(out, "candidate-outbox.jsonl");
+  const seen = new Set(fs.existsSync(ob) ? fs.readFileSync(ob, "utf8").split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l).key; } catch { return null; } }) : []);
+  const fresh = developmentOpportunities({ learningEvents: rse, efficiencyEvents: eff }).filter((o) => !seen.has(o.key));
+  for (const o of fresh) await store.submitCandidate({ key: o.key, target: "memory:/candidate", payload: { candidate_type: o.candidate_type, scope: "project", source: "agent",
+    content: o.content, purpose: `sophia-evolution:${o.type}`, confidence: o.type === "validated_result" ? 0.6 : 0.4, importance: 0.5 }, requires: o.requires, executes: false });
+  const projection = { schema: "nyxa-sophia-evolution-heartbeat-v1", at: nowIso, results, learningEvents: rse, efficiencyEvents: eff,
+    opportunities: { newThisRun: fresh.map((o) => o.key), totalProposed: seen.size + fresh.length }, externalActions: [] };
   const tmp = path.join(out, `.hb-${process.pid}.tmp`); fs.writeFileSync(tmp, JSON.stringify(projection, null, 1), { mode: 0o640 }); fs.renameSync(tmp, path.join(out, "sophia-evolution-heartbeat.json"));
   for (const r of results) fs.appendFileSync(path.join(out, "sophia-evolution-events.jsonl"), JSON.stringify({ at: nowIso, kind: "heartbeat", participant: r.participant, outcome: r.outcome, calibration: r.calibration, externalActions: r.externalActions }) + "\n", { mode: 0o640 });
   console.log(JSON.stringify({ ok: true, at: nowIso, outcomes: results.map((r) => r.outcome), learningEvents: rse.length }));

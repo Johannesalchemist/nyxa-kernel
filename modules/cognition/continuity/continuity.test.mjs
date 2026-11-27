@@ -66,3 +66,15 @@ test("recurring error feeds strategy-evolution regret (HURT) and regression watc
   const w = regressionWatch({ id: "strat-acc", digest: "d", status: "adopted", activeContexts: ["acceptance test runner"], history: [] }, [r.regret]);
   assert.equal(w.action, "suspended_to_baseline");
 });
+test("M10: shadow mode never submits; privacy audit finds nothing in redacted output but catches raw secrets", async () => {
+  const { audit } = await import("./privacyAudit.mjs");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "m10-")); const env = { ...process.env, NYXA_CONTINUITY_DIR: dir }; delete env.NYXA_CONTINUITY_MODE;
+  const hook = new URL("./hooks/lifecycle-hook.mjs", import.meta.url).pathname;
+  execFileSync(process.execPath, [hook, "claude-code"], { input: JSON.stringify({ hook_event_name: "PostToolUse", session_id: "s", tool_name: "Bash", tool_input: { command: "deploy" }, tool_response: { exit_code: 1, stderr: "failed: API_SECRET=abc123def456 user a@b.de at 10.1.2.3 eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.abcdefghijklmnop" } }), env });
+  const flush = JSON.parse(execFileSync(process.execPath, [new URL("./continuity-cli.mjs", import.meta.url).pathname, "flush"], { env, encoding: "utf8" }));
+  assert.equal(flush.mode, "shadow"); assert.match(flush.submit, /none/);
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".jsonl")).map((f) => path.join(dir, f));
+  assert.equal(audit(files).ok, true, JSON.stringify(audit(files).findings));
+  const raw = path.join(dir, "raw.jsonl"); fs.writeFileSync(raw, "token=eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.abcdefghijklmnop\nDB_PASSWORD=hunter2\n");
+  assert.deepEqual(audit([raw]).findings.map((f) => f.class).sort(), ["jwt", "secret_assignment"]);
+});

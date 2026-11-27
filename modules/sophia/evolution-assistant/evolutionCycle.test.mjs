@@ -1,4 +1,5 @@
 // WP4 full vertical cycle on SYNTHETIC data: experience -> reflection -> hypothesis -> possibility ->
+import fs from "node:fs";
 // human decision -> authorized action -> result -> evaluation -> strategic learning, plus reject/never/
 // correct/revoke/no-action and re-proposal bypass attempts.
 import test from "node:test"; import assert from "node:assert/strict";
@@ -81,4 +82,13 @@ test("WP3 relationship evolution, perspectives, collaborative research, initiati
   const ic = new InitiativeCalibration(); assert.equal(ic.shouldInitiate("evening").initiate, false);
   for (let i = 0; i < 4; i++) ic.record("evening", { welcomed: false }); for (let i = 0; i < 4; i++) ic.record("weekend_morning", { welcomed: true });
   assert.equal(ic.shouldInitiate("evening").initiate, false); assert.equal(ic.shouldInitiate("weekend_morning").initiate, true);
+});
+test("R8 heartbeat opportunities: experiments for regressions, consolidation of validated results, each once, never executed", async () => {
+  const { developmentOpportunities } = await import("./evolutionExtensions.mjs");
+  const ev = JSON.parse(fs.readFileSync(new URL("../../../research/rse-01/events-2026-11-27.json", import.meta.url)));
+  const learning = ev.events.map((e) => ({ id: e.id, outcome: e.profile.overall, recommendation: e.decision.recommendation, activateIn: e.decision.activateIn }));
+  const eff = ev.efficiency.map((e) => ({ id: e.id, relative: e.relative, qualityDelta: e.qualityDelta, promote: e.decision.promote, reasons: e.decision.reasons }));
+  const o = developmentOpportunities({ learningEvents: learning, efficiencyEvents: eff });
+  assert.ok(o.some((x) => x.key === "exp:regression:CE-01:D_vs_A")); assert.ok(o.some((x) => x.key === "consolidate:CE-01:B_vs_A:efficiency"));
+  assert.ok(o.every((x) => x.executes === false)); assert.equal(new Set(o.map((x) => x.key)).size, o.length);
 });

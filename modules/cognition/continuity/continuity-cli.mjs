@@ -12,6 +12,9 @@ if (cmd === "note") { const r = captureEvent({ agent: a("agent") ?? "claude-code
 else if (cmd === "flush") { const recs = fs.existsSync(OB) ? fs.readFileSync(OB, "utf8").trim().split("\n").filter(Boolean).map(JSON.parse) : [];
   const c = consolidate(recs, { now: Date.now() }); const props = c.records.filter((r) => r.status === "active").map((r) => toCandidateProposal(r, { actor: a("actor") ?? "claude-code", taskId: a("task") ?? "continuity", runId: a("run") ?? new Date().toISOString() }));
   if (recs.length) fs.renameSync(OB, path.join(DIR, `outbox.flushed-${Date.now()}.jsonl`));
-  console.log(JSON.stringify({ proposals: props, consolidation: c.log }, null, 1)); }
+  // M10 shadow mode (default until activation is approved): proposals are written to a local shadow file and are NEVER submitted.
+  const mode = process.env.NYXA_CONTINUITY_MODE ?? "shadow";
+  if (mode === "shadow") { fs.appendFileSync(path.join(DIR, "shadow-proposals.jsonl"), props.map((p) => JSON.stringify({ shadow: true, ...p })).join("\n") + (props.length ? "\n" : ""), { mode: 0o600 }); }
+  console.log(JSON.stringify({ mode, submit: mode === "active" ? "via nyxa_propose_action" : "none (shadow)", proposals: props, consolidation: c.log }, null, 1)); }
 else if (cmd === "snapshot") { const src = JSON.parse(fs.readFileSync(process.argv[3], "utf8")); fs.writeFileSync(path.join(DIR, "recall-snapshot.json"), JSON.stringify({ at: new Date().toISOString(), records: src.records ?? [] }), { mode: 0o600 }); console.log("ok"); }
 else console.log("usage: note|flush|snapshot");

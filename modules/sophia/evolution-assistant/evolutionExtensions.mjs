@@ -143,3 +143,27 @@ export class InitiativeCalibration {
     const p = v.a / (v.a + v.b); return { initiate: p >= this.th, p: +p.toFixed(3), reason: p >= this.th ? "welcomed_in_situation" : "unwelcome_in_situation" };
   }
 }
+
+// ---------- R8: development opportunities inside the existing heartbeat -----------------------------------
+/**
+ * From real learning/efficiency events: propose experiments (never executed here) and consolidate validated results.
+ * Every item gets a stable key so the heartbeat proposes/consolidates each thing exactly once.
+ */
+export function developmentOpportunities({ learningEvents = [], efficiencyEvents = [] }) {
+  const out = [];
+  for (const e of learningEvents) {
+    if (e.outcome?.HURT > 0) out.push({ key: `exp:regression:${e.id}`, type: "experiment", candidate_type: "open_question",
+      content: guarded(`Experiment proposal: re-evaluate ${e.id} in shadow mode with the regressing context excluded; success = HURT 0 at equal or better GAIN on a fresh holdout.`),
+      requires: "human_decision", executes: false });
+    if (e.recommendation === "propose_adoption_for_contexts" && e.outcome?.HURT === 0) out.push({ key: `consolidate:${e.id}`, type: "validated_result", candidate_type: "observation",
+      content: `Validated learning event ${e.id}: GAIN ${e.outcome.GAIN}, HURT 0, RETAIN ${e.outcome.RETAIN}; adoption only for contexts ${e.activateIn.join(", ")} and only via gamma + human grant.`,
+      requires: "governed_adoption", executes: false });
+  }
+  for (const f of efficiencyEvents) {
+    if (f.promote) out.push({ key: `consolidate:${f.id}`, type: "validated_result", candidate_type: "observation",
+      content: `Efficiency without quality/governance loss (${f.id}): steps ${Math.round(f.relative.steps * 100)}%, approvals ${Math.round(f.relative.approvals * 100)}%, quality ${f.qualityDelta}. Small n, self-evaluated.`, requires: "governed_adoption", executes: false });
+    else if (f.reasons?.includes("regression")) out.push({ key: `exp:efficiency:${f.id}`, type: "experiment", candidate_type: "open_question",
+      content: guarded(`Experiment proposal: can the cost saving of ${f.id} be kept without its regression? Test the cheaper procedure only in contexts with RETAIN, in shadow mode.`), requires: "human_decision", executes: false });
+  }
+  return out;
+}
