@@ -11,8 +11,8 @@
  */
 import { createHash } from "node:crypto";
 
-export const KINDS = ["project_state", "decision", "error", "correction", "strategy", "observation"];
-const TYPE = { project_state: "observation", decision: "decision", error: "risk", correction: "process_pattern", strategy: "process_pattern", observation: "observation" };
+export const KINDS = ["project_state", "decision", "error", "correction", "strategy", "observation", "success", "cooperation"];
+const TYPE = { project_state: "observation", decision: "decision", error: "risk", correction: "process_pattern", strategy: "process_pattern", observation: "observation", success: "observation", cooperation: "process_pattern" };
 const TRUSTED_SOURCES = new Set(["human", "agent_reflection"]); // tool output, web, files, other users = untrusted
 const sha = (s) => createHash("sha256").update(s).digest("hex");
 const norm = (s) => String(s ?? "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -41,10 +41,11 @@ export function captureEvent(ev) {
   const trust = trustOf(source);
   if (INSTRUCTION.test(body)) flags.push("instruction_like");
   // Untrusted material can never become a decision, correction or strategy; instruction-like text is quarantined.
-  if (trust === "untrusted" && ["decision", "correction", "strategy"].includes(k)) { flags.push(`downgraded_from:${k}`); k = "observation"; }
+  if (trust === "untrusted" && ["decision", "correction", "strategy", "success", "cooperation"].includes(k)) { flags.push(`downgraded_from:${k}`); k = "observation"; }
   const quarantined = flags.includes("instruction_like") && trust === "untrusted";
   return { id: sha(`${agent}|${session}|${event}|${at}|${body}`).slice(0, 16), kind: k, topic: norm(topic ?? ""), content: body, trust, quarantined, flags,
-    provenance: { agent, session, event, source, at, ref: ref ?? null }, status: "active", supersedes: null, version: 1 };
+    provenance: { agent, session, event, source, at, ref: ref ?? null }, status: "active", supersedes: null, version: 1, validated: false, validation: null,
+    failureClass: k === "error" ? classifyFailure(`${topic ?? ""} ${body}`) : null };
 }
 
 // ---------- Consolidation: dedup, contradiction, versioned supersession, staleness ----------------------------
@@ -52,6 +53,12 @@ export function consolidate(records, { now, staleDays = 120, nearDup = 0.8 } = {
   const out = []; const log = [];
   for (const r of [...records].sort((a, b) => Date.parse(a.provenance.at) - Date.parse(b.provenance.at))) {
     if (r.quarantined) { log.push({ op: "quarantine", id: r.id }); out.push({ ...r, status: "quarantined" }); continue; }
+    // F-MCC-1: an untrusted item touching a topic that a trusted decision/correction/strategy governs is held for review,
+    // never shown next to the governing item as if it were an alternative.
+    if (r.trust === "untrusted") {
+      const gov = out.find((x) => x.status === "active" && x.trust === "trusted" && ["decision", "correction", "strategy"].includes(x.kind) && x.topic && (x.topic === r.topic || jac(x.topic, r.topic) >= 0.5));
+      if (gov) { log.push({ op: "held_for_review", id: r.id, governedBy: gov.id }); out.push({ ...r, status: "held_for_review" }); continue; }
+    }
     // Near-duplicate only for contents with enough tokens; short contents ("state A" vs "state B") must match exactly,
     // otherwise contradictions would be silently swallowed as duplicates.
     const longEnough = (t) => tok(t).size >= 4;
@@ -72,15 +79,32 @@ export function consolidate(records, { now, staleDays = 120, nearDup = 0.8 } = {
 
 // ---------- Recurring-error detection -> RSE regret (GUARD-inspired, source unverified) ----------------------
 /** A new error that matches an error which already has an active correction = regression (HURT). */
+/** Failure classes are handled differently; only STRATEGY failures feed strategy regret. */
+const FAILURE = [["authorization", /\b(denied|forbidden|unauthori[sz]ed|permission|mandate|grant|not allowed|policy|DENY:|capability|human[_ ]authority)\b/i],
+  ["infrastructure", /\b(timeout|timed out|ECONNREFUSED|ENOSPC|disk full|network|unreachable|503|502|OOM|killed|service (down|failed)|cannot connect)\b/i],
+  ["context", /\b(not found|missing|unknown (file|path|variable)|stale|outdated|wrong (file|path|branch|version)|no such file|ENOENT|symlink|regular file)\b/i]];
+export function classifyFailure(text) { for (const [c, r] of FAILURE) if (r.test(String(text))) return c; return "strategy"; }
+const ROUTE = { strategy: "strategy_regret", context: "continuity_gap", infrastructure: "ops_incident", authorization: "governance_review" };
 export function recurringError(records, newError, { threshold = 0.5 } = {}) {
   const corr = records.filter((r) => r.status === "active" && r.kind === "correction");
   const hit = corr.map((c) => ({ c, s: Math.max(jac(c.topic, newError.topic ?? ""), jac(c.content, newError.content)) })).filter((x) => x.s >= threshold).sort((a, b) => b.s - a.s)[0];
-  return hit ? { regression: true, correctionId: hit.c.id, similarity: +hit.s.toFixed(2), regret: { task: newError.topic, context: newError.topic, baseline: true, candidate: false } } : { regression: false };
+  const failureClass = newError.failureClass ?? classifyFailure(`${newError.topic ?? ""} ${newError.content ?? ""}`);
+  if (!hit) return { regression: false, failureClass, route: ROUTE[failureClass] };
+  // Only strategy failures become strategy regret; authorization failures are NEVER learned around (governance review only).
+  return { regression: true, correctionId: hit.c.id, similarity: +hit.s.toFixed(2), failureClass, route: ROUTE[failureClass],
+    regret: failureClass === "strategy" ? { task: newError.topic, context: newError.topic, baseline: true, candidate: false } : null };
 }
 
 // ---------- Recall with progressive disclosure under a token budget ------------------------------------------
-export function recallBundle(records, { query, agent, tokenBudget = 600, k = 8, minRelevance = 0.08 }) {
-  const usable = records.filter((r) => r.status === "active" && !r.quarantined);
+/** Action-guiding context = active + trusted (+ validated where required). Everything else is returned SEPARATELY. */
+export function recallBundle(records, { query, agent, tokenBudget = 600, k = 8, minRelevance = 0.08, requireValidated = false }) {
+  const actionable = (r) => r.trust === "trusted" && (!requireValidated || r.validated || r.kind === "decision");
+  const main = recallCore(records.filter((r) => r.status === "active" && !r.quarantined && actionable(r)), { query, agent, tokenBudget, k, minRelevance });
+  const side = recallCore(records.filter((r) => r.status === "active" && !r.quarantined && !actionable(r)), { query, agent, tokenBudget: Math.floor(tokenBudget / 3), k: 3, minRelevance });
+  return { ...main, unverified: { ids: side.ids, text: side.text, forAction: false, label: "UNVERIFIED - context only, do not act on" } };
+}
+function recallCore(records, { query, agent, tokenBudget, k, minRelevance }) {
+  const usable = records;
   // Relevance first: bonuses only break ties among items that are already relevant (fix after MCC-01 mechanism run v1,
   // where unconditional bonuses filled the list with unrelated corrections and crowded out a current decision).
   const scored = usable.map((r) => { const base = jac(query, `${r.topic} ${r.content}`);
@@ -92,6 +116,15 @@ export function recallBundle(records, { query, agent, tokenBudget = 600, k = 8, 
     if (used + tokens(line) > tokenBudget) break; lines.push(line); used += tokens(line);
   }
   return { forAgent: agent, ids: scored.slice(0, lines.length).map((x) => x.r.id), text: lines.join("\n"), tokens: used, note: "expand by id via nyxa_memory_recall_candidates" };
+}
+
+// ---------- Validation (required before cross-agent transfer) --------------------------------------------
+/** Validation needs evidence from a verifier that is not the record's author (human, test run, independent evaluator). */
+export function validate(r, { by, evidence, at }) {
+  if (!["human", "test_run", "independent_evaluator"].includes(by)) throw Error("validator_not_allowed");
+  if (!evidence) throw Error("validation_evidence_required");
+  if (r.trust !== "trusted" || r.status !== "active") throw Error("only_active_trusted_records");
+  return { ...r, validated: true, validation: { by, evidence: String(evidence).slice(0, 300), at } };
 }
 
 // ---------- Persistence through the EXISTING governed path only ---------------------------------------------
