@@ -46,7 +46,8 @@ export function createLifecycle({ dir, issueFrame, discover, mandateStore, now =
     const r = { id: randomUUID(), operation, actor, purpose: String(purpose), state: "REQUESTED", createdAt: now(), updatedAt: now(), history: [{ state: "REQUESTED", at: now() }] };
     write(r); journal({ request: r.id, to: "REQUESTED", operation, actor });
     // Hand-off to the publisher worker (runs as the portal's service identity): inbox file, O_EXCL.
-    const fd = fs.openSync(path.join(dir, "inbox", `${r.id}.json`), "wx", 0o640); try { fs.writeSync(fd, JSON.stringify({ request_id: r.id, operation })); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
+    // fchmod explicitly: a service umask (e.g. 077) must not make the hand-off unreadable for the publisher's group (R9 live finding).
+    const fd = fs.openSync(path.join(dir, "inbox", `${r.id}.json`), "wx", 0o640); try { fs.fchmodSync(fd, 0o640); fs.writeSync(fd, JSON.stringify({ request_id: r.id, operation })); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
     return { ok: true, id: r.id, state: r.state };
   }
   const list = () => fs.readdirSync(path.join(dir, "requests")).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(fs.readFileSync(path.join(dir, "requests", f), "utf8")));

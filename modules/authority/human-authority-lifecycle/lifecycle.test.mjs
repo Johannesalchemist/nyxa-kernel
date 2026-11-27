@@ -62,3 +62,8 @@ test("revocation stops the mandate; journal is append-only and complete", async 
   await L.revoke(r.id, "owner_revoked"); assert.equal(L.status(r.id).state, "REVOKED"); assert.equal(w.mandates[0].revoked, true);
   assert.deepEqual(L.journal().filter((e) => e.request === r.id && e.to).map((e) => e.to), ["REQUESTED", "PENDING", "APPROVED", "CLAIMING", "ACTIVE", "REVOKED"]);
 });
+test("R9: hand-off file stays group-readable under a restrictive service umask", () => {
+  const w = world(); const old = process.umask(0o077);
+  try { const r = w.mk().request({ actor: "claude", purpose: "p" }); assert.equal(fs.statSync(path.join(w.dir, "inbox", `${r.id}.json`)).mode & 0o777, 0o640); }
+  finally { process.umask(old); }
+});

@@ -20,7 +20,7 @@ def atomic_write(path, obj):
 def run(lifecycle, publisher, frames_root, pins, now_ms=None):
     pub = load_publisher(publisher); pinned = set(json.loads(Path(pins).read_text()))
     inbox, outbox, done = Path(lifecycle) / 'inbox', Path(lifecycle) / 'outbox', Path(lifecycle) / 'inbox-done'
-    done.mkdir(exist_ok=True, mode=0o750); results = []
+    results = []
     for f in sorted(inbox.glob('*.json')):
         try:
             req = json.loads(f.read_text()); rid = str(uuid.UUID(req['request_id'], version=4)); op = req['operation']
@@ -32,7 +32,9 @@ def run(lifecycle, publisher, frames_root, pins, now_ms=None):
         except Exception as e:
             ack = {'ok': False, 'request_id': f.stem, 'reason': str(e)[:80]}
         if not (outbox / f.name).exists(): atomic_write(outbox / f.name, ack)
-        os.replace(f, done / f.name); results.append(ack)
+        # R9 live finding: ReadWritePaths are separate bind mounts, rename across them fails (EXDEV). The ack in the
+        # outbox is the durable record, so the processed hand-off is removed instead of moved.
+        f.unlink(); results.append(ack)
     return results
 
 if __name__ == '__main__':
