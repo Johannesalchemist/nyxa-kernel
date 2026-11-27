@@ -1,0 +1,17 @@
+{
+ "schema": "nyxa-scorer-freeze-v1",
+ "version": "2.1",
+ "frozen_at": "2026-11-27T18:30:00+01:00",
+ "by": "Claude Code session for Johannes Suess",
+ "files": {
+  "answerScorer.mjs": "4e91461c7ac64f2e18c545b66ff12d3922697c3477a3ad1e425cb1f240d2b089",
+  "provenanceVerifier.mjs": "e8bff09ceeac71ebed5831a3f8d92775fe2bc7777bd48d87fe4841ddbafcd214"
+ },
+ "known_limits": {
+  "D6": "paraphrased live-check actions are not recognised (lexical scorer); CE-02 uses next_action_kind instead",
+  "D7": "scorer trusts claimed governed provenance; closed by provenanceVerifier.mjs against the run's read log",
+  "D8": "no semantic paraphrase understanding for 'terms' keys; answers that state the fact without any key phrase score 0",
+  "D9": "ambiguous polarity ('yes and no') scores 0 unless the leading clause is unambiguous"
+ },
+ "rule": "No change to frozen files. Any change = new version, new freeze record, and a NEW independent holdout; CE-02 success criteria are fixed in research/ce-02/criteria.json (sha in PRE-REGISTRATION.sha256)."
+}

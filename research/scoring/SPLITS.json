@@ -1,0 +1,30 @@
+{
+ "schema": "nyxa-scorer-splits-v1",
+ "splits": {
+  "development": {
+   "files": [
+    "validation/cases.json"
+   ],
+   "status": "used for development (1 revision)"
+  },
+  "validation_internal": {
+   "files": [
+    "validation/holdout.json"
+   ],
+   "status": "CONSUMED (run once 17/18, then 1 revision)"
+  },
+  "diagnostic": {
+   "files": [
+    "validation/ce01b-diagnostic.out.json"
+   ],
+   "status": "CONSUMED (revealed D5/D6)"
+  },
+  "holdout_external": {
+   "files": [
+    "external/submissions/*"
+   ],
+   "status": "EMPTY - awaiting an externally produced, blinded set"
+  }
+ },
+ "rule": "A case may belong to exactly one split. External submissions are checked for overlap with development/validation cases (exact and near-duplicate, Jaccard >= 0.7) and rejected on overlap."
+}

@@ -1,0 +1,15 @@
+{"$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "nyxa-external-holdout-v1",
+ "type": "object", "required": ["schema", "producer", "blinding", "created_at", "keys", "cases"], "additionalProperties": false,
+ "properties": {
+  "schema": {"const": "nyxa-external-holdout-v1"},
+  "producer": {"type": "object", "required": ["kind", "family", "independent_of_claude_lineage", "contact_role"], "additionalProperties": false,
+    "properties": {"kind": {"enum": ["human", "model"]}, "family": {"type": "string", "description": "e.g. 'human' or a non-Anthropic model family"},
+      "independent_of_claude_lineage": {"const": true}, "contact_role": {"type": "string", "description": "role only, no personal data"}}},
+  "blinding": {"type": "object", "required": ["saw_scorer_code", "saw_development_cases", "saw_ce02_keys"], "additionalProperties": false,
+    "properties": {"saw_scorer_code": {"const": false}, "saw_development_cases": {"const": false}, "saw_ce02_keys": {"const": false}}},
+  "created_at": {"type": "string"},
+  "keys": {"type": "object", "description": "key id -> nyxa-answer-key-v2 ({type:terms|yes_no|live, ...})"},
+  "read_log": {"type": "array", "items": {"type": "object", "required": ["ref"]}},
+  "cases": {"type": "array", "minItems": 40, "items": {"type": "object", "required": ["id", "category", "key", "row", "gold"], "additionalProperties": false,
+    "properties": {"id": {"type": "string"}, "category": {"enum": ["paraphrase", "negation", "ambiguity", "unsupported_live_claim", "false_provenance", "control"]},
+      "key": {"type": "string"}, "row": {"type": "object"}, "gold": {"enum": [0, 0.5, 1]}}}}}}
