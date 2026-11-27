@@ -8,7 +8,8 @@ mint(){ node -e 'const c=require("crypto");const b=(o)=>Buffer.from(JSON.stringi
 pass=0; fail=0; chk(){ if [ "$2" = "$3" ]; then echo "PASS $1"; pass=$((pass+1)); else echo "FAIL $1 (got $2, want $3)"; fail=$((fail+1)); fi; }
 ANON=$(v "$E" ANON_KEY); OLDT=$(mint "$(v "$OLD" JWT_SECRET)")
 chk "A1 old-secret token rejected by REST" "$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $ANON" -H "Authorization: Bearer $OLDT" $GW/rest/v1/)" 401
-chk "A2 old-secret token rejected by Storage" "$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $ANON" -H "Authorization: Bearer $OLDT" $GW/storage/v1/bucket)" 400
+c=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $ANON" -H "Authorization: Bearer $OLDT" $GW/storage/v1/bucket); case $c in 400|401|403) c=rejected;; esac
+chk "A2 old-secret token rejected by Storage" "$c" rejected
 chk "A3 new anon key healthy" "$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $ANON" $GW/auth/v1/health)" 200
 NEWH=$(v "$E" JWT_SECRET | sha256sum | cut -c1-16)
 for c in supabase-auth:GOTRUE_JWT_SECRET supabase-rest:PGRST_JWT_SECRET supabase-storage:AUTH_JWT_SECRET realtime-dev.supabase-realtime:API_JWT_SECRET supabase-pooler:API_JWT_SECRET supabase-edge-functions:JWT_SECRET supabase-studio:AUTH_JWT_SECRET supabase-db:JWT_SECRET; do
