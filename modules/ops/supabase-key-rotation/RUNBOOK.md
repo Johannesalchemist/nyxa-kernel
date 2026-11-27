@@ -7,10 +7,10 @@
 | Skripte | `acceptance-tests.sh` (lesend, nach der Rotation), Werte werden nie ausgegeben |
 
 ## Phase 0 — Sofort-Eindämmung (eigene Freigabe F6a, unabhängig vom Wartungsfenster, reversibel)
-1. `a2dissite stream.future24.eu` (oder dort `ProxyPass` auf den ursprünglich gemeinten Dienst korrigieren).
-2. Im Default-vHost `ProxyPass /leads` entfernen. Ziel war offenbar der frühere Leadflow-Dienst; der läuft heute auf `127.0.0.1:8010`.
+1. `a2dissite <vhost-S>` (oder dort `ProxyPass` auf den ursprünglich gemeinten Dienst korrigieren).
+2. Im Default-vHost `ProxyPass <pfad-L>` entfernen. Ziel war offenbar der frühere Leadflow-Dienst; der läuft heute auf `<anderer lokaler Port>`.
 3. `apachectl configtest && systemctl reload apache2`.
-4. Prüfen: `curl -s -o /dev/null -w '%{http_code}' http://stream.future24.eu/auth/v1/health` darf **nicht** mehr `401` von Supabase liefern.
+4. Prüfen: `curl -s -o /dev/null -w '%{http_code}' http://<vhost-S>/auth/v1/health` darf **nicht** mehr `401` von Supabase liefern.
 
 Rückweg: Sicherungskopien der beiden vHost-Dateien zurückspielen, dann `reload`.
 

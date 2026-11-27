@@ -35,7 +35,7 @@
 | F4 | Autorisierungsserver | **offen** | — |
 | F5 | LiveAvatar-Kauf | **zurückgestellt**, bis LiteAvatar bewertet ist | — |
 | F6 | Schlüsselrotation | **offen, dringlicher**: Runbook und Abnahme bereit | s. o. |
-| **F6a (neu)** | Sofort-Eindämmung: Proxy `stream.future24.eu` → `:8000` und `/leads` → `:8000` entfernen | **offen, empfohlen sofort**, reversibel | HTTP-Probe |
+| **F6a (neu)** | Sofort-Eindämmung: Proxy `<vhost-S>` → `:<gw-port>` und `<pfad-L>` → `:<gw-port>` entfernen | **offen, empfohlen sofort**, reversibel | HTTP-Probe |
 | F7 | eingewilligte Sophia-Daten | offen | — |
 | F8 | Owner-Login für Realtime-Messung | offen | — |
 | F9 | Room-Integration | **umsetzungsbereit**. Nötig sind die Registrierung der Transaktion `room-identity-bind-v1` im Human-Gate-Katalog, die Routen hinter `requireBoundIdentity` und das Lesen bzw. Anpassen der root-Timer-Units | — |
@@ -47,3 +47,6 @@
 1. Root bzw. Owner: F6a, dann F6. Danach F2. Danach F9 (Katalog und Timer-Units).
 2. Externer Prüfsatz von einem Menschen oder einer anderen Modellfamilie, dann CE-02-Läufe.
 3. Die Passkey Authority braucht eine Principal-Registrierung für weitere Menschen (F10/F11).
+
+## Redaktionsvermerk
+Hostname, Pfad und Ports des öffentlich erreichbaren Gateways standen kurzzeitig im Klartext in Commit `eae1af6`. Mit dem Folge-Commit sind sie durch Platzhalter ersetzt; die exakte Zuordnung liegt nur geschützt auf Server B (`f6-redaction-map.txt`, 0600). In der **Historie** bleibt `eae1af6` lesbar. Eine Bereinigung wäre ein History-Rewrite (F1b) und wird nicht eigenmächtig durchgeführt. Wirksamste Abhilfe ist F6a (Proxy entfernen), danach F6.
