@@ -33,5 +33,5 @@ des SHA und des Inhalts (`/var/lib/nyxa-admin/bundles/<sha>.sh` ist für jo lesb
 Es gibt immer nur eine offene Admin-Freigabe (eine Binding je Operation).
 
 ## Tests
-`python3 -m unittest test_admin_executor test_admin_pipeline` (10 Tests): einmalige Ausführung und Replay-Ablehnung,
+`python3 -m unittest test_admin_executor test_admin_pipeline` (12 Tests): einmalige Ausführung und Replay-Ablehnung,
 Rollback, Tausch nach Freigabe, Fälschung/Scope/Zeit/Principal, Timeout, Staging→Publisher→Binding, Ablehnung nicht gestagter Bündel.

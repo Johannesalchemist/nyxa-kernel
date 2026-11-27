@@ -3,7 +3,7 @@ from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 import admin_executor as X
 
-HOST = "ubuntu-4gb-nbg1-1"
+HOST = "host-b"
 def bundle(dir, body):
     p = Path(dir) / "bundle.sh"; p.write_text(body); os.chmod(p, 0o600); return p, hashlib.sha256(p.read_bytes()).hexdigest()
 def binding(path, s, **o):

@@ -5,32 +5,44 @@
   apply : for every issued Human Gate grant with action nyxa_admin_bundle_apply, verify against the CURRENT binding and the
           stored bundle, then execute once (admin_executor.execute). Everything else in the grant store is ignored.
 """
-import argparse, hashlib, json, os, socket, uuid
+import argparse, hashlib, json, os, socket, stat, uuid
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 import admin_executor as X
 
+def _read_submitted(path: Path, limit: int):
+    """Submitted files are untrusted: no symlinks, regular file, single link, not root-owned (no laundering of root files)."""
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_uid == 0 or st.st_size > limit: raise ValueError("submission_untrusted_file")
+        with os.fdopen(os.dup(fd), "rb") as f: return f.read(limit + 1)
+    finally: os.close(fd)
+
 def stage(inbox: Path, store: Path, publish_inbox: Path):
+    """Triggered on <name>.json (written AFTER <name>.sh). A .sh without its .json is left alone (submission in progress)."""
     out = []
-    for sh in sorted(inbox.glob("*.sh")):
-        meta = inbox / (sh.stem + ".json")
+    for meta in sorted(inbox.glob("*.json")):
+        sh = inbox / (meta.stem + ".sh")
         try:
-            display = json.loads(meta.read_text())["display"]; assert isinstance(display, str) and 1 <= len(display) <= 400
-            data = sh.read_bytes(); assert len(data) <= 256_000
+            display = json.loads(_read_submitted(meta, 4096))["display"]; assert isinstance(display, str) and 1 <= len(display) <= 400, "display_invalid"
+            data = _read_submitted(sh, 256_000); assert len(data) <= 256_000, "bundle_too_large"
             s = hashlib.sha256(data).hexdigest(); dst = store / f"{s}.sh"
             if not dst.exists():
                 fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o640)
-                with os.fdopen(fd, "wb") as f: f.write(data); f.flush(); os.fsync(f.fileno())
-            rid = str(uuid.uuid4())
-            req = {"request_id": rid, "operation": X.OPERATION, "artifact_sha256": s, "artifact_path": str(dst),
-                   "display": display}
+                with os.fdopen(fd, "wb") as f: os.fchmod(f.fileno(), 0o640); f.write(data); f.flush(); os.fsync(f.fileno())
+            rid = str(uuid.uuid4()); ist = os.stat(publish_inbox)
+            req = {"request_id": rid, "operation": X.OPERATION, "artifact_sha256": s, "artifact_path": str(dst), "display": display}
             fd = os.open(publish_inbox / f"{rid}.json", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o640)
-            with os.fdopen(fd, "w") as f: os.fchmod(f.fileno(), 0o640); json.dump(req, f)
+            with os.fdopen(fd, "w") as f:
+                os.fchmod(f.fileno(), 0o640)
+                if os.geteuid() == 0: os.fchown(f.fileno(), ist.st_uid, ist.st_gid)  # same owner/group as lifecycle hand-offs
+                json.dump(req, f)
             out.append({"bundle": s, "request_id": rid})
         except Exception as e:
-            out.append({"bundle_file": sh.name, "error": str(e)[:120]})
+            out.append({"submission": meta.name, "error": str(e)[:120]})
         finally:
-            sh.unlink(missing_ok=True); meta.unlink(missing_ok=True)
+            meta.unlink(missing_ok=True); sh.unlink(missing_ok=True)
     return out
 
 def apply(grants_issued: Path, binding_file: Path, ledger: Path, receipts: Path, public_pem: Path, subjects: Path):
@@ -40,10 +52,13 @@ def apply(grants_issued: Path, binding_file: Path, ledger: Path, receipts: Path,
         except Exception: continue
         if (env.get("claims") or {}).get("action") != X.ACTION: continue
         gid = str(env['claims'].get('grant_id'))
-        if not X.UUID.fullmatch(gid) or (ledger / f"grant-{gid}").exists(): continue
+        if not X.UUID.fullmatch(gid) or (ledger / f"grant-{gid}").exists() or (ledger / f"denied-{gid}").exists(): continue
         try: subject = json.loads((subjects / f"{gid}.json").read_text())
         except Exception: subject = None  # -> DENIED subject_mismatch, with receipt
-        done.append(X.execute(env, binding, Path(binding["artifact_path"]), pub, ledger, receipts, socket.gethostname(), subject=subject))
+        r = X.execute(env, binding, Path(binding["artifact_path"]), pub, ledger, receipts, socket.gethostname(), subject=subject)
+        if r["status"] == "DENIED":  # one receipt per denied grant, not one per trigger
+            os.close(os.open(ledger / f"denied-{gid}", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600))
+        done.append(r)
     return done
 
 if __name__ == "__main__":
