@@ -37,18 +37,23 @@ sha = lambda b: hashlib.sha256(b).hexdigest()
 def transaction(binding):
     return {k: binding[k] for k in TX_FIELDS}
 
-def verify_grant(envelope, binding, bundle_sha, public_key, hostname, now):
-    """Returns the verified claims or raises Denied(reason). Order: shape -> binding -> scope -> time -> signature."""
+SUBJECT_FIELDS = set(TX_FIELDS) | {"proposal_id", "proposal_expires_at"}
+
+def verify_grant(envelope, binding, bundle_sha, public_key, hostname, now, subject):
+    """Returns the verified claims or raises Denied(reason). Order: shape -> binding -> subject -> scope -> time -> signature.
+    The gate signs transaction_digest = sha256(canonical(subject)) where subject is the exact offer the owner saw
+    (binding transaction + proposal_id + proposal_expires_at); the gate persists it per grant (frame-transactions/<gid>.json)."""
     if not isinstance(envelope, dict) or set(envelope) != {"algorithm", "claims", "signature"} or envelope["algorithm"] != "Ed25519": raise Denied("envelope_invalid")
     c = envelope["claims"]
     if not isinstance(c, dict) or set(c) != CLAIMS: raise Denied("claims_invalid")
     tx = transaction(binding)
+    if not isinstance(subject, dict) or set(subject) != SUBJECT_FIELDS or transaction(subject) != tx or not UUID.fullmatch(str(subject["proposal_id"])): raise Denied("subject_mismatch")
     if binding.get("operation_id") != OPERATION or binding.get("action") != ACTION or binding.get("target") != f"host:{hostname}": raise Denied("binding_scope_invalid")
     if binding.get("artifact_sha256") != bundle_sha or not HEX.fullmatch(bundle_sha): raise Denied("bundle_hash_mismatch")
     if (c["schema"] != "nyxa-human-authority-grant-v2" or c["issuer"] != "webauthn://auth.future24.eu" or c["principal"] != "nyxa-owner" or
         c["origin"] != "https://auth.future24.eu" or c["rp_id"] != "auth.future24.eu" or c["user_verification"] is not True or c["max_executions"] != 1 or
         c["action"] != ACTION or c["target"] != binding["target"] or c["artifact_sha256"] != bundle_sha or c["artifact_path"] != binding["artifact_path"] or
-        c["transaction_digest"] != sha(canonical(tx).encode()) or not UUID.fullmatch(str(c["grant_id"])) or
+        c["transaction_digest"] != sha(canonical(subject).encode()) or not UUID.fullmatch(str(c["grant_id"])) or
         not isinstance(c["nonce"], str) or not re.fullmatch(r"[A-Za-z0-9_-]{32,128}", c["nonce"]) or not HEX.fullmatch(str(c["credential_fingerprint"]))):
         raise Denied("grant_scope_invalid")
     if (type(c["issued_at"]) is not int or type(c["expires_at"]) is not int or c["issued_at"] > now + 30 or c["issued_at"] < now - 300 or
@@ -93,13 +98,13 @@ def run_bundle(path: Path, timeout_s=300):
     ok = len(steps) == 2 and all(s["rc"] == 0 for s in steps)
     return {"ok": ok, "steps": steps, "rolled_back": any(s["mode"] == "--rollback" for s in steps)}
 
-def execute(envelope, binding, bundle_path: Path, public_key, ledger: Path, receipts: Path, hostname, now=None, timeout_s=300):
+def execute(envelope, binding, bundle_path: Path, public_key, ledger: Path, receipts: Path, hostname, now=None, timeout_s=300, subject=None):
     now = int(time.time()) if now is None else now
     receipt = {"schema": "nyxa-admin-receipt-v1", "at": now, "bundle_path": str(bundle_path), "binding_sha256": sha(canonical(binding).encode())}
     try:
         expected = binding.get("artifact_sha256", "")
         trusted_bundle(bundle_path, expected, owner_uid=os.geteuid())
-        c = verify_grant(envelope, binding, expected, public_key, hostname, now)
+        c = verify_grant(envelope, binding, expected, public_key, hostname, now, subject)
         claim_once(ledger, c)
         receipt.update(grant_id=c["grant_id"], bundle_sha256=expected, grant_sha256=sha(canonical(envelope).encode()), result=run_bundle(bundle_path, timeout_s))
         receipt["status"] = "APPLIED" if receipt["result"]["ok"] else ("ROLLED_BACK" if receipt["result"]["rolled_back"] else "FAILED")

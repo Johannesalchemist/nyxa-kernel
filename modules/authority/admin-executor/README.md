@@ -13,7 +13,7 @@ keine neue Authority, kein eigener Timer.
 4. Johannes bestätigt im Portal per Passkey **genau diesen SHA**. Der Gate signiert die Grant (Ed25519).
 5. Eine Path-Unit (root) auf `authority-grants/issued` startet `admin_runner.py apply`:
    Grant prüfen (Schema, Issuer, Principal, Origin, UV, Aktion, Ziel, Artefakt, Transaktions-Digest, Zeitfenster, Signatur),
-   Bündel prüfen (root-eigen, nicht g/w-beschreibbar, nlink 1, SHA), O_EXCL-Ledger (grant_id **und** nonce),
+   Subjekt prüfen (exakt das signierte Angebot inkl. proposal_id; vom Gate je Grant persistiert), Bündel prüfen (root-eigen, nicht g/w-beschreibbar, nlink 1, SHA), O_EXCL-Ledger (grant_id **und** nonce),
    dann `--apply` → `--verify`; bei Fehlern `--rollback`; Timeout je Schritt; leere Umgebung.
 6. Für jeden Versuch wird eine Quittung nach `/var/lib/nyxa-admin/receipts/` geschrieben (für jo lesbar).
 
@@ -33,5 +33,5 @@ des SHA und des Inhalts (`/var/lib/nyxa-admin/bundles/<sha>.sh` ist für jo lesb
 Es gibt immer nur eine offene Admin-Freigabe (eine Binding je Operation).
 
 ## Tests
-`python3 -m unittest test_admin_executor test_admin_pipeline` (8 Tests): einmalige Ausführung und Replay-Ablehnung,
+`python3 -m unittest test_admin_executor test_admin_pipeline` (10 Tests): einmalige Ausführung und Replay-Ablehnung,
 Rollback, Tausch nach Freigabe, Fälschung/Scope/Zeit/Principal, Timeout, Staging→Publisher→Binding, Ablehnung nicht gestagter Bündel.
