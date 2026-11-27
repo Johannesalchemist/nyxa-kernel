@@ -47,3 +47,33 @@ Das Übergabepaket an ChatGPT (`research/scoring/external/HANDOVER-CHATGPT.md`) 
 
 ## Freigabepflichtig
 M1–M8 im Index `2026-11-27_MANDATES_R7.md`, Vollfassung geschützt.
+
+## RSE-01 Addendum — Cognitive Efficiency Evolution
+Umgesetzt im **bestehenden** `strategy-evolution` (15/15 Tests); es gibt keine neue Architektur.
+
+| Auftrag | Umsetzung |
+|---|---|
+| 1/2 Verdichtung | `distillProcedure`: nur übernommene Strategien, nur im übernommenen Kontext, höchstens 5 Schritte, SRM-Provenienz, Authority-Sperre |
+| 3 adaptive Auswahl | `ModeSelector`: direkt / reflektieren / kooperieren / erkunden. Gewählt wird der günstigste Modus, der die Qualitätsuntergrenze erreicht; bei hohem Risiko immer `reflect` |
+| 4 Kosten | `cycleCost`; `breakEven` gilt nur ohne Rückschritt und ohne Qualitätsverlust (Schaden wird nie amortisiert) |
+| 5 Bereinigung | `auditStrategies` erkennt widersprüchliche, redundante (dominierte) und überholte Strategien |
+| 6 Kontextaktivierung | `activationBundle` aktiviert nur Prozeduren des Kontexts innerhalb eines Token-Budgets; der globale Prompt wächst nicht |
+| 7 Schutz | `efficiencyDecision`: Effizienz kommt nur **zusätzlich** zu Qualität, Kalibrierung und Governance in Betracht, nie an ihrer Stelle |
+
+**Reale Effizienzbefunde (CE-01; Kosteneinheiten: Schritte und menschliche Freigaben; Tokens und Latenz wurden nicht erfasst; n = 6, selbst bewertet):**
+| Bedingung | Schritte | Freigaben | Qualität | Entscheidung |
+|---|---|---|---|---|
+| B Erfahrungsgedächtnis | 0 % | **−23 %** | +0,055 | übernahmefähig |
+| C + Strategien | 0 % | 0 % | +0,055 | keine Kostensenkung |
+| D + adaptive Auswahl | **−20 %** | −8 % | 0 | **abgelehnt (Regression E3)**: billiger, aber schlechter |
+
+Der Break-even ist für CE-01 nicht bestimmbar, weil die Kosten des Lernzyklus nicht gemessen wurden. Genau das misst RSE-02.
+
+**Sophia:** Die Befunde sind Teil der echten Heartbeat-Projektion auf Server B (Commit `cb82dcf`) und der Evolution-Ansicht.
+
+**RSE-02:**
+- Präregistriert (`research/rse-02`) mit den Armen statisch / Gedächtnis / Strategy Evolution / Regret + Verdichtung.
+- Gemessen werden Tokens aus den Nutzungsberichten des Adapters, Latenz, Lernkosten, Gesamtkosten, Transfer, Regressionen, Speicherwachstum und Break-even.
+- Der Messrahmen ist nur mit einem gekennzeichneten Stub geprüft; das sind keine Ergebnisse.
+- **Nicht ausgeführt:** Die Läufe brauchen bezahlten Modellzugang mit Nutzungsangaben (**M9**) und die unabhängige Evaluation (CE-02-Gate).
+- **GUARD:** Die Quelle wurde nicht gefunden. Sie dient nur als deskriptive Vergleichsgröße, wenn du die Veröffentlichung lieferst.
