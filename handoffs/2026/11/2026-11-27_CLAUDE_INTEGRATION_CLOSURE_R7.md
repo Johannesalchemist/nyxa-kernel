@@ -77,3 +77,22 @@ Der Break-even ist für CE-01 nicht bestimmbar, weil die Kosten des Lernzyklus n
 - Der Messrahmen ist nur mit einem gekennzeichneten Stub geprüft; das sind keine Ergebnisse.
 - **Nicht ausgeführt:** Die Läufe brauchen bezahlten Modellzugang mit Nutzungsangaben (**M9**) und die unabhängige Evaluation (CE-02-Gate).
 - **GUARD:** Die Quelle wurde nicht gefunden. Sie dient nur als deskriptive Vergleichsgröße, wenn du die Veröffentlichung lieferst.
+
+## Cross-Agent Cognitive Continuity + MCC-01
+- **Bestand:** Der governte Kandidatenspeicher ist implementiert, bereit und integer (Audit 518 Einträge), aber **leer**. Das ist der einzige Speicherort; es entsteht kein neuer.
+- **Referenzen geprüft:** Lizenzen an den LICENSE-Dateien, dazu Mechanismen und Datenschutz (Tabelle in `modules/cognition/continuity/README.md`). Übernommen werden nur Muster, kein Code und keine Dienste. Supermemory scheidet aus (externer Speicher/Abfluss, Plugin ohne Lizenzdatei).
+- **Umsetzung:** `modules/cognition/continuity` (Adapter mit 8/8 Tests, darunter ein Hook-End-to-End-Test mit Claude-Code-Payloads und die Kopplung an die Strategy Evolution) sowie Hook-Vorlagen für Claude Code und Codex. CLAUDE.md und AGENTS.md sind Navigationsflächen und werden per Lint geprüft.
+- **MCC-01, Mechanismusebene** (20 echte und gekennzeichnete Ereignisse, 10 Abfragen, Goldlabels aus dieser Sitzung):
+
+| Bedingung | Präzision | Recall | Wiederholungsrisiko | Entscheidungsverlust | Vergiftungstreffer | Kontext-Tokens |
+|---|---|---|---|---|---|---|
+| A nativ | 0,30 | 0,25 | 5 | 2 | 2 | 10 |
+| B Markdown + Hooks | 0,06 | 1,00 | 0 | 1 | 30 | 534 |
+| C eigener Speicher | 0,48 | 1,00 | 0 | 1 | 4 | 72 |
+| D NYXA v1 (vor Korrektur) | 0,18 | 0,85 | 0 | 1 | 0 | 246 |
+| D NYXA v2 (nach Korrektur) | 0,92 | 1,00 | 0 | 0 | 1 (als „unverified“ markiert) | 63 |
+
+- **Grenzen:** Die Korrektur zwischen v1 und v2 (Relevanz vor Bonus) erfolgte nach Kenntnis des Ergebnisses; v2 ist deshalb **keine** unabhängige Bestätigung. Der offene Befund F-MCC-1 wurde bewusst nicht am selben Korpus nachgebessert.
+- **Agentenebene** präregistriert. Sie braucht ein frisches Korpus von dritter Seite, echte Agenten und das Budget (M9) sowie die Aktivierung M10.
+
+**M10 (neu):** Continuity-Adapter in Claude-Code- und Codex-Sitzungen dieses Repos aktivieren. Vorschläge gehen nur über `nyxa_propose_action` in den Produktions-Kandidatenspeicher, zunächst im Modus „nur vorschlagen, Owner bestätigt“. Rückweg: Hooks entfernen, offene Kandidaten ablehnen.

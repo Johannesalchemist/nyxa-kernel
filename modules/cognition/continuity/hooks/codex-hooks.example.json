@@ -1,0 +1,5 @@
+{"_note": "Codex hooks.json (events per developers.openai.com/codex/hooks); non-managed hooks must be reviewed and trusted via /hooks before they run. Payload field names UNVERIFIED.",
+ "hooks": {
+  "SessionStart": [{"matcher": "startup|resume", "hooks": [{"type": "command", "command": "node modules/cognition/continuity/hooks/lifecycle-hook.mjs codex"}]}],
+  "PreCompact":   [{"hooks": [{"type": "command", "command": "node modules/cognition/continuity/hooks/lifecycle-hook.mjs codex"}]}],
+  "PostToolUse":  [{"hooks": [{"type": "command", "command": "node modules/cognition/continuity/hooks/lifecycle-hook.mjs codex"}]}]}}
