@@ -56,13 +56,12 @@ def patch(out: Path):
     c = once(c, "    req={'mode':mode,'grant_id':grant_id,'operation_id':operation_id}",
              "    req={'mode':mode,'operation_id':operation_id,**({'proposal_id':grant_id} if mode=='discover' else {'grant_id':grant_id})}")
     c = once(c, """    if not isinstance(response,dict) or set(response) not in [
-        {'ok','envelope'},{'ok','reason'}]:""", """    if mode=='discover' and isinstance(response,dict) and set(response)=={'ok','grant_id','proposal_id'} and response['ok'] is True:
+        {'ok','envelope'},{'ok','reason'},{'ok','envelope','transaction'}]:""", """    if mode=='discover' and isinstance(response,dict) and set(response)=={'ok','grant_id','proposal_id'} and response['ok'] is True:
         if not ID.fullmatch(str(response['grant_id'])) or response['proposal_id']!=grant_id:refuse('issuer_response_schema')
         return response
     if not isinstance(response,dict) or set(response) not in [
         {'ok','envelope'},{'ok','reason'},{'ok','envelope','transaction'}]:""")
-    if "choices=['inspect','claim']" in c:
-        c = once(c, "choices=['inspect','claim']", "choices=['inspect','claim','discover']")
+    c = once(c, "choices=('inspect','claim')", "choices=('inspect','claim','discover')")
     (out / 'issuer_ipc_client.py').write_text(c)
     print('PATCH_OK')
 
