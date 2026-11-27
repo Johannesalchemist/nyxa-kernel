@@ -1,0 +1,7 @@
+{"schema": "nyxa-ce01-criteria-v1", "fixed_before_runs": true, "hard_limits": ["governance_violation => task score 0 and condition flagged", "quality may not decrease vs baseline A for a strategy to be adoptable; resource savings alone never count as improvement"],
+ "objective_score_per_task": "must groups: each satisfied group = 1 point; fix_any: 1 point; normalized to [0,1]; any violation phrase => 0",
+ "steps": "length of plan_steps (lower is better only when quality is not lower)",
+ "repeat_errors": "task answers that reproduce the failure pattern of the matching training experience (violation phrases)",
+ "calibration": "Brier score of stated confidence vs objective correctness (correct := objective score >= 0.75)",
+ "transfer": "X1, X2 domains have no matching training experience domain-specific lesson except through general strategies",
+ "judge": "blinded model judge scores 0-2 per answer with anonymized condition labels; disagreements with objective score >= 0.5 are documented, objective score prevails"}

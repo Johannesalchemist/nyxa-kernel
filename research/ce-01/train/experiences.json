@@ -1,0 +1,66 @@
+{
+ "schema": "nyxa-ce01-experiences-v1",
+ "source": "real NYXA development episodes from Claude Code sessions 2026-11-26/27 (this repository's evidence and handoffs)",
+ "experiences": [
+  {
+   "id": "EXP-01",
+   "domain": "fault_diagnosis",
+   "tag": "MEMORY",
+   "situation": "A Node test stub using require() crashed with 'require is not defined in ES module scope' only on one server.",
+   "action": "Ran the stub directly and read the error, then looked for the nearest package.json.",
+   "outcome": "Root cause: a stray /package.json with \"type\":\"module\" at filesystem root applied ESM to every .js without a closer package.json. Fixed with a local package.json {\"type\":\"commonjs\"}.",
+   "lesson": "When module semantics differ per host, check the nearest package.json up to / before changing code.",
+   "source": "research/evidence/2026-11-26/WP-A1-ACTOR-BINDING_EVIDENCE.md"
+  },
+  {
+   "id": "EXP-02",
+   "domain": "tool_selection",
+   "tag": "MEMORY",
+   "situation": "grep -r over a web server's sites-enabled directory returned nothing for a vhost that clearly existed.",
+   "action": "Concluded the config was unreadable, later re-read the files directly.",
+   "outcome": "sites-enabled contains symlinks; grep -r does not follow them (grep -R does). The vhost was readable and decisive.",
+   "lesson": "An empty search result is evidence about the tool, not only about the target; verify tool semantics (symlinks, permissions, truncation) before concluding absence.",
+   "source": "handoffs/2026/11/2026-11-27_CLAUDE_CONTINUATION_R2.md"
+  },
+  {
+   "id": "EXP-03",
+   "domain": "contradictory_evidence",
+   "tag": "MEMORY",
+   "situation": "A directory listing piped through head -30 did not show a service's entry script; the process list showed that script running.",
+   "action": "Reported 'the running file was deleted'.",
+   "outcome": "Wrong: the listing was truncated. The file existed (and had a separate, more serious permission problem). The claim had to be retracted.",
+   "lesson": "When two observations contradict, check whether one is truncated or filtered before asserting a conclusion; never report absence from a truncated listing.",
+   "source": "research/evidence/2026-11-27/CONTINUATION-R3_EVIDENCE.md (redacted)"
+  },
+  {
+   "id": "EXP-04",
+   "domain": "multi_agent_collaboration",
+   "tag": "MEMORY",
+   "situation": "Harness child processes (bridge, then backend stub) could not resolve the MCP SDK although NODE_PATH was set in the parent.",
+   "action": "First blamed the bridge code, then traced environment propagation across each spawn boundary.",
+   "outcome": "Each spawned process received a minimal env; NODE_PATH never reached grandchildren. Fixed at the harness level with a temporary node_modules link, removed afterwards.",
+   "lesson": "In multi-process/multi-agent chains, verify what context actually crosses each boundary instead of assuming inheritance.",
+   "source": "research/adversarial-harness/run.mjs"
+  },
+  {
+   "id": "EXP-05",
+   "domain": "unnecessary_steps",
+   "tag": "MEMORY",
+   "situation": "A long remote grep was polled repeatedly with read_process_output while the remote tool quota was above 80 percent.",
+   "action": "Polled four times with no new output.",
+   "outcome": "Quota burned without information. Writing output to a file and reading once after a known duration was cheaper.",
+   "lesson": "For slow remote jobs with metered access, write to a file and read once; do not poll.",
+   "source": "session transcript 2026-11-26"
+  },
+  {
+   "id": "EXP-06",
+   "domain": "architecture_decision",
+   "tag": "MEMORY",
+   "situation": "Actor binding identified MCP clients by Tailscale node identity of the TCP peer.",
+   "action": "Planned production deployment for the Claude web connector route.",
+   "outcome": "The web route reached the service through a reverse proxy on the same host, so every request appeared to come from the host itself; the binding would have denied all traffic. A different mechanism was required (OAuth for web clients, signatures for agents).",
+   "lesson": "Before binding identity to a transport property, verify the real request path (proxies, tunnels) end to end.",
+   "source": "modules/authority/actor-binding/DEPLOY-ORDER-WP-A1.md"
+  }
+ ]
+}
