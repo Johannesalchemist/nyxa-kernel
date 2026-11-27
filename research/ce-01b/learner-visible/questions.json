@@ -1,0 +1,18 @@
+{"schema": "nyxa-ce01b-questions-v1", "partners": [
+  {"id": "general_model_knowledge", "desc": "your own training knowledge, no lookup"},
+  {"id": "web_official_docs", "desc": "official protocol/standards documentation fetched live"},
+  {"id": "vendor_docs", "desc": "a commercial vendor's current documentation fetched live"},
+  {"id": "arxiv_paper", "desc": "the primary research paper text"},
+  {"id": "nyxa_repo", "desc": "the canonical NYXA repository (ADRs, governance, handoffs)"},
+  {"id": "human_owner", "desc": "the NYXA owner (external contact = governed action)"},
+  {"id": "live_server_tool", "desc": "a governed read-only live check on a NYXA server"},
+  {"id": "nyxa_route_registry", "desc": "NYXA operational route registry (target status)"}],
+ "questions": [
+  {"id": "Q1", "text": "What is the current revision string of the Model Context Protocol specification?"},
+  {"id": "Q2", "text": "Does the current MCP specification still use the Mcp-Session-Id header for Streamable HTTP sessions?"},
+  {"id": "Q3", "text": "How many credits per minute does HeyGen LiveAvatar charge for LITE mode?"},
+  {"id": "Q4", "text": "How many stages does the MeMo (arXiv 2605.15156) reflection QA pipeline have, and what is the last stage?"},
+  {"id": "Q5", "text": "In NYXA ADR-0002, in which order does the kernel check a candidate action?"},
+  {"id": "Q6", "text": "Who must approve a production deployment of NYXA Authority V2?"},
+  {"id": "Q7", "text": "What is the CPU load average on NYXA Server B right now?"},
+  {"id": "Q8", "text": "Is NYXA Server C currently available as the Unreal rendering host?"}]}

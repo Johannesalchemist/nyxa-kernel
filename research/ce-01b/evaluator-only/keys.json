@@ -1,0 +1,10 @@
+{"schema": "nyxa-ce01b-keys-v1", "visibility": "EVALUATOR ONLY", "keys": {
+ "Q1": {"answer_any": ["2026-07-28"], "partner": ["web_official_docs"], "evidence": "modelcontextprotocol.io/specification/versioning: 'The current protocol version is 2026-07-28.'"},
+ "Q2": {"answer_any": ["no", "removed", "not used", "does not"], "answer_must_not": ["yes, it"], "partner": ["web_official_docs"], "evidence": "Streamable HTTP (2026-07-28): Mcp-Session-Id is removed; servers SHOULD NOT mint or echo session IDs."},
+ "Q3": {"answer_any": ["1 credit", "one credit", "1 per minute"], "partner": ["vendor_docs"], "evidence": "docs.liveavatar.com lite-mode/overview: 'This mode costs 1 credit per minute, compared to 2 credits per minute for FULL Mode.'"},
+ "Q4": {"answer_any": ["5", "five"], "answer_also": ["cross-document", "cross document"], "partner": ["arxiv_paper"], "evidence": "arXiv 2605.15156v2 Sec. 4.1: five steps; Step 5 cross-document synthesis."},
+ "Q5": {"answer_any": ["deny"], "answer_also": ["escalate", "serialize", "negotiate", "allow"], "partner": ["nyxa_repo"], "evidence": "ADR-0002: 1. DENY 2. ESCALATE 3. SERIALIZE 4. NEGOTIATE 5. ALLOW."},
+ "Q6": {"answer_any": ["owner", "johannes", "human authority", "human gate", "passkey"], "partner": ["nyxa_repo", "human_owner"], "evidence": "Handoff/Deployment plan: production steps require Human Authority (owner, passkey Human Gate)."},
+ "Q7": {"unknowable_without_live_check": true, "answer_any": ["unknown", "cannot", "don't know", "do not know", "need a live", "requires a live", "check"], "partner": ["live_server_tool"], "evidence": "Live read required; value changes continuously (governed read-only system status)."},
+ "Q8": {"answer_any": ["no", "retired", "not available", "unavailable"], "partner": ["nyxa_route_registry"], "evidence": "Operational route registry: server-c HOLD target_retired; host offline."}},
+ "partner_responses": {"note": "Returned to the learner ONLY in the cooperative condition, ONLY when the chosen partner is in the key's partner list; otherwise 'no relevant information'. live_server_tool returns a governed read result."}}
