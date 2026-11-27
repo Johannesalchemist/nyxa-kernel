@@ -43,7 +43,7 @@ let portSeq = 39400 + Math.floor(Math.random() * 400);
 function startBridge(env) {
   const port = portSeq++;
   const child = spawn(process.execPath, [BRIDGE], {
-    env: { PATH: process.env.PATH, HOME: process.env.HOME, BRIDGE_PORT: String(port),
+    env: { PATH: process.env.PATH, HOME: process.env.HOME, ...(process.env.NODE_PATH ? { NODE_PATH: process.env.NODE_PATH } : {}), BRIDGE_PORT: String(port),
       BRIDGE_BIND_HOST: "127.0.0.1", BRIDGE_MCP_RUNTIME_CWD: STUB, BRIDGE_MCP_DATA_DIR: tmp, ...env },
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -134,7 +134,15 @@ test("bound bridge: identity, actor propagation, proposal mismatch, session take
   whoisAnswer = null;
   assert.equal((await rpc(b.port, init)).status, 403, "unresolvable peer denied");
 
+  // WP1 R2: proxied requests never count as transport-authenticated, even from an allowed node.
   whoisAnswer = "PEERAAAA1";
+  for (const h of ["x-forwarded-for", "forwarded", "via", "x-real-ip"]) {
+    const r = await fetch(`http://127.0.0.1:${b.port}/mcp`, { method: "POST", body: JSON.stringify(init),
+      headers: { "content-type": "application/json", accept: "application/json, text/event-stream", [h]: "198.51.100.7" } });
+    assert.equal(r.status, 403, "forwarded via " + h + " denied");
+  }
+  assert.match(b.log(), /"event":"forwarded_request_rejected"/);
+
   const sid = await open(b.port);
   const who = payload(await rpc(b.port, call(2, "stub_whoami", {}), sid));
   assert.equal(who.backend_actor, "claude", "backend env carries bound actor");

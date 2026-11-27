@@ -1,56 +1,64 @@
-# Deployment-Auftrag WP-A1-ACTOR-BINDING (Human Authority Gate)
+# Deployment-Auftrag WP-A1 (Actor Binding) + WP1 (Agent Attestation) — Human Authority Gate
 
-Status: `PREPARED` — nicht ausgeführt. Ausführender: Johannes Süß als root auf Server B (`ubuntu-4gb-nbg1-1`). Keine Erweiterung von Agenten-Root-Rechten.
+Revision: R2 (2026-11-27, Europe/Berlin). Ersetzt R1 vom 2026-11-26.
+Status: `PREPARED` — nicht ausgeführt. Ausführender: Johannes Süß als root auf Server B (`ubuntu-4gb-nbg1-1`).
+Keine Erweiterung von Agenten-Root-Rechten. Jeder Schritt ist umkehrbar und einzeln abnehmbar.
 
-## Exakter Umfang
+## Entscheidungsgrundlage (live verifiziert, R2)
 
-Ändert genau: zwei neue Dateien in `/opt/nyxa-claude-mcp-bridge/`, eine Bindungsdatei unter `/etc/nyxa-bridge/`, ein systemd-Drop-in für `nyxa-claude-mcp-bridge.service`. Ändert nicht: `bridge.cjs`, Governed Backend, Authority-Issuer, Tunnel-Client, andere Units.
+| Befund | Konsequenz |
+|---|---|
+| `mcp.future24.eu/mcp` → Apache `ProxyPass` → `http://100.116.58.45:39281/mcp`, nur IP-Allowlist (zwei Provider-Bereiche, [REDACTED]) | Der Claude-Webconnector erreicht die Bridge **immer über Server B selbst**. Tailnet-Bindung kann diesen Weg nicht identifizieren; mit R1 würde sie ihn vollständig abweisen. |
+| Bridge-Route ohne Authentifizierung, nur IP-Bereichs-Filter | Jeder Client aus diesen IP-Bereichen erreicht die Bridge. Bestehende Exposition, unabhängig von diesem Auftrag. |
+| Governed Backend V2: alle governten Effekte laufen durch `handleProposeAction` (auch Toolbox-Effekte) | Backend-seitige Attestierung deckt alle Proposal-Pfade ab, unabhängig von Bridge und Transport. |
+| Direkte Schreib-Tools außerhalb Proposals: `nyxa_apply_patch`, `nyxa_run_test`, `nyxa_human_grant_issue`, `nyxa_mandate_issue`, `nyxa_mandate_derive`, `nyxa_mandate_revoke` | `nyxa_apply_patch` im Attestierungsmodus gesperrt; Mandats-Tools noch nicht attestiert (R8, offen). |
 
-## Vorbedingungen (alle müssen erfüllt sein, sonst HOLD)
+## Erforderliche menschliche Entscheidungen (vor Stufe 1)
 
-1. Unabhängiges Review von `REVIEW-R1.md` + Diff liegt vor (nicht durch Claude).
-2. R6: `grep -n NYXA_DEVELOPMENT_ACTOR /opt/nyxa-governed-memory-mcp-runtime/dist/server.js` — wertet das Live-Backend die Variable aus? Wenn ja: Auswirkungen auf Direktaufrufe dokumentieren; Aktivierung zusammen mit Authority V2 planen.
-3. R3: Apache-Vhost `mcp.future24.eu` prüfen: `grep -n -A15 mcp.future24.eu /etc/apache2/sites-enabled/*`. Zeigt er auf `100.116.58.45:39281`, ist Server B selbst der Client → Binding würde (korrekt) alles abweisen; dann ist dieses Arbeitspaket für den Claude-Webconnector **nicht** der richtige Ort, sondern die Apache-Authentifizierung.
-4. Client-Knoten bestimmen: während einer echten Claude-Verbindung `ss -tn sport = :39281` → Peer-IP → `tailscale whois <ip>`. StableID notieren. Darf nicht Server B sein und keinen Fremdverkehr proxien.
-5. Hashes im Workspace prüfen: `cd /home/jo/nyxa-actor-binding-20261126 && sha256sum -c` gegen `modules/authority/actor-binding/SHA256SUMS` dieses Repos.
+1. **Claude-Webconnector-Route:** (a) unverändert ohne Akteursbindung weiterbetreiben (nur Read-/Draft-Werkzeuge, keine Frame-Mandate für `claude` über diese Route), oder (b) OAuth 2.1 gemäß MCP `2026-07-28` (Protected Resource Metadata, Audience-Bindung) auf `mcp.future24.eu` einführen. Empfehlung: (a) sofort, (b) als eigenes Arbeitspaket.
+2. **Freigabe Stufe 2 (Backend-Attestierung)** inklusive Passport-Schlüsselerzeugung für die Agenten mit lokalem Laufzeitprozess (Claude-Code-Sitzungen auf Tailnet-Knoten, Sophia-Server, ChatGPT-Tunnel-Client).
 
-## Ausführung (root)
+## Stufe 0 — Preflight (zwingend, read-only)
+
+```sh
+sudo WS=/home/jo/nyxa-actor-binding-20261126 AT=/home/jo/nyxa-attestation-20261127 \
+  bash /home/jo/nyxa-actor-binding-20261126/preflight-wp-a1.sh
+```
+
+Prüft: Host-Identität; Apache-Routing auf die Bridge (HOLD bei Proxy); Backend-Durchsetzung im **live** `dist/server.js` (HOLD ohne Attestierungs-Gate); Rechte der Runtime-/Datenverzeichnisse (R5); beobachtete Bridge-Peers; Hashes beider Workspaces; Rechte von Passport-Registry und Nonce-Ledger. Weiter nur bei `PREFLIGHT=PASS` oder bei einem HOLD, das durch eine dokumentierte Entscheidung oben ausdrücklich angenommen wurde.
+
+## Stufe 1 — Actor Binding nur für direkte Tailnet-Clients (zweite Bridge-Instanz)
+
+Die bestehende Unit `nyxa-claude-mcp-bridge.service` (Port 39281, Apache-Route) bleibt **unverändert**. Für direkte Tailnet-Clients wird eine **zweite** Instanz auf eigenem Port gestartet, die die Apache-Route nicht bedient.
 
 ```sh
 set -euo pipefail
 W=/home/jo/nyxa-actor-binding-20261126; B=/opt/nyxa-claude-mcp-bridge
-CLIENT=<StableID aus Vorbedingung 4>
+CLIENT=<StableID des direkten Claude-Tailnet-Clients; nicht Server B; kein Proxy-Knoten>
 install -o root -g nyxamcp -m 0644 "$W/tailscaleIdentity.cjs" "$W/bridge-actor-bound.cjs" "$B/"
 install -d -o root -g nyxamcp -m 0750 /etc/nyxa-bridge
 umask 027; printf '{"version":1,"actor":"claude","localApiSocket":"/var/run/tailscale/tailscaled.sock","allowedPeers":[{"nodeStableId":"%s"}]}\n' "$CLIENT" > /etc/nyxa-bridge/claude-actor-binding.json
 chown root:nyxamcp /etc/nyxa-bridge/claude-actor-binding.json; chmod 0640 /etc/nyxa-bridge/claude-actor-binding.json
-install -d /etc/systemd/system/nyxa-claude-mcp-bridge.service.d
-cat > /etc/systemd/system/nyxa-claude-mcp-bridge.service.d/50-actor-binding.conf <<'EOF'
-[Service]
-Environment=BRIDGE_ACTOR_BINDING_FILE=/etc/nyxa-bridge/claude-actor-binding.json
-ExecStart=
-ExecStart=/usr/bin/node /opt/nyxa-claude-mcp-bridge/bridge-actor-bound.cjs
-EOF
-systemctl daemon-reload && systemctl restart nyxa-claude-mcp-bridge
+sed -e 's/^Description=.*/Description=NYXA Claude MCP Bridge, tailnet actor-bound (WP-A1)/' \
+    -e 's/^Environment=BRIDGE_PORT=39281/Environment=BRIDGE_PORT=39282/' \
+    -e 's#^ExecStart=.*#ExecStart=/usr/bin/node /opt/nyxa-claude-mcp-bridge/bridge-actor-bound.cjs#' \
+    /etc/systemd/system/nyxa-claude-mcp-bridge.service > /etc/systemd/system/nyxa-claude-mcp-bridge-bound.service
+printf '[Service]\nEnvironment=BRIDGE_ACTOR_BINDING_FILE=/etc/nyxa-bridge/claude-actor-binding.json\nEnvironment=BRIDGE_MCP_DATA_DIR=/opt/nyxa-governed-memory-mcp-runtime/data-claude-bridge-bound\n' \
+  | install -D -m 0644 /dev/stdin /etc/systemd/system/nyxa-claude-mcp-bridge-bound.service.d/50-binding.conf
+systemctl daemon-reload && systemctl start nyxa-claude-mcp-bridge-bound
 ```
 
-## Verifikation (direkt danach)
+Verifikation: Journal `actor claude`; von Server B `curl … http://100.116.58.45:39282/mcp` → `403`; Request mit `X-Forwarded-For` vom erlaubten Client → `403`; erlaubter Client → Tool-Liste; `nyxa_propose_action` mit `actor:"chatgpt"` → `TRANSPORT_IDENTITY`.
+Rollback: `systemctl stop nyxa-claude-mcp-bridge-bound && rm -r /etc/systemd/system/nyxa-claude-mcp-bridge-bound.service* && systemctl daemon-reload`. Die bestehende Bridge war nie betroffen.
 
-1. `journalctl -u nyxa-claude-mcp-bridge -n 20` enthält `nyxa_claude_mcp_broker_ready … actor claude`.
-2. Von Server B: `curl -s -o /dev/null -w '%{http_code}' -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"v","version":"0"}}}' http://100.116.58.45:39281/mcp` → `403`.
-3. Echter Claude-Client: Tool-Liste lädt (Session gebunden).
-4. Spoof-Probe vom Client: `nyxa_propose_action` mit `actor:"chatgpt"` → `TRANSPORT_IDENTITY / authenticated_actor_mismatch`.
+## Stufe 2 — Backend-Attestierung (Release-Pfad, nicht Hand-Patch)
 
-## Rollback (bei jedem Fehlschlag)
+1. Neue Authority-V2-Release-Version erzeugen: `patch_attestation.py` als zusätzlicher Build-Schritt nach `release-v2/build.py` (exakte Anker mit Trefferzahl; Abbruch bei Abweichung), neue `SHA256SUMS`, `deploy-authority-v2.sh --check` muss PASS ergeben.
+2. Dateien: `authority/actorAttestation.mjs`, `authority/actorAttestationGate.mjs` (neben dem echten `authority/passkeyAuthorityV1.js`).
+3. Passport-Registry `/etc/nyxa-authority/agent-passports.json` (`root:nyxamcp 0640`), Nonce-Ledger `/var/lib/nyxa-attestation/nonces` (`nyxamcp 0700`). Öffentliche Schlüssel werden vom jeweiligen Agenten-Host erzeugt; private Schlüssel verlassen den Agenten-Host nie und gehören nicht ins Repository.
+4. Aktivierung zuerst `NYXA_ACTOR_ATTESTATION_MODE=off` (Regression), dann `required` nur für die Frame-Mandats-Route.
+5. Rollback: Modus auf `off` (sofort wirksam nach Neustart), danach vorherige Release-Version über `deploy-authority-v2.sh`-Rollback.
 
-```sh
-rm /etc/systemd/system/nyxa-claude-mcp-bridge.service.d/50-actor-binding.conf
-systemctl daemon-reload && systemctl restart nyxa-claude-mcp-bridge
-systemctl show nyxa-claude-mcp-bridge -p ExecStart | grep -q 'bridge.cjs' && echo ROLLED_BACK
-```
+## Stufe 3 — Funktionale Abnahme Authority V2
 
-`bridge.cjs` bleibt unverändert; die neuen Dateien sind ohne Drop-in inert.
-
-## Danach: funktionale Abnahme Authority V2
-
-Erst nach Deployment von Authority V2 (`deploy-authority-v2.sh` mit neuer Release-Version, deren `--install` die Bindung prüft statt hart abzubrechen): Passkey-Freigabe auf `auth.future24.eu` → exakt gebundenes Mandat → `nyxa_apply_patch` in `governed-dev:` (ALLOW, reale Wirkung) → Scope-Escape (realer DENY) → Replay → Widerruf → Bypass über Direktaufruf → Fail-Closed bei gestopptem Issuer → Rollback. Jeder Schritt mit Audit-/Evidenz-Referenz.
+Passkey-Freigabe auf `auth.future24.eu` → exakt gebundenes Frame-Mandat → attestierter `nyxa_apply_patch` in `governed-dev:` (ALLOW, reale Wirkung, Audit + Evidenz) → realer Scope-DENY → Replay → Widerruf (`nyxa_mandate_revoke`) → Bypass-Versuche (direktes Tool, Toolbox, Proxy-Header, fremder Knoten) → Fail-Closed (Issuer gestoppt, Passport-Registry unlesbar) → Rollback. Jeder Schritt mit Audit-Referenz.

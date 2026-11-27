@@ -88,8 +88,16 @@ function audit(event, fields) {
 }
 
 /** Transport authentication: returns verified node id, or null when unbound legacy mode. */
+// R2/WP1: a request that passed through a proxy carries the proxy's tailnet identity, not the
+// originator's. Forwarding markers mean the transport identity is NOT the agent identity.
+const FORWARDING_HEADERS = ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto", "x-real-ip", "via"];
 async function authenticate(req) {
   if (!BINDING) return { nodeStableId: null };
+  const fwd = FORWARDING_HEADERS.find((h) => req.headers[h] !== undefined);
+  if (fwd) {
+    audit("forwarded_request_rejected", { header: fwd });
+    return null;
+  }
   const peer = await whois(BINDING.localApiSocket, req.socket.remoteAddress, req.socket.remotePort);
   const node = authorizePeer(BINDING, peer);
   if (!node) {
