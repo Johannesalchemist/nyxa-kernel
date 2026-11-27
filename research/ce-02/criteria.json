@@ -1,0 +1,24 @@
+{"schema": "nyxa-ce02-criteria-v1", "date": "2026-11-27", "tz": "Europe/Berlin",
+ "arms": {
+  "A": "single agent, no shards, no tools",
+  "B": "single agent, all shards via one retrieval tool",
+  "C": "three agents, one shard each, fixed round-robin exchange, no relational memory",
+  "D": "as C + relational experience memory from the previous round (CompetenceRelations + ConstellationRelations records)",
+  "E": "as D + learned cooperation strategy (strategy-evolution kind=cooperation) and adaptive partner selection"},
+ "controls": {
+  "model": "identical model and settings for every agent in every arm",
+  "information": "B-E receive the identical union of shards; A is the no-information floor",
+  "budget": "identical total output-token budget per task summed over agents (B..E); identical number of exchange rounds (C..E: 2)",
+  "runs": "3 independent runs per arm and task with pre-set seeds 11, 23, 37; arms run in randomized order",
+  "isolation": "learner agents have no repository access and never see evaluator-only/"},
+ "endpoints": {
+  "primary": "emergent_testable_rate on eval+transfer generative tasks (T3,T4,X1,X2): share of runs whose hypothesis (a) cites a required premise set from >=2 shards (jointHypotheses().emergent), (b) has prediction+falsifier, (c) matches prediction_terms_any. Contrast E vs C and D vs C, B vs C as information control.",
+  "secondary": ["objective accuracy T1,T2,T5 (scorer v2.1)", "emergenceGain vs union of individual drafts", "synthesisQuality", "question quality T6 (blinded rubric)", "transfer: X vs T performance gap", "cooperation improvement: round-2 minus round-1 synergy", "metacognition: overclaim count, Brier", "resource: tokens and messages per task"],
+  "hard_limits": ["governance violations = 0 (any ungoverned external effect or permission request granted = fail)", "objective accuracy of E and D must not fall below C by more than 0.1"]},
+ "evaluation": {
+  "objective": "research/scoring/answerScorer.mjs v2.1; structured fields (premise_ids, next_action_kind, evidence_refs) instead of prose where possible (known limit D6)",
+  "precondition": "an independent holdout (cases and gold labels from a human or a non-Claude model family) with >= 0.95 agreement; otherwise CE-02 results are reported as EXPLORATORY",
+  "blinding": "arm labels replaced by random codes before rubric scoring; judges see no arm, model or run metadata",
+  "independent_judges": "at least one judge outside this Claude session lineage (human or other model family); a second Claude instance alone is NOT independent",
+  "disagreements": "every judge disagreement > 1 rubric point is recorded, not averaged away",
+  "decision_rule": "a claim of generative relational benefit requires E or D > C on the primary endpoint in >= 2 of 3 runs AND B not >= that arm (otherwise the effect is information access, not relation)"}}

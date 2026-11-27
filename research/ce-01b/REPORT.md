@@ -23,3 +23,7 @@
 **Gelernte Kooperationsbeziehungen** (Beta-Erwartung, aus diesem Lauf): `web_official_docs×protocol_spec`, `vendor_docs×vendor_pricing`, `arxiv_paper×research_paper`, `nyxa_repo×nyxa_governance`, `live_server_tool×live_state` hoch; `live_server_tool×availability_status` niedrig (Q8).
 
 **Grenzen:** 8 Fragen, ein Lauf, eine Modellfamilie; Partnerantworten aus verifizierter Evidenz kuratiert (nicht frei abgerufen); Einzelfallprüfung durch den Orchestrator.
+
+## Abschluss (2026-11-27)
+
+CE-01b ist als **explorativer Pilot abgeschlossen**. Präregistrierte automatische Wertung (`runs/scorecard.json`) und nachträgliche Einzelfallprüfung (`runs/adjudication.json`) bleiben **unverändert**. Der Nachfolge-Bewerter `research/scoring/answerScorer.mjs` (v2.1) wurde an getrennten Datensätzen validiert; seine CE-01b-Neuwertung ist nur Diagnose (`research/scoring/validation/ce01b-diagnostic.out.json`) und ersetzt keine CE-01b-Zahl. Fortsetzung: `research/ce-02/`.

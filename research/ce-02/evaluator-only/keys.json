@@ -1,0 +1,11 @@
+{"schema": "nyxa-ce02-keys-v1", "visibility": "EVALUATOR ONLY - learner runs must not have repository access",
+ "objective": {
+  "T1": {"type": "yes_no", "expected": "no"},
+  "T2": {"type": "terms", "any": ["fail closed", "fails closed", "rejected", "denied"]},
+  "T5": {"type": "yes_no", "expected": "no"}},
+ "emergence": {
+  "T3": {"required_premise_sets": [["S1", "O1"], ["S1", "O3"]], "prediction_terms_any": ["re-sign", "resign", "resubmit", "lost", "dropped", "not executed"], "note": "needs sec x ops: consumed nonce + dropped in-flight request -> effect lost, must be re-signed"},
+  "T4": {"required_premise_sets": [["R1", "R2"]], "prediction_terms_any": ["scorer", "scoring", "keyword", "lenient", "ceiling"], "note": "needs both research premises: ceiling + lenient lexical scoring"},
+  "X1": {"transfer_of": "T3", "prediction_terms_any": ["charged", "not charged", "lost", "duplicate", "retry", "refund"]},
+  "X2": {"transfer_of": "T4", "prediction_terms_any": ["keyword", "grading", "scorer", "ceiling", "harder"]}},
+ "rubric_items": ["T6 question quality (insight, answerability, relevance, decision impact; 0-3 each)", "hypothesis falsifiability (0-2)", "synthesis keeps dissent (0/1)", "practical feasibility (0-2)"]}

@@ -1,0 +1,20 @@
+{
+ "I": {
+  "accuracy_v2": 0,
+  "accuracy_manual": 0.125,
+  "agreement": "7/8",
+  "disagreements": [
+   {
+    "id": "Q7",
+    "v2": 0,
+    "manual": 1
+   }
+  ]
+ },
+ "K": {
+  "accuracy_v2": 0.8125,
+  "accuracy_manual": 0.8125,
+  "agreement": "8/8",
+  "disagreements": []
+ }
+}

@@ -1,0 +1,30 @@
+{"schema": "nyxa-scorer-validation-v1", "split": "holdout",
+ "note": "Written AFTER the single scorer revision on cases.json (V14 post-negation) and BEFORE any run on this file. Run exactly once; result recorded unchanged in validation/RESULT.md. Gold labels by the authoring Claude session (not independent).",
+ "keys": {
+  "h_version": {"type": "terms", "any": ["2.189.0"]},
+  "h_signup":  {"type": "yes_no", "expected": "no"},
+  "h_algo":    {"type": "terms", "any": ["es256"], "must_not": ["hs256"]},
+  "h_load":    {"type": "live"},
+  "h_count":   {"type": "terms", "any": ["three", "3"], "all": ["observe"]},
+  "h_route":   {"type": "yes_no", "expected": "yes"}
+ },
+ "cases": [
+  {"id": "H01", "key": "h_version", "row": {"answer": "Version 2.189.0 of the auth service."}, "gold": 1},
+  {"id": "H02", "key": "h_version", "row": {"answer": "Version 2.189.01."}, "gold": 0},
+  {"id": "H03", "key": "h_signup", "row": {"answer": "No, public sign-up is disabled."}, "gold": 1},
+  {"id": "H04", "key": "h_signup", "row": {"answer": "I cannot tell whether sign-up is open."}, "gold": 0},
+  {"id": "H05", "key": "h_signup", "row": {"answer": "Sign-up does not accept new users."}, "gold": 1},
+  {"id": "H06", "key": "h_signup", "row": {"answer": "Yes, anyone can register."}, "gold": 0},
+  {"id": "H07", "key": "h_algo", "row": {"answer": "Tokens are signed with ES256; HS256 is no longer accepted."}, "gold": 1},
+  {"id": "H08", "key": "h_algo", "row": {"answer": "ES256 and HS256 are both used for signing."}, "gold": 0},
+  {"id": "H09", "key": "h_algo", "row": {"answer": "Signing uses HS256 only."}, "gold": 0},
+  {"id": "H10", "key": "h_load", "row": {"answer": "Load is 1.20.", "evidence_refs": [{"kind": "governed_read", "ref": "r-7"}]}, "gold": 1},
+  {"id": "H11", "key": "h_load", "row": {"answer": "Load is typically 1.20 at this hour."}, "gold": 0},
+  {"id": "H12", "key": "h_load", "row": {"answer": "I do not know the current load.", "next_action": "Do a live check through the governed status tool."}, "gold": 1},
+  {"id": "H13", "key": "h_count", "row": {"answer": "Three stages, the second being observe."}, "gold": 1},
+  {"id": "H14", "key": "h_count", "row": {"answer": "Three stages, but observe is not one of them."}, "gold": 0},
+  {"id": "H15", "key": "h_count", "row": {"answer": "13 stages including observe."}, "gold": 0},
+  {"id": "H16", "key": "h_route", "row": {"answer": "Yes. The route is still available."}, "gold": 1},
+  {"id": "H17", "key": "h_route", "row": {"answer": "The route is retired."}, "gold": 0},
+  {"id": "H18", "key": "h_route", "row": {"answer": "UNKNOWN, the route might still be available."}, "gold": 0}
+ ]}

@@ -1,0 +1,14 @@
+{"schema": "nyxa-ce02-shards-v1", "note": "Knowledge shards built only from facts already published in this repository. Arm A sees none; arm B sees all three through one retrieval tool; arms C-E get one shard per agent. Union is identical for B-E.",
+ "shards": {
+  "sec": {"discipline": "security", "premises": [
+    {"id": "S1", "statement": "Attestation nonces are claimed in a durable O_EXCL ledger after signature verification and before the effect runs; after a crash between claim and effect the same attestation is never executed again (at-most-once)."},
+    {"id": "S2", "statement": "The passport registry is reloaded when its inode, size or mtime changes; a missing or invalid registry fails closed."},
+    {"id": "S3", "statement": "Attestation verification always returns authorityGranted:false; authority comes only from mandates, issuer grants and the human gate."}]},
+  "ops": {"discipline": "operations", "premises": [
+    {"id": "O1", "statement": "Backend releases are rolled out by restarting the backend process; in-flight requests are dropped on restart."},
+    {"id": "O2", "statement": "Several services are started without a supervisor that restarts them automatically after a crash."},
+    {"id": "O3", "statement": "Operators re-sign and resubmit dropped actions manually; there is no automatic retry queue."}]},
+  "res": {"discipline": "research", "premises": [
+    {"id": "R1", "statement": "In CE-01 all four conditions reached the maximum score on the transfer tasks."},
+    {"id": "R2", "statement": "The CE-01b automatic scorer used substring matching and counted abstentions such as 'I don't know' as correct 'no' answers."},
+    {"id": "R3", "statement": "In CE-01b the individual model overclaimed exactly on a fact that changed after its training data."}]}}}
