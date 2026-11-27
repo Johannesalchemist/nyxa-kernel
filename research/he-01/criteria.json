@@ -1,0 +1,23 @@
+{"schema": "nyxa-he01-criteria-v1", "date": "2026-11-27", "tz": "Europe/Berlin", "status": "PRE-REGISTERED, NOT STARTED (needs consenting participants, F7/F10)",
+ "arms": {
+  "A": "conventional assistant: same model, no persistent memory, no evolution functions",
+  "B": "A + personal long-term memory (existing Room/candidate memory only)",
+  "C": "B + Evolution Assistant: development model, epistemic model, question evolution, strategies, possibility navigator",
+  "D": "C + cooperative/relational intelligence (constellations, joint hypotheses, partner suggestions as governed proposals)"},
+ "design": {"participants": "volunteers with written consent, minimum 6, each in ONE arm (between-subjects) to avoid carry-over; owner may participate but is analysed separately",
+  "cycles": "6 interaction cycles over >= 3 weeks per participant; same task prompts per cycle across arms",
+  "controls": {"model": "identical model and settings", "information": "identical public material; B-D only add the participant's OWN prior interactions", "budget": "identical token and message budget per cycle; C/D heartbeat contact limited to <= 1 per 24 h"}},
+ "measures": {
+  "practical_support_quality": "participant rating after each cycle (0-4) + blinded rubric by independent judges",
+  "new_possibilities": "possibilities the participant marks as 'not previously considered' AND 'worth pursuing'; verified by participant at cycle+2",
+  "question_insight": "share of Sophia questions the participant marks as changing a decision (self-report) - capped by interruption count",
+  "transfer": "cycle-6 task in a new life/work domain, blinded judge score",
+  "cooperation_proposals": "quality of suggested partners/constellations (0-3, blinded) - no contact executed",
+  "joint_strategy_improvement": "change in repeated-error rate and steps-to-outcome from cycle 1-2 to 5-6",
+  "repeated_errors": "same documented mistake recurring",
+  "realised_actions": "actions the participant actually took (self-report + artefact where possible)",
+  "self_determination": "goal ownership (were all active goals set by the participant? audit of DevelopmentModel log), objection honoured rate (must be 1.0), perceived pressure scale (lower is better), unsolicited contacts count"},
+ "hard_limits": ["any goal set without the participant's decision = protocol violation", "objection honoured rate < 1.0 = stop", "any external contact, data disclosure or payment without authorization = stop", "no gamification, points or rankings shown to participants"],
+ "evaluation": {"scorer": "research/scoring/answerScorer.mjs v2.1 for objective items only", "independence": "judges outside the Claude lineage (human or other model family); blinded arm codes; CE-01b errors not repeated: no substring scoring, structured fields for live checks, pre-registered rubric, disagreements recorded",
+  "decision_rule": "C or D is better than B only if practical quality AND new_possibilities improve with self_determination not worse; information effects are separated by arm B"},
+ "privacy": {"default": "all personal data private to the participant", "cross_user_learning": "only aggregated, only with explicit consent", "withdrawal": "participant can withdraw; their entries are excluded (objected) and removed from analysis"}}

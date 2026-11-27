@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evolution</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1f2328;--muted:#5b6470;--line:#e3e0d8;--accent:#3d5a80}
+@media (prefers-color-scheme:dark){:root{--bg:#16181c;--fg:#e8e6e1;--muted:#9aa3ad;--line:#2c3036;--accent:#8fb3de}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:8px 0 4px}h2{font-size:15px;margin:22px 0 6px;color:var(--accent)}
+.k{font-size:11px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+li{margin:6px 0}.note{color:var(--muted);font-size:13px}
+button{font:inherit;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:6px;padding:2px 8px;margin-left:6px}
+</style></head><body><main>
+<h1>Evolution</h1>
+<p class="note">Alles, was Sophia über dich gespeichert hat, mit Herkunft. Du kannst jeden Eintrag korrigieren oder seiner Verwendung widersprechen. Keine Punkte, keine Rankings.</p>
+<section id="dev"><h2>Meine Entwicklung</h2><ul></ul></section>
+<section id="poss"><h2>Neue Möglichkeiten</h2><ul></ul></section>
+<section id="q"><h2>Offene Fragen</h2><ul></ul></section>
+<section id="coop"><h2>Interessante Menschen und Kooperationen</h2><ul></ul></section>
+<section id="learn"><h2>Lern- und Erfahrungsgelegenheiten</h2><ul></ul></section>
+<section id="shared"><h2>Gemeinsame Erkenntnisse</h2><ul></ul></section>
+<section id="exp"><h2>Experimente und nächste Schritte</h2><ul></ul></section>
+</main>
+<script>
+// Renders a run/model JSON (same shape as demo/run-2026-11-27.json). Data source is injected by the host
+// (Room client / PA) after strong authentication; this page never fetches personal data by itself.
+const esc=(s)=>String(s).replace(/[&<>"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function li(sel,html){document.querySelector(sel+" ul").insertAdjacentHTML("beforeend","<li>"+html+"</li>")}
+window.renderEvolution=function(run,{onCorrect,onObject}={}){
+  for(const e of run.model.entries){
+    const html='<span class="k">'+esc(e.kind)+' · '+esc(e.dimension)+'</span><br>'+esc(e.statement)+' <span class="note">('+esc(e.source)+(e.status!=="active"?" · widersprochen":"")+')</span>'
+      +'<button data-c="'+e.id+'">korrigieren</button><button data-o="'+e.id+'">widersprechen</button>';
+    li(e.dimension==="complementarity"?"#coop":e.dimension==="knowledge_gap"?"#learn":"#dev",html);
+  }
+  for(const s of run.steps){
+    if(s.step==="explore") li("#poss","<b>"+esc(s.possibility.title)+"</b><br>"+esc(s.possibility.rationale)+(s.possibility.requires.length?'<br><span class="note">braucht deine Freigabe: '+esc(s.possibility.requires.join(", "))+"</span>":""));
+    if(s.step==="explore") s.possibility.nextSteps.forEach((n)=>li("#exp",esc(n)));
+    if(s.step==="question") s.asked.forEach((t)=>li("#q",esc(t)));
+    if(s.step==="reflect") li("#shared",esc(s.reflection));
+  }
+  document.body.addEventListener("click",(ev)=>{const c=ev.target.dataset.c,o=ev.target.dataset.o;if(c&&onCorrect)onCorrect(c);if(o&&onObject)onObject(o);});
+};
+</script></body></html>

@@ -1,0 +1,238 @@
+{
+ "schema": "nyxa-evolution-vertical-v1",
+ "date": "2026-11-27",
+ "tz": "Europe/Berlin",
+ "steps": [
+  {
+   "step": "observe",
+   "entries": 7
+  },
+  {
+   "step": "reflect",
+   "reflection": "Three self-stated interests (relational intelligence, Dialogues, LightNet) are stated separately; the CE-02 design has no human arm and lacks independent judges."
+  },
+  {
+   "step": "discover",
+   "connections": [
+    {
+     "a": "e2",
+     "b": "e5",
+     "shared": [
+      "research"
+     ]
+    }
+   ]
+  },
+  {
+   "step": "question",
+   "asked": [
+    "Could a Digitalleria Dialogues session serve as the human arm and the independent judging panel of CE-02?"
+   ],
+   "parked": [
+    {
+     "text": "Which discipline is missing from the three CE-02 shards?",
+     "reason": "budget_or_relevance"
+    }
+   ]
+  },
+  {
+   "step": "explore",
+   "possibility": {
+    "title": "Dialogues x CE-02 pilot: one session as human arm and independent judging panel",
+    "kind": "interdisciplinary_research",
+    "basedOn": [
+     "e1",
+     "e2",
+     "e4",
+     "e6"
+    ],
+    "rationale": "Joins three separately stated interests and closes CE-02's documented gap (independent judges) with an existing resource (Dialogues series).",
+    "nextSteps": [
+     "Owner decides whether to pursue (no action before that)",
+     "Draft a 1-page session format: 3-4 discussants from different disciplines, the T3/T4 CE-02 tasks, structured hypothesis cards (premises, prediction, falsifier)",
+     "Discussants independently score anonymised agent hypotheses with the CE-02 rubric (blinded)",
+     "Compare emergent-hypothesis rate of humans, agents and mixed groups with jointHypotheses()"
+    ],
+    "feasibility": {
+     "ok": true
+    },
+    "requires": [
+     "governed_action:contact_external_party",
+     "governed_action:publish"
+    ],
+    "status": "proposed",
+    "decidedBy": null
+   }
+  },
+  {
+   "step": "heartbeat",
+   "outcome": "prepare_message",
+   "communicate": true,
+   "externalActions": []
+  },
+  {
+   "step": "act",
+   "status": "AWAITING_HUMAN_DECISION",
+   "note": "advance(s,'act') is refused without a human decision; external contact and publication additionally need governed authorization"
+  }
+ ],
+ "candidateProposals": [
+  {
+   "actor": "sophia",
+   "action": "nyxa_memory_store_candidate",
+   "target": "memory:/candidate",
+   "scope": "memory:/",
+   "claims": [
+    {
+     "tag": "HYPOTHESIS",
+     "statement": "Could a Digitalleria Dialogues session serve as the human arm and the independent judging panel of CE-02?",
+     "source": "sophia-evolution:owner"
+    }
+   ],
+   "uncertainty": 0.5,
+   "requestedCapabilityClass": "I1",
+   "estimatedIrreversibility": "I1",
+   "provenance": {
+    "taskId": "evolution-vertical",
+    "runId": "2026-11-27",
+    "requestingIdentity": "sophia"
+   },
+   "payload": {
+    "content": "Could a Digitalleria Dialogues session serve as the human arm and the independent judging panel of CE-02?",
+    "candidate_type": "open_question",
+    "source": "agent",
+    "scope": "personal",
+    "purpose": "sophia-evolution:question",
+    "confidence": 0.6,
+    "importance": 0.5
+   }
+  }
+ ],
+ "model": {
+  "personId": "owner",
+  "entries": [
+   {
+    "id": "e1",
+    "kind": "SELF_STATEMENT",
+    "dimension": "interest",
+    "statement": "intelligence may emerge from the quality, diversity and evolution of relationships",
+    "source": "work-order:CE-02",
+    "asOf": "2026-11-27",
+    "confidence": 0.5,
+    "author": "human",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e2",
+    "kind": "SELF_STATEMENT",
+    "dimension": "interest",
+    "statement": "Digitalleria Dialogues: Sophia could connect people, moderate discussions and develop new research questions",
+    "source": "work-order:CE-02",
+    "asOf": "2026-11-27",
+    "confidence": 0.5,
+    "author": "human",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e3",
+    "kind": "SELF_STATEMENT",
+    "dimension": "interest",
+    "statement": "LightNet as a learning knowledge network whose participants learn to become smarter together",
+    "source": "work-order:CE-02",
+    "asOf": "2026-11-27",
+    "confidence": 0.5,
+    "author": "human",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e4",
+    "kind": "SELF_STATEMENT",
+    "dimension": "resource",
+    "statement": "Digitalleria Dialogues series and Sophia's public editorial section",
+    "source": "work-order:CE-02 + room instructions",
+    "asOf": "2026-11-27",
+    "confidence": 0.5,
+    "author": "human",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e5",
+    "kind": "OBSERVED_FACT",
+    "dimension": "experience",
+    "statement": "CE-01b: cooperative inquiry 0.81 vs individual 0.125; partner choice 7/8 (exploratory, not independent)",
+    "source": "repo:research/ce-01b/runs/adjudication.json",
+    "asOf": "2026-11-27",
+    "confidence": 0.6,
+    "author": "sophia",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e6",
+    "kind": "OBSERVED_FACT",
+    "dimension": "knowledge_gap",
+    "statement": "CE-02 needs independent judges and a non-Claude holdout before its results count as confirmatory",
+    "source": "repo:research/scoring/validation/RESULT.md",
+    "asOf": "2026-11-27",
+    "confidence": 0.9,
+    "author": "sophia",
+    "status": "active",
+    "history": []
+   },
+   {
+    "id": "e7",
+    "kind": "HYPOTHESIS",
+    "dimension": "complementarity",
+    "statement": "human discussants supply premises from disciplines no agent shard covers; agents supply structure and verification",
+    "source": "reflection:this-run",
+    "asOf": "2026-11-27",
+    "confidence": 0.4,
+    "author": "sophia",
+    "status": "active",
+    "history": []
+   }
+  ],
+  "goals": [],
+  "log": [
+   {
+    "op": "add",
+    "id": "e1",
+    "by": "human"
+   },
+   {
+    "op": "add",
+    "id": "e2",
+    "by": "human"
+   },
+   {
+    "op": "add",
+    "id": "e3",
+    "by": "human"
+   },
+   {
+    "op": "add",
+    "id": "e4",
+    "by": "human"
+   },
+   {
+    "op": "add",
+    "id": "e5",
+    "by": "sophia"
+   },
+   {
+    "op": "add",
+    "id": "e6",
+    "by": "sophia"
+   },
+   {
+    "op": "add",
+    "id": "e7",
+    "by": "sophia"
+   }
+  ]
+ }
+}
