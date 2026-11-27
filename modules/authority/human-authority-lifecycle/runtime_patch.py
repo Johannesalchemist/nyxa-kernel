@@ -27,6 +27,12 @@ TOOLS_NEW = '''        name: "nyxa_mandate_list",
         annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false }
     },
     {
+        name: "nyxa_authority_release",
+        description: "Releases (revokes) the caller's OWN active frame mandate early. Only reduces authority; never grants.",
+        inputSchema: objectSchema({ request_id: stringSchema(64) }, ["request_id"]),
+        annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true }
+    },
+    {
         name: "nyxa_authority_status",
         description: "Read-only processing state of an authority request (REQUESTED..ACTIVE/COMPLETED or EXPIRED/REVOKED/DENIED/FAILED).",
         inputSchema: objectSchema({ request_id: stringSchema(64) }, ["request_id"]),
@@ -37,6 +43,10 @@ DISPATCH_OLD = '''            if (name === "nyxa_mandate_list") {'''
 DISPATCH_NEW = '''            if (name === "nyxa_authority_request") {
                 assertKeys(input, ["root", "window", "purpose"]);
                 return await this.handleAuthorityRequest(input);
+            }
+            if (name === "nyxa_authority_release") {
+                assertKeys(input, ["request_id"]);
+                return await this.handleAuthorityRelease(input);
             }
             if (name === "nyxa_authority_status") {
                 assertKeys(input, ["request_id"]);
@@ -76,6 +86,20 @@ METHODS_NEW = '''    async authorityLifecycle() {
             await this.audit("blocked", "nyxa_authority_request", { actor, reason: String(error.message).slice(0, 80) });
             return toolJsonResult({ error: String(error.message).slice(0, 80) }, true);
         }
+    }
+    async handleAuthorityRelease(input) {
+        const lifecycle = await this.authorityLifecycle();
+        if (!lifecycle)
+            return toolJsonResult({ error: "authority_lifecycle_not_configured" }, true);
+        try {
+            const id = requiredString(input, "request_id", 64);
+            if (lifecycle.status(id).actor !== process.env.NYXA_DEVELOPMENT_ACTOR)
+                return toolJsonResult({ error: "not_own_request" }, true);
+            const r = await lifecycle.revoke(id, "released_by_actor");
+            await this.audit("allowed", "nyxa_authority_release", { id, mandateId: r.mandateId });
+            return toolJsonResult({ ok: true, state: r.state, mandateId: r.mandateId });
+        }
+        catch (error) { return toolJsonResult({ error: String(error.message).slice(0, 80) }, true); }
     }
     async handleAuthorityStatus(input) {
         const lifecycle = await this.authorityLifecycle();
