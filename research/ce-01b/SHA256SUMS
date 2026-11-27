@@ -1,0 +1,13 @@
+6f088dbda2882b2cff8d8768999c9cb9a347ac76c55a34ecb47c7d47595aed2f  ./PRE-REGISTRATION.sha256
+b5d28d8ff14abe4d14e423985826095e11f1f8662ce64a8ddfc471ece0d70833  ./REPORT.md
+6f8eb8866daf5fd66ae7c8d3c20141d54de9a4666c340478664eb7b9f0d7de0c  ./evaluate.mjs
+4f78ec8b2bf2e63d0b00ddb47c2a77ebd94d9667e71c9d236b77ba8bc8ad6aa7  ./evaluator-only/criteria.json
+a48f4389e3716321d1512468745ff453a3ae19a97cc2f7513cbd418c07a50ca5  ./evaluator-only/keys.json
+49db9475b85f5dd9ef7a19058b84a99fcc42021f4dce90fcee22107e0e078760  ./learner-visible/questions.json
+11cf8ac97668666b04564cb4bb0c434d8a2d1c0704b8b7cc441fd7220f861a9c  ./question-portfolio.mjs
+1fd47d47e1c97005fa755446a94223cd1bb3597dfd456f51776bd16173f8c925  ./runs/I.json
+44e27f57aff7643f9f9dab47cc559144fab157ff1b63ed167522dfddedb1db29  ./runs/K-step1.json
+6da83dda3d44ebcff5dde06bc7af874041507bf416c53b86d67b1d999f9d04c3  ./runs/K-step2.json
+0df2c9814a81d084ca697804c1b842338c60adf936f7b7e7c377e8f622484be3  ./runs/adjudication.json
+3cccf755f946032fc26fbddb23a854a797032f3af6204c17186ccad6e5fab98c  ./runs/question-portfolio.json
+e2cef3f5f6881002d954b4f8933b0ab8fdd6baa95705615708130edd5ad7a6e2  ./runs/scorecard.json

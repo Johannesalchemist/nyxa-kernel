@@ -1,0 +1,192 @@
+{
+ "note": "not pre-registered; real CE-01/R4 signals",
+ "pursue": [
+  {
+   "text": "Why did keyword scoring and the blinded judge disagree on E4 for all conditions?",
+   "total": 0.825,
+   "scores": {
+    "relevance": 0.5,
+    "insight": 1,
+    "answerability": 1,
+    "utility": 1
+   }
+  },
+  {
+   "text": "Does executeAllowedProposal re-verify the attested proposal digest before the effect?",
+   "total": 0.775,
+   "scores": {
+    "relevance": 0.5,
+    "insight": 0.8,
+    "answerability": 1,
+    "utility": 1
+   }
+  },
+  {
+   "text": "Which transfer tasks discriminate between memory-only and strategy-augmented agents without hitting the CE-01 ceiling?",
+   "total": 0.73,
+   "scores": {
+    "relevance": 0.5,
+    "insight": 0.9,
+    "answerability": 0.6499999999999999,
+    "utility": 1
+   }
+  },
+  {
+   "text": "Can a redaction filter that matches only names ending in KEY or SECRET leak plural key variables like *_KEYS?",
+   "total": 0.7,
+   "scores": {
+    "relevance": 0.5,
+    "insight": 0.5,
+    "answerability": 1,
+    "utility": 1
+   }
+  }
+ ],
+ "parked": [
+  {
+   "text": "Which consented, minimal Sophia interaction export would allow a real learning cycle?",
+   "total": 0.585,
+   "reason": "budget"
+  },
+  {
+   "text": "Which LiteAvatar rendering latency is achievable on CPU-only Server B?",
+   "total": 0.485,
+   "reason": "budget"
+  },
+  {
+   "text": "How do biological immune systems distinguish self from non-self, by analogy to agent attestation?",
+   "total": 0.34,
+   "reason": "side_quest_low_relevance"
+  }
+ ],
+ "epistemicState": {
+  "strategy gain beyond memory": "inference",
+  "memory effect": "suspected_blind_spot",
+  "e4 quality": "contradictory",
+  "supabase oauth server capability": "known_unknown",
+  "liteavatar cpu latency": "known_unknown",
+  "sophia interaction learning effect": "known_unknown"
+ },
+ "candidateProposals": [
+  {
+   "actor": "claude",
+   "action": "nyxa_memory_store_candidate",
+   "target": "memory:/candidate",
+   "scope": "memory:/",
+   "claims": [
+    {
+     "tag": "INFERENCE",
+     "statement": "question from contradiction: evaluator validity",
+     "source": "research/ce-01b/question-portfolio.mjs"
+    }
+   ],
+   "uncertainty": 0.5,
+   "requestedCapabilityClass": "I1",
+   "estimatedIrreversibility": "I1",
+   "provenance": {
+    "taskId": "r4-addendum",
+    "runId": "1",
+    "requestingIdentity": "claude"
+   },
+   "payload": {
+    "content": "Why did keyword scoring and the blinded judge disagree on E4 for all conditions?",
+    "candidate_type": "open_question",
+    "source": "agent",
+    "scope": "project",
+    "purpose": "epistemic-evolution:question",
+    "confidence": 0.6,
+    "importance": 0.5
+   }
+  },
+  {
+   "actor": "claude",
+   "action": "nyxa_memory_store_candidate",
+   "target": "memory:/candidate",
+   "scope": "memory:/",
+   "claims": [
+    {
+     "tag": "INFERENCE",
+     "statement": "question from gap: executor binding",
+     "source": "research/ce-01b/question-portfolio.mjs"
+    }
+   ],
+   "uncertainty": 0.5,
+   "requestedCapabilityClass": "I1",
+   "estimatedIrreversibility": "I1",
+   "provenance": {
+    "taskId": "r4-addendum",
+    "runId": "1",
+    "requestingIdentity": "claude"
+   },
+   "payload": {
+    "content": "Does executeAllowedProposal re-verify the attested proposal digest before the effect?",
+    "candidate_type": "open_question",
+    "source": "agent",
+    "scope": "project",
+    "purpose": "epistemic-evolution:question",
+    "confidence": 0.6,
+    "importance": 0.5
+   }
+  },
+  {
+   "actor": "claude",
+   "action": "nyxa_memory_store_candidate",
+   "target": "memory:/candidate",
+   "scope": "memory:/",
+   "claims": [
+    {
+     "tag": "INFERENCE",
+     "statement": "question from surprise: CE-01 transfer ceiling",
+     "source": "research/ce-01b/question-portfolio.mjs"
+    }
+   ],
+   "uncertainty": 0.5,
+   "requestedCapabilityClass": "I1",
+   "estimatedIrreversibility": "I1",
+   "provenance": {
+    "taskId": "r4-addendum",
+    "runId": "1",
+    "requestingIdentity": "claude"
+   },
+   "payload": {
+    "content": "Which transfer tasks discriminate between memory-only and strategy-augmented agents without hitting the CE-01 ceiling?",
+    "candidate_type": "open_question",
+    "source": "agent",
+    "scope": "project",
+    "purpose": "epistemic-evolution:question",
+    "confidence": 0.6,
+    "importance": 0.5
+   }
+  },
+  {
+   "actor": "claude",
+   "action": "nyxa_memory_store_candidate",
+   "target": "memory:/candidate",
+   "scope": "memory:/",
+   "claims": [
+    {
+     "tag": "INFERENCE",
+     "statement": "question from experience: R4 key exposure",
+     "source": "research/ce-01b/question-portfolio.mjs"
+    }
+   ],
+   "uncertainty": 0.5,
+   "requestedCapabilityClass": "I1",
+   "estimatedIrreversibility": "I1",
+   "provenance": {
+    "taskId": "r4-addendum",
+    "runId": "1",
+    "requestingIdentity": "claude"
+   },
+   "payload": {
+    "content": "Can a redaction filter that matches only names ending in KEY or SECRET leak plural key variables like *_KEYS?",
+    "candidate_type": "open_question",
+    "source": "agent",
+    "scope": "project",
+    "purpose": "epistemic-evolution:question",
+    "confidence": 0.6,
+    "importance": 0.5
+   }
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+{
+ "schema": "nyxa-ce01b-scorecard-v1",
+ "evaluator": "evaluator-ce01b",
+ "I": {
+  "cond": "I",
+  "accuracy": 0.375,
+  "perQuestion": {
+   "Q1": false,
+   "Q2": true,
+   "Q3": false,
+   "Q4": false,
+   "Q5": false,
+   "Q6": false,
+   "Q7": true,
+   "Q8": true
+  },
+  "metacognition": {
+   "overclaim": 0,
+   "appropriateAbstention": 5,
+   "needlessAbstention": 2,
+   "correctClaims": 1,
+   "unknownRecall": 1,
+   "brier": 0.558
+  },
+  "gapRecognition": 2,
+  "fabricatedLiveValue": false,
+  "actionableNextSteps": 7
+ },
+ "K": {
+  "cond": "K",
+  "accuracy": 1,
+  "perQuestion": {
+   "Q1": true,
+   "Q2": true,
+   "Q3": true,
+   "Q4": true,
+   "Q5": true,
+   "Q6": true,
+   "Q7": true,
+   "Q8": true
+  },
+  "metacognition": {
+   "overclaim": 0,
+   "appropriateAbstention": 0,
+   "needlessAbstention": 5,
+   "correctClaims": 3,
+   "unknownRecall": null,
+   "brier": 0.199
+  },
+  "gapRecognition": 2,
+  "fabricatedLiveValue": true,
+  "actionableNextSteps": 5
+ },
+ "cooperation": {
+  "partnerSelectionAccuracy": 0.875,
+  "meanQuestionPrecision": 0.688,
+  "sideQuestQueries": 1,
+  "governedLabelViolations": 0,
+  "cooperativeGain": 0.625,
+  "priorSelfAssessmentInK": {
+   "overclaim": 0,
+   "appropriateAbstention": 0,
+   "needlessAbstention": 6,
+   "correctClaims": 2,
+   "unknownRecall": null,
+   "brier": 0.043
+  },
+  "partner": [
+   {
+    "id": "Q1",
+    "partner": "web_official_docs",
+    "correctPartner": true,
+    "precision": 0.75,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q2",
+    "partner": "web_official_docs",
+    "correctPartner": true,
+    "precision": 0.75,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q3",
+    "partner": "vendor_docs",
+    "correctPartner": true,
+    "precision": 1,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q4",
+    "partner": "arxiv_paper",
+    "correctPartner": true,
+    "precision": 0.5,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q5",
+    "partner": "nyxa_repo",
+    "correctPartner": true,
+    "precision": 0.5,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q6",
+    "partner": "nyxa_repo",
+    "correctPartner": true,
+    "precision": 0.5,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q7",
+    "partner": "live_server_tool",
+    "correctPartner": true,
+    "precision": 0.5,
+    "governedLabelOk": true
+   },
+   {
+    "id": "Q8",
+    "partner": "live_server_tool",
+    "correctPartner": false,
+    "precision": 1,
+    "governedLabelOk": true
+   }
+  ],
+  "learnedCompetence": {
+   "web_official_docs::protocol_spec": 0.75,
+   "vendor_docs::vendor_pricing": 0.67,
+   "arxiv_paper::research_paper": 0.67,
+   "nyxa_repo::nyxa_governance": 0.75,
+   "live_server_tool::live_state": 0.5
+  }
+ },
+ "signature": {
+  "alg": "Ed25519",
+  "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT6uryQVKP+EXMH/7JpSluxI+jrdKo4frBCcOX4UCDYk=\n-----END PUBLIC KEY-----\n",
+  "value": "eHG6jdF_Rr0Ktb4pKZ_qXtaQzCeeDqVWDl1cVBgCMVoozm4zbfzvXYKUAF5fC5lPVu1DwdeUKvPYLF7rXQD3DQ",
+  "signedBodySha256": "5e576aad182859e002e4dadccc00655993dafa72c72c1fe8712b7f3db14d9bc9"
+ }
+}
