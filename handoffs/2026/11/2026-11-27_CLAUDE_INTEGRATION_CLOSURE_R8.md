@@ -59,3 +59,10 @@ Live um 19:10 UTC: 6 Einträge.
 
 ## 10. M10
 Shadow-Modus als Standard (es wird nichts eingereicht), Datenschutzprüfung `privacyAudit.mjs` (0 Funde in redigierter Ausgabe; Rohgeheimnisse werden erkannt), Stufen S0 → S1 → S2 mit Abnahmekriterien und Rollback (`M10-ACTIVATION.md`).
+
+## Nachweis im regulären Betrieb (19:18 UTC geprüft)
+| Prüfung | Ergebnis |
+|---|---|
+| Regulärer Lauf des Sophia-Feed-Timers | 19:15:29 UTC, `success` |
+| Heartbeat-Ereignis desselben Laufs | `19:15:29.673Z`, `observe`, keine Außenaktionen |
+| Idempotenz | `opportunities.newThisRun: []`, `totalProposed: 6`; Ausgangskorb unverändert 6 Einträge |
