@@ -25,7 +25,7 @@ export function createLifecycle({ dir, issueFrame, discover, mandateStore, now =
   for (const d of ["requests", "inbox", "outbox"]) fs.mkdirSync(path.join(dir, d), { recursive: true, mode: 0o700 });
   const file = (id) => path.join(dir, "requests", `${id}.json`);
   const journal = (e) => { const fd = fs.openSync(path.join(dir, "journal.jsonl"), "a", 0o600); try { fs.writeSync(fd, JSON.stringify({ at: new Date(now()).toISOString(), ...e }) + "\n"); fs.fsyncSync(fd); } finally { fs.closeSync(fd); } };
-  const read = (id) => JSON.parse(fs.readFileSync(file(id), "utf8"));
+  const read = (id) => { if (!UUID.test(String(id))) throw Error("request_id_invalid"); return JSON.parse(fs.readFileSync(file(id), "utf8")); };
   const write = (r) => { const tmp = `${file(r.id)}.${process.pid}.tmp`; const fd = fs.openSync(tmp, "w", 0o600);
     try { fs.writeSync(fd, JSON.stringify(r)); fs.fsyncSync(fd); } finally { fs.closeSync(fd); } fs.renameSync(tmp, file(r.id));
     const dfd = fs.openSync(path.join(dir, "requests"), "r"); try { fs.fsyncSync(dfd); } finally { fs.closeSync(dfd); } };

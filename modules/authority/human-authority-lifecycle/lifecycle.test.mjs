@@ -54,6 +54,7 @@ test("wrong actor and expired grant are denied; ambiguity denied; proposal expir
   const r4 = L.request({ actor: "claude", root: "silicon-dev", purpose: "p" }); w.publish(r4.id, PID()); await L.tick(); T += 86400e3 + 1; await L.tick(); assert.equal(L.status(r4.id).state, "EXPIRED");
   assert.throws(() => L.request({ actor: "mallory", purpose: "p" }), /frame_not_allowed/); assert.throws(() => L.request({ actor: "claude", root: "../etc", purpose: "p" }), /frame_not_allowed/);
   assert.throws(() => L.request({ actor: "claude" }), /purpose_required/); assert.equal(w.mandates.length, 0);
+  assert.throws(() => L.status("../../etc/passwd"), /request_id_invalid/);
 });
 test("revocation stops the mandate; journal is append-only and complete", async () => {
   const w = world(); const L = w.mk(); const r = L.request({ actor: "claude", purpose: "p" }); const pid = PID(); w.publish(r.id, pid); await L.tick();
