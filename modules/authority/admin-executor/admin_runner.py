@@ -7,6 +7,8 @@
 """
 import argparse, hashlib, json, os, socket, stat, uuid
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir; the install dir is root-owned
 from cryptography.hazmat.primitives import serialization
 import admin_executor as X
 
