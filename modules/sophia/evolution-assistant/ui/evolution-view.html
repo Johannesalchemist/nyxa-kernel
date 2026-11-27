@@ -43,6 +43,10 @@ window.renderEvolution=function(run,{onCorrect,onObject}={}){
     const o=e.outcome; li("#rse","<b>"+esc(e.id)+"</b> ("+esc(e.what)+")<br>GAIN "+o.GAIN+" · HURT "+o.HURT+" · RETAIN "+o.RETAIN+" · GAP "+o.GAP+" · UNKNOWN "+o.UNKNOWN
       +'<br><span class="note">'+(e.recommendation==="reject"?"nicht übernommen":"übernehmen nur in: "+esc(e.activateIn.join(", ")))+" (Übernahme nur mit Freigabe)</span>");
   }
+  for(const e of (run.efficiencyEvents||[])){
+    const r=e.relative; li("#rse","<b>Effizienz "+esc(e.id.replace(":efficiency",""))+"</b>: Schritte "+Math.round(r.steps*100)+" %, Freigaben "+Math.round(r.approvals*100)+" %, Qualität "+(e.qualityDelta>=0?"+":"")+e.qualityDelta
+      +'<br><span class="note">'+(e.promote?"Effizienzgewinn ohne Qualitäts- oder Governance-Verlust":"nicht übernommen: "+esc(e.reasons.join(", ")))+" · Kosteneinheit: "+esc(e.costUnits)+"</span>");
+  }
   document.body.addEventListener("click",(ev)=>{const c=ev.target.dataset.c,o=ev.target.dataset.o;if(c&&onCorrect)onCorrect(c);if(o&&onObject)onObject(o);});
 };
 </script></body></html>

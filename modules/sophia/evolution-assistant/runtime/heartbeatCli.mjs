@@ -25,7 +25,9 @@ try {
   const rseFile = path.join(state, "rse-events.json");
   const rse = fs.existsSync(rseFile) ? JSON.parse(fs.readFileSync(rseFile, "utf8")).events.map((e) => ({ id: e.id, what: e.what,
     outcome: Object.fromEntries(["GAIN", "HURT", "RETAIN", "GAP", "UNKNOWN"].map((k) => [k, e.profile.overall[k]])), recommendation: e.decision.recommendation, activateIn: e.decision.activateIn })) : [];
-  const projection = { schema: "nyxa-sophia-evolution-heartbeat-v1", at: nowIso, results, learningEvents: rse, externalActions: [] };
+  const eff = fs.existsSync(rseFile) ? (JSON.parse(fs.readFileSync(rseFile, "utf8")).efficiency ?? []).map((e) => ({ id: e.id, costUnits: e.costUnits, relative: e.relative,
+    qualityDelta: e.qualityDelta, promote: e.decision.promote, reasons: e.decision.reasons, breakEven: e.breakEven })) : [];
+  const projection = { schema: "nyxa-sophia-evolution-heartbeat-v1", at: nowIso, results, learningEvents: rse, efficiencyEvents: eff, externalActions: [] };
   const tmp = path.join(out, `.hb-${process.pid}.tmp`); fs.writeFileSync(tmp, JSON.stringify(projection, null, 1), { mode: 0o640 }); fs.renameSync(tmp, path.join(out, "sophia-evolution-heartbeat.json"));
   for (const r of results) fs.appendFileSync(path.join(out, "sophia-evolution-events.jsonl"), JSON.stringify({ at: nowIso, kind: "heartbeat", participant: r.participant, outcome: r.outcome, calibration: r.calibration, externalActions: r.externalActions }) + "\n", { mode: 0o640 });
   console.log(JSON.stringify({ ok: true, at: nowIso, outcomes: results.map((r) => r.outcome), learningEvents: rse.length }));

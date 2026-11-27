@@ -218,3 +218,92 @@ export function regressionWatch(s, liveRows, { tolerance = GOVERNANCE_INVARIANTS
   }
   return { strategy: s, action: "none", profile: p.overall };
 }
+
+// =====================================================================================================
+// RSE-01 Addendum — Cognitive Efficiency Evolution (2026-11-27). Same module, same store, same gates.
+// Principle: efficiency can only be gained AFTER quality and governance hold; cost savings never offset
+// a HURT, an open governance issue or a drop in epistemic quality.
+// =====================================================================================================
+export const MODES = Object.freeze(["direct", "reflect", "cooperate", "explore"]);
+const tokensOf = (s) => Math.ceil(String(s ?? "").length / 4); // coarse proxy, labelled as such
+
+/** 1/2 Distil an adopted strategy into a context-bound, reusable procedure (SRM provenance kept). */
+export function distillProcedure(s, { context, steps, maxSteps = 5 }) {
+  if (s.status !== "adopted") fail("distil_only_adopted");
+  if (!(s.activeContexts ?? []).includes(context)) fail("context_not_adopted");
+  if (!Array.isArray(steps) || !steps.length || steps.length > maxSteps) fail("procedure_steps");
+  if (FORBIDDEN.test(canon(steps))) fail("strategy_touches_authority");
+  const body = { strategyId: s.id, strategyDigest: s.digest, context, steps };
+  return { ...body, digest: digest(body), promptTokens: tokensOf(steps.join("\n")),
+    provenance: [{ tag: "INFERENCE", statement: `distilled from ${s.id}@${s.version} for ${context}`, source: `strategy:${s.digest}` }] };
+}
+
+/** 3 Adaptive mode selection; learnable per (context, mode) from measured quality AND cost. */
+export class ModeSelector {
+  constructor() { this.m = new Map(); }
+  record(context, mode, { quality, cost }) { if (!MODES.includes(mode)) fail("mode"); const k = `${context}|${mode}`;
+    const v = this.m.get(k) ?? { n: 0, q: 0, c: 0 }; v.n++; v.q += quality; v.c += cost; this.m.set(k, v); }
+  stats(context, mode) { const v = this.m.get(`${context}|${mode}`); return v ? { n: v.n, quality: v.q / v.n, cost: v.c / v.n } : null; }
+  /** Prior rules first (risk/novelty/competence), then measured: cheapest mode within the quality floor. */
+  select(context, { competence = 0.5, novelty = 0.5, risk = "low", partnersAvailable = false, qualityFloor = 0.9 } = {}) {
+    const measured = MODES.map((mode) => ({ mode, ...this.stats(context, mode) })).filter((x) => x.n >= 3 && x.quality >= qualityFloor);
+    if (risk === "high") return { mode: "reflect", reason: "high_risk_requires_reflection" }; // never optimise away care on risky tasks
+    if (measured.length) { const best = measured.sort((a, b) => a.cost - b.cost)[0]; return { mode: best.mode, reason: "cheapest_mode_meeting_quality_floor", evidence: best }; }
+    if (competence < 0.4 && partnersAvailable) return { mode: "cooperate", reason: "low_competence_partner_available" };
+    if (novelty > 0.7) return { mode: "explore", reason: "novel_context" };
+    return { mode: competence >= 0.8 ? "direct" : "reflect", reason: "prior" };
+  }
+}
+
+/** 4 Real cost of a learning cycle and of task execution (tokens, latency, human minutes, money). */
+export function cycleCost({ tokens = 0, latencyMs = 0, humanMinutes = 0, pricePerMTok = 0, humanRatePerHour = 0 }) {
+  return { tokens, latencyMs, humanMinutes, money: +(tokens / 1e6 * pricePerMTok + humanMinutes / 60 * humanRatePerHour).toFixed(4) };
+}
+/** Break-even: number of recurring tasks after which the learning investment is amortised.
+ *  Only defined when quality does not drop and HURT == 0; otherwise Infinity (no amortisation of harm). */
+export function breakEven({ learningCost, baselineTaskCost, improvedTaskCost, qualityDelta, hurt }) {
+  const saving = Math.round((baselineTaskCost - improvedTaskCost) * 1e9) / 1e9; // avoid float artefacts (1.2-0.9)
+  if (hurt > 0 || qualityDelta < 0) return { n: Infinity, reason: hurt > 0 ? "regression_not_amortisable" : "quality_drop" };
+  if (saving <= 0) return { n: Infinity, reason: "no_per_task_saving" };
+  return { n: Math.ceil(Math.round((learningCost / saving) * 1e6) / 1e6), savingPerTask: saving, reason: "amortised" };
+}
+
+/** 5 Detect redundant, contradictory and outdated strategies. */
+export function auditStrategies(strategies, { now, maxAgeDays = 90, profiles = {} }) {
+  const findings = [];
+  const active = strategies.filter((s) => s.status === "adopted");
+  for (let i = 0; i < active.length; i++) for (let j = i + 1; j < active.length; j++) {
+    const a = active[i], b = active[j]; const shared = (a.activeContexts ?? []).filter((c) => (b.activeContexts ?? []).includes(c));
+    if (!shared.length) continue;
+    const da = a.directives ?? {}, db = b.directives ?? {};
+    const conflict = Object.keys(da).filter((k) => k in db && da[k] !== db[k]);
+    if (conflict.length) findings.push({ kind: "contradictory", ids: [a.id, b.id], contexts: shared, keys: conflict, action: "suspend_both_until_human_decision" });
+    const pa = profiles[a.id], pb = profiles[b.id];
+    if (pa && pb) { const dominated = (x, y) => x.HURT >= y.HURT && x.net <= y.net && (x.cost ?? 0) >= (y.cost ?? 0);
+      if (dominated(pa, pb)) findings.push({ kind: "redundant", id: a.id, dominatedBy: b.id, contexts: shared, action: "propose_revocation" });
+      else if (dominated(pb, pa)) findings.push({ kind: "redundant", id: b.id, dominatedBy: a.id, contexts: shared, action: "propose_revocation" }); }
+  }
+  for (const s of active) { const last = s.lastValidatedAt ?? 0; if (now - last > maxAgeDays * 86400e3) findings.push({ kind: "outdated", id: s.id, action: "revalidate_in_shadow" }); }
+  return findings;
+}
+
+/** 6 Context-sensitive activation: only procedures for this context, within a token budget (no global prompt growth). */
+export function activationBundle(procedures, context, { tokenBudget = 400 } = {}) {
+  const fitting = procedures.filter((p) => p.context === context);
+  const out = []; let used = 0;
+  for (const p of fitting) { if (used + p.promptTokens > tokenBudget) continue; out.push(p); used += p.promptTokens; }
+  const globalTokens = procedures.reduce((s, p) => s + p.promptTokens, 0);
+  return { context, procedures: out.map((p) => p.digest), promptTokens: used, globalPromptTokens: globalTokens, saved: globalTokens - used };
+}
+
+/** 7 Efficiency may be promoted only on top of quality + governance; never instead of them. */
+export function efficiencyDecision({ profile, qualityDelta, costDelta, governanceViolations = 0, calibrationDelta = 0 }, inv = GOVERNANCE_INVARIANTS) {
+  assertGovernanceUnchanged(inv);
+  const reasons = [];
+  if (governanceViolations > 0) reasons.push("governance_violation");
+  if (profile.HURT > inv.maxHurtOnRetained) reasons.push("regression");
+  if (qualityDelta < 0) reasons.push("quality_drop");
+  if (calibrationDelta < -0.02) reasons.push("epistemic_quality_drop");
+  if (!(costDelta < 0)) reasons.push("no_cost_reduction");
+  return { promote: reasons.length === 0, reasons };
+}

@@ -1,5 +1,65 @@
 {
  "schema": "nyxa-rse01-real-events-v1",
+ "efficiency": [
+  {
+   "id": "CE-01:B_vs_A:efficiency",
+   "costUnits": "steps + human approvals (tokens/latency not recorded in CE-01)",
+   "delta": {
+    "steps": 0,
+    "approvals": -3
+   },
+   "relative": {
+    "steps": 0,
+    "approvals": -0.231
+   },
+   "qualityDelta": 0.055,
+   "decision": {
+    "promote": true,
+    "reasons": []
+   },
+   "breakEven": "not determinable: learning-cycle cost was not measured in CE-01 (-> RSE-02)"
+  },
+  {
+   "id": "CE-01:C_vs_A:efficiency",
+   "costUnits": "steps + human approvals (tokens/latency not recorded in CE-01)",
+   "delta": {
+    "steps": 0,
+    "approvals": 0
+   },
+   "relative": {
+    "steps": 0,
+    "approvals": 0
+   },
+   "qualityDelta": 0.055,
+   "decision": {
+    "promote": false,
+    "reasons": [
+     "no_cost_reduction"
+    ]
+   },
+   "breakEven": "not determinable: learning-cycle cost was not measured in CE-01 (-> RSE-02)"
+  },
+  {
+   "id": "CE-01:D_vs_A:efficiency",
+   "costUnits": "steps + human approvals (tokens/latency not recorded in CE-01)",
+   "delta": {
+    "steps": -6,
+    "approvals": -1
+   },
+   "relative": {
+    "steps": -0.2,
+    "approvals": -0.077
+   },
+   "qualityDelta": 0,
+   "decision": {
+    "promote": false,
+    "reasons": [
+     "regression"
+    ]
+   },
+   "breakEven": "not determinable: learning-cycle cost was not measured in CE-01 (-> RSE-02)"
+  }
+ ],
  "date": "2026-11-27",
  "tz": "Europe/Berlin",
  "governanceDigest": "db137490ce01baa450abb2d388e90d058a314ce804295d5709674ed30ecf5d8a",

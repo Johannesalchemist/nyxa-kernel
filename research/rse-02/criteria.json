@@ -1,0 +1,22 @@
+{"schema": "nyxa-rse02-criteria-v1", "date": "2026-11-27", "tz": "Europe/Berlin", "status": "PRE-REGISTERED, NOT RUN (needs model adapter with usage reporting = paid resource -> budget mandate M9; independent evaluator per CE-02 gate)",
+ "arms": {
+  "S": "static agent: fixed instructions, no memory, no learning",
+  "M": "S + growing experience memory (existing candidate store records appended to context)",
+  "E": "S + strategy evolution (candidates, shadow evaluation, governed adoption)",
+  "R": "E + regret guidance (RSE-01) + adaptive procedure distillation + context activation + mode selection (direct/reflect/cooperate/explore)"},
+ "tasks": {"families": "CE-01 task families (diagnosis, architecture, tool choice, contradictory evidence) as RECURRING instances: 4 families x 12 instances, presented in a fixed seeded order", "transfer": "CE-01 X1/X2 families x 6 instances after the learning phase", "seeds": [11, 23, 37]},
+ "controls": {"model": "identical model/settings for all arms", "information": "identical task material; M/E/R only add what they learned themselves in this run", "budget": "no per-arm token cap during tasks (cost is the outcome), hard cap 2x static-arm median per task to prevent runaway"},
+ "measures": {
+  "quality": "frozen scorer v2.1 + provenance verifier on structured answers; rubric items by blinded independent judges",
+  "tokens": "input+output tokens per task from the adapter's usage report (not estimated)",
+  "latency": "wall-clock ms per task",
+  "learning_cost": "tokens + ms + human minutes spent in reflection, distillation, shadow evaluation and approval, attributed to the cycle",
+  "tco": "sum(task tokens * price) + learning_cost money + human approval minutes * rate (rates fixed below)",
+  "transfer": "quality on transfer instances",
+  "regressions": "RSE-01 HURT count per arm vs S on identical instances",
+  "memory_growth": "bytes and prompt tokens of memory/procedures carried into each task, per instance index",
+  "break_even": "breakEven(): smallest n of recurring instances where cumulative TCO(arm) <= TCO(S), defined only if quality_delta >= 0 and HURT == 0"},
+ "rates": {"pricePerMTok": "list price of the chosen model on run date, recorded in the run manifest", "humanRatePerHour": 60},
+ "hard_limits": ["governance violations = 0", "efficiency is promoted only via efficiencyDecision(): no regression, no quality drop, no calibration drop > 0.02", "risk=high tasks always run in reflect mode"],
+ "decision_rule": "R is more efficient than E iff median tokens/task over instances 7-12 is lower by >= 15% in >= 2 of 3 seeds AND quality not lower AND HURT == 0; break-even reported per arm with 95% bootstrap interval",
+ "comparison": {"GUARD": "external reference only. Source NOT found in any reachable repository or handoff (unverified). If the owner supplies the publication/results, effect sizes are compared descriptively after the run; GUARD results are never used as targets or priors"}}
