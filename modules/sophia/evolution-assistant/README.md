@@ -27,3 +27,15 @@ Keine neue Persönlichkeit, kein zweiter Speicher, kein paralleler Agent.
 **Grenzen:**
 - Die Machbarkeitsprüfung und `connections` arbeiten lexikalisch. Im Lauf war ein Ressourcenname falsch geschrieben, die Daten wurden korrigiert.
 - Die Lernkurven der Fragen sind nur in Tests belegt, noch nicht an echten Personen.
+
+## R5 — Integration (2026-11-27)
+
+| Teil | Datei | Tests |
+|---|---|---|
+| WP3: Möglichkeitsentdeckung, Strategien, Kooperationsformen, Perspektiven, gemeinsame Forschung, Langzeitreflexion, Kalibrierung der Initiative | `evolutionExtensions.mjs` | in `evolutionCycle.test.mjs` |
+| WP4: Entscheidungsregister — Ablehnung wirksam, auch gegen umformulierte Vorschläge; „nie“ ist dauerhaft; höchstens ein erneuter Anlauf, und nur mit neuer Evidenz und nach 30 Tagen. Dazu Korrektur, Widerruf, bewusstes Nicht-Handeln und Ausführung nur nach Annahme plus Grant | `evolutionExtensions.mjs` (`DecisionLedger`) | vollständiger Zyklus mit synthetischen Daten |
+| WP7: Manipulationsschutz (Druck, Knappheit, Schuld, Gamification) | `manipulationCheck` | ✓ |
+| Runtime: identitätsgebundene Handler + einmaliger Heartbeat-Job für vorhandene Sophia-Timer | `runtime/evolutionRuntime.mjs` | echter HTTP-E2E |
+| Identität | `modules/authority/room-identity/` | 6 adversariale Tests |
+
+Modul gesamt: 11/11 + E2E 1/1. Die HE-01-Abnahme (`research/he-01/acceptance.mjs`) ist **ACCEPTED**.

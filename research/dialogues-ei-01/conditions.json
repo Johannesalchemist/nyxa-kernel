@@ -1,0 +1,19 @@
+{"schema": "nyxa-ei01-conditions-v1", "date": "2026-11-27", "tz": "Europe/Berlin", "status": "PREPARED, not started (needs F11: invitations, consent, publication approval)",
+ "conditions": {
+  "H1": "single human, 40 min, task card + shard material on paper",
+  "H3": "three humans from different disciplines, 40 min, moderated, same material",
+  "A1": "single AI agent, same material, same token budget per person-equivalent",
+  "A3": "three AI agents, one shard each, 2 exchange rounds (CE-02 arm C protocol)",
+  "M":  "mixed group: two humans + two agents (shards split), moderated, agents answer only when asked"},
+ "tasks": "CE-02 T3/T4 (generative) and X1/X2 (transfer) plus one open research question chosen by the moderator in advance; all registered before the session",
+ "controls": {"material": "identical shard set for all conditions", "time": "40 min per task block for humans; agents get the token-equivalent budget recorded per session", "order": "task order counterbalanced between groups"},
+ "measures": {
+  "novelty": "blinded judges 0-3: not contained in any single participant's pre-session note (pre-notes collected before the group phase)",
+  "correctness": "objective keys where available (frozen scorer v2.1 + provenance verifier); else judge 0-2",
+  "insight_gain": "emergenceGain(): verified items in the group output absent from all individual pre-notes",
+  "practical_use": "judge 0-2 + 4-week follow-up: was anything actually used (self-report, artefact if possible)",
+  "effort": "person-minutes, agent tokens, messages",
+  "self_determination": "post-session scale on pressure/autonomy, count of agent interventions not asked for (must be 0 in M), right to withdraw honoured (1.0)"},
+ "evaluation": {"scorer_validation_vs_experiment": "the external scorer-holdout producers are listed as role scorer_validator and may not be judges or participants (roles.mjs)",
+  "judges": ">= 2 humans not participating + >= 1 non-Claude model judge; blinded condition codes; disagreements > 1 point recorded",
+  "decision_rule": "M > max(H3, A3) on insight_gain with correctness not lower and self_determination not worse, in >= 2 of 3 sessions"}}

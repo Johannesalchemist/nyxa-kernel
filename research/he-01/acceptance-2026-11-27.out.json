@@ -1,0 +1,50 @@
+{
+ "he01_acceptance": "ACCEPTED",
+ "criteria": [
+  {
+   "id": "SD1 goals only by the human",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "SD2 every action needs a human decision; governed effects need a grant",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "SD3 rejection effective, no bypass by re-proposal, 'never' permanent",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "RV1 correction, revocation, deliberate non-action",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "RV2 objection removes entries from use immediately",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "MP1 no pressure/scarcity/guilt/gamification language",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "MP2 silence by default; initiative only when evidenced as welcome",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "ID1 personal data only for the passkey-bound owner (no name auth, no cross-user)",
+   "pass": true,
+   "testsRun": 1
+  },
+  {
+   "id": "ID2 impersonation/replay/session-swap resistance",
+   "pass": true,
+   "testsRun": 6
+  }
+ ]
+}

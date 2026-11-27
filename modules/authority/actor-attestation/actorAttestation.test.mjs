@@ -112,6 +112,24 @@ test("registry loader fails closed", () => {
   assert.throws(() => L(bad("dup.json", { ...reg, passports: [reg.passports[0], reg.passports[0]] })), /duplicate/);
 });
 
+test("BACKEND GATE observe (R5): verifies and logs, never blocks; required stays fail-closed", async () => {
+  const env = { ...process.env }; const log = path.join(tmp, "observe.jsonl");
+  try {
+    Object.assign(process.env, { NYXA_ACTOR_ATTESTATION_MODE: "observe", NYXA_AGENT_PASSPORTS: regFile, NYXA_ATTESTATION_NONCE_DIR: nonceDir,
+      NYXA_DEVELOPMENT_ACTOR: "claude", NYXA_PASSPORTS_OWNER_UID: String(UID), NYXA_ATTESTATION_OBSERVE_LOG: log }); G._resetForTesting();
+    const now = NOW * 1000; const p = proposal(); const att = sign(p);
+    const a = await G.gateProposal(p, undefined, now); assert.deepEqual([a.ok, a.observedVerdict, a.observedReason], [true, "would_deny", "attestation_required"]);
+    const b = await G.gateProposal(p, att, now); assert.deepEqual([b.ok, b.observedVerdict], [true, "would_allow"]);
+    const c = await G.gateProposal(p, att, now); assert.deepEqual([c.ok, c.observedReason], [true, "replay"]);
+    const lines = fs.readFileSync(log, "utf8").trim().split("\n").map(JSON.parse); assert.deepEqual(lines.map((l) => l.verdict), ["would_deny", "would_allow", "would_deny"]);
+    assert.equal((fs.statSync(log).mode & 0o777), 0o600);
+    process.env.NYXA_AGENT_PASSPORTS = "/nonexistent.json"; G._resetForTesting();
+    const d = await G.gateProposal(p, att, now); assert.deepEqual([d.ok, d.observedReason], [true, "attestation_config_invalid"]);
+    process.env.NYXA_ACTOR_ATTESTATION_MODE = "required"; G._resetForTesting();
+    assert.equal((await G.gateProposal(p, att, now)).ok, false);
+  } finally { process.env = env; G._resetForTesting(); }
+});
+
 test("BACKEND GATE: off passes, required enforces, misconfiguration fails closed", async () => {
   const env = { ...process.env };
   try {

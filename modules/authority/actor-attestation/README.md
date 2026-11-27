@@ -42,3 +42,8 @@
 - **R8 — in R3 geschlossen:** Die Schreib-Tools außerhalb des Proposal-Pfads waren in R2 nicht attestiert; seit R3 sind sie über den kanonischen Tool-Argument-Digest attestierungspflichtig (siehe oben).
 - **Agenten ohne lokalen Laufzeitprozess** (Claude-Webconnector über `mcp.future24.eu`) können nicht selbst signieren → dort OAuth 2.1 (MCP 2026-07-28) statt Attestierung.
 - Direkte Effekt-Tools im `required`-Modus: `nyxa_apply_patch` zusätzlich gesperrt (R3 im Modus `draft` real bestätigt); `nyxa_run_test` direkt bleibt über die vorhandene Test-Target-Allowlist geregelt.
+
+## R5
+
+- Modus `observe` (Stufe 2 des Stufenplans): volle Prüfung inkl. Nonce-Ledger, Urteil `would_allow`/`would_deny` als JSONL (`NYXA_ATTESTATION_OBSERVE_LOG`, 0600), **keine** Blockade. Fehlkonfiguration in `observe` wird protokolliert; in `required` bleibt sie fail-closed. Tests 14/14.
+- Offen: Digest-Bindung am Executor (`executeAllowedProposal` ist in dieser Sitzung nicht gelesen worden).
