@@ -1,4 +1,4 @@
-# Integration Closure R7 + RSE-01 (2026-11-27)
+# Integration Closure R7 + RSE-01 (2026-11-27) — Timer-Nachweis erbracht
 
 | Feld | Wert |
 |---|---|
@@ -18,6 +18,15 @@
 | Initiative-Kalibrierung: 1 reale Beobachtung, Ergebnis weiter Stille (Minimum 3) | Zustand (geschützt) |
 | Sophia zeigt reale Lernereignisse (RSE-01) | Projektion vom Server, gerendert in der Evolution-Ansicht |
 | Externe Erreichbarkeit der unbeabsichtigten Wege vor der Eindämmung, gemessen von einem zweiten Host | 2× Supabase-`401` |
+
+## Nachweis im regulären Betrieb (18:50 UTC geprüft)
+| Prüfung | Ergebnis |
+|---|---|
+| Regulärer Lauf des bestehenden Sophia-Feed-Timers | 18:45:29 UTC, Ergebnis `success`; der Feed selbst ist unbeeinträchtigt |
+| Evolution-Schritt im selben Lauf (unter der Sandbox des Dienstes: Home nur lesbar, nur das Room-API-Verzeichnis schreibbar) | Ereignis `18:45:29.462Z`, `kind: heartbeat`, `outcome: observe`, `externalActions: []`; Projektion zur selben Sekunde aktualisiert |
+| Ereignisprotokoll gesamt | 4 Einträge: 3 Heartbeats (manuell 18:23 und 18:33, **regulär 18:45**) und 1 reale Owner-Entscheidung |
+
+Die Integration in den bestehenden Takt ist damit im regulären Betrieb nachgewiesen, ohne eigenen Timer und ohne eigenen Speicher.
 
 ## Diagnose Sophia-Timer
 - Die vermuteten Heartbeats `nyxa-sophia-room-pilot` und `nyxa-sophia-shadow` sind **Ausführer einzeln freigegebener Testläufe**, keine kognitive Taktung. Der Shadow-Lauf endet mit Exit 1; Unit und Journal sind für die Sitzung nicht lesbar, daher Ursache `unverified` (Owner: `journalctl -u nyxa-sophia-shadow -n 50`).
