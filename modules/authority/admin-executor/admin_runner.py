@@ -48,7 +48,12 @@ def stage(inbox: Path, store: Path, publish_inbox: Path):
     return out
 
 def apply(grants_issued: Path, binding_file: Path, ledger: Path, receipts: Path, public_pem: Path, subjects: Path):
-    pub = serialization.load_pem_public_key(public_pem.read_bytes()); binding = json.loads(binding_file.read_text()); done = []
+    pub = serialization.load_pem_public_key(public_pem.read_bytes())
+    try:
+        binding = json.loads(binding_file.read_text())
+    except FileNotFoundError:
+        return [{"status": "WAITING", "reason": "binding_not_initialized"}]
+    done = []
     for g in sorted(grants_issued.glob("*.json")):
         try: env = json.loads(g.read_text())
         except Exception: continue

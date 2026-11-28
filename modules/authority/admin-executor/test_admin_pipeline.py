@@ -71,6 +71,7 @@ class T(unittest.TestCase):
             (subjects / f"{gid}.json").write_text(json.dumps(subj))
         mk("55555555-5555-4555-8555-555555555555", k); mk("66666666-6666-4666-8666-666666666666", Ed25519PrivateKey.generate())
         (issued / "77777777-7777-4777-8777-777777777777.json").write_text(json.dumps({"claims": {"action": "nyxa_dev_frame"}}))  # frame grant: ignored
+        self.assertEqual(R.apply(issued, self.t / "missing.json", ledger, rc, pem, subjects), [{"status": "WAITING", "reason": "binding_not_initialized"}])  # R10 live finding
         run = lambda: R.apply(issued, bf, ledger, rc, pem, subjects)
         r = run(); self.assertEqual(sorted(x["status"] for x in r), ["APPLIED", "DENIED"])
         self.assertEqual(run(), []); self.assertEqual(len(list(rc.iterdir())), 2)  # re-trigger: nothing re-executed, no new receipts
